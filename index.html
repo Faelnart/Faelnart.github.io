@@ -1,1 +1,88 @@
 
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ficha RPG — Editável</title>
+<style>
+  :root{--bg:#0f1724;--card:#0b1220;--accent:#ffcc33;--text:#e6eef8}
+  body{font-family:Inter,system-ui,Arial;background:var(--bg);color:var(--text);padding:20px}
+  .toolbar{display:flex;gap:8px;margin-bottom:12px;align-items:center}
+  .sheet{max-width:900px;margin:0 auto;background:var(--card);padding:18px;border-radius:10px;box-shadow:0 6px 18px rgba(0,0,0,.6)}
+  .row{display:flex;gap:12px;margin-bottom:10px}
+  .col{flex:1}
+  .box{background:rgba(255,255,255,0.03);padding:10px;border-radius:6px;min-height:48px}
+  [contenteditable]{outline:none}
+  .stat{display:flex;justify-content:space-between;align-items:center;padding:6px 8px;border-radius:6px}
+  .small{font-size:0.85rem;color:#cbd5e1}
+  .controls input[type=color]{border:none;padding:0;width:36px;height:36px}
+  @media print{
+    body{background:white;color:black}
+    .toolbar{display:none}
+    .sheet{box-shadow:none;border-radius:0}
+  }
+</style>
+</head>
+<body>
+<div class="toolbar">
+  <button id="saveBtn">Salvar</button>
+  <button id="exportBtn">Exportar JSON</button>
+  <input id="importFile" type="file" accept="application/json">
+  <label class="controls small">Tema: <input id="accent" type="color" value="#ffcc33"></label>
+  <button id="resetBtn">Reset</button>
+</div>
+
+<div class="sheet" id="sheet">
+  <div class="row">
+    <div class="col box">
+      <h2 contenteditable id="nome">Nome do Personagem</h2>
+      <div class="small">Jogador: <span contenteditable id="jogador">Seu nome</span></div>
+    </div>
+    <div class="col box">
+      <div class="stat"><strong>Classe</strong><span contenteditable id="classe">Guerreiro</span></div>
+      <div class="stat"><strong>Nível</strong><span contenteditable id="nivel">1</span></div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col box">
+      <h3>Atributos</h3>
+      <div class="row">
+        <div class="col stat">Força <span contenteditable id="forca">10</span></div>
+        <div class="col stat">Destreza <span contenteditable id="des">10</span></div>
+        <div class="col stat">Constituição <span contenteditable id="con">10</span></div>
+      </div>
+    </div>
+    <div class="col box">
+      <h3>Perícias</h3>
+      <div contenteditable id="pericias">Perícia 1; Perícia 2</div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col box">
+      <h3>Inventário</h3>
+      <div contenteditable id="inventario">Espada; Poção</div>
+    </div>
+    <div class="col box">
+      <h3>Notas</h3>
+      <div contenteditable id="notas">Anotações do mestre...</div>
+    </div>
+  </div>
+</div>
+
+<script>
+const ids=['nome','jogador','classe','nivel','forca','des','con','pericias','inventario','notas'];
+function save(){ const data={}; ids.forEach(id=>data[id]=document.getElementById(id).innerText); localStorage.setItem('ficha_rpg',JSON.stringify(data)); alert('Salvo localmente'); }
+function load(){ const raw=localStorage.getItem('ficha_rpg'); if(!raw) return; const data=JSON.parse(raw); ids.forEach(id=>document.getElementById(id).innerText=data[id]||''); }
+document.getElementById('saveBtn').onclick=save;
+document.getElementById('exportBtn').onclick=()=>{ const raw=localStorage.getItem('ficha_rpg')||'{}'; const blob=new Blob([raw],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='ficha.json'; a.click(); }
+document.getElementById('importFile').onchange=e=>{ const f=e.target.files[0]; if(!f) return; const r=new FileReader(); r.onload=ev=>{ localStorage.setItem('ficha_rpg',ev.target.result); load(); }; r.readAsText(f); }
+document.getElementById('accent').oninput=e=>{ document.documentElement.style.setProperty('--accent', e.target.value); }
+document.getElementById('resetBtn').onclick=()=>{ if(confirm('Resetar ficha?')){ localStorage.removeItem('ficha_rpg'); location.reload(); } }
+window.addEventListener('beforeunload',save);
+load();
+</script>
+</body>
+</html>
