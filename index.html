@@ -81,13 +81,57 @@
   .right-col{display:flex;flex-direction:column;gap:12px}
   .small-btn{padding:8px 10px;border-radius:8px;border:0;background:var(--accent);color:#071025;font-weight:700;cursor:pointer;font-size:13px}
 
-  /* Avatar: maior e sem encolhimento */
-  .avatar-wrap{display:flex;gap:14px;align-items:center}
-  .avatar-preview{
-    width:180px;height:180px;min-width:180px;min-height:180px;border-radius:10px;
-    background:rgba(255,255,255,0.02);display:flex;align-items:center;justify-content:center;overflow:hidden;border:1px solid rgba(255,255,255,0.04);flex:0 0 auto;
-  }
-  .avatar-preview img{width:100%;height:100%;object-fit:cover;display:block}
+ /* Avatar: layout fix — evita overflow e mantém botões dentro do card */
+.avatar-wrap{
+  display:flex;
+  gap:14px;
+  align-items:flex-start;       /* alinha topo para que controles não "desçam" */
+  width:100%;
+  box-sizing:border-box;
+}
+.avatar-preview{
+  width:180px;
+  height:180px;
+  min-width:180px;
+  min-height:180px;
+  border-radius:10px;
+  background:rgba(255,255,255,0.02);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,0.04);
+  flex:0 0 auto;                /* evita shrink */
+}
+.avatar-preview img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+
+/* Controles: fix para ficar dentro do card e ocupar o espaço restante */
+.avatar-controls{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  justify-content:space-between; /* mantém botões agrupados e dentro do bloco */
+  align-items:flex-start;
+  flex:1 1 auto;                 /* ocupa o restante do espaço sem empurrar para fora */
+  min-width:0;                   /* evita overflow em telas pequenas */
+}
+
+/* Botões: garantir que não ultrapassem o contêiner */
+.avatar-controls .btn-row{
+  display:flex;
+  gap:8px;
+  width:100%;
+  flex-wrap:wrap;
+}
+.avatar-controls .small-btn{
+  flex:0 0 auto;
+  white-space:nowrap;
+}
 
   /* spacing helpers */
   .spaced{margin-top:12px;margin-bottom:12px}
