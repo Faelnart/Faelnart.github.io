@@ -3,83 +3,116 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Ficha RPG Interativa — Completa</title>
+<title>Ficha RPG — Layout Espaçoso</title>
 <style>
   :root{
-    --bg:#0f1724; --card:#0b1220; --accent:#9b5cf6; --muted:#94a3b8; --paper:#f8fafc;
+    --bg:#071025;
+    --card:#071827;
+    --accent:#8b5cf6;
+    --muted:#9fb0c8;
+    --paper:#eef6fb;
+    --gap:18px;
+    --field-height:44px;
+    --input-padding:12px;
+    --radius:10px;
   }
-  body{font-family:Inter,system-ui,Segoe UI,Roboto,Arial; background:linear-gradient(180deg,#071025 0%, #071a2a 100%); color:var(--paper); margin:0; padding:20px;}
-  .container{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 420px;gap:18px;}
+
+  *{box-sizing:border-box}
+  body{
+    font-family:Inter,system-ui,Segoe UI,Roboto,Arial;
+    background:linear-gradient(180deg,var(--bg) 0%, #071a2a 100%);
+    color:var(--paper);
+    margin:0;
+    padding:24px;
+  }
+
+  .container{
+    max-width:1320px;
+    margin:0 auto;
+    display:grid;
+    grid-template-columns:1fr 380px;
+    gap:var(--gap);
+    align-items:start;
+  }
+
   header{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
-  header h1{font-size:20px;margin:0;color:var(--accent);}
-  .controls button{margin-left:8px;padding:8px 10px;border-radius:8px;border:0;background:var(--accent);color:#071025;font-weight:600;cursor:pointer;}
-  .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); padding:14px;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,0.03);}
-  .sheet{display:grid;grid-template-columns:1fr;gap:12px;}
-  .row{display:flex;gap:12px;align-items:center;}
-  .field{background:rgba(255,255,255,0.02);padding:8px;border-radius:8px;min-width:0;}
-  label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px;}
-  input[type="text"], input[type="number"], select, textarea{width:100%;padding:8px;border-radius:6px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--paper);}
-  .big{font-size:18px;padding:10px 12px;}
-  .attributes{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
-  .attr{background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02));padding:10px;border-radius:10px;text-align:center;}
-  .attr .score{font-size:20px;font-weight:700;}
-  .attr .mod{font-size:14px;color:var(--muted);}
-  .skills{display:grid;grid-template-columns:1fr;gap:8px;}
-  .skill{display:flex;align-items:center;gap:8px;padding:6px;border-radius:8px;background:rgba(255,255,255,0.01);}
-  .skill input[type="checkbox"]{transform:scale(1.05);}
-  .weapons table, .spells table{width:100%;border-collapse:collapse;color:var(--paper);}
-  .weapons th, .weapons td, .spells th, .spells td{padding:6px;border-bottom:1px dashed rgba(255,255,255,0.03);font-size:13px;text-align:left;}
-  .section-header{display:flex;justify-content:space-between;align-items:center;cursor:grab;padding:6px 0;}
-  .collapse{background:none;border:0;color:var(--muted);cursor:pointer;}
-  .right-col{display:flex;flex-direction:column;gap:12px;}
-  footer{grid-column:1/-1;margin-top:12px;color:var(--muted);font-size:13px;text-align:center;}
-  .dragging{opacity:0.7;transform:scale(0.995);}
+  header h1{font-size:20px;margin:0;color:var(--accent);letter-spacing:0.2px}
+  .controls button{margin-left:8px;padding:10px 12px;border-radius:10px;border:0;background:var(--accent);color:#071025;font-weight:700;cursor:pointer;font-size:13px}
 
-  /* AVATAR: tamanho fixo e sem encolhimento */
-  .avatar-wrap{display:flex;gap:12px;align-items:center;}
-  .avatar-preview{
-    width:160px;
-    height:160px;
-    min-width:160px;
-    min-height:160px;
-    border-radius:8px;
-    background:rgba(255,255,255,0.02);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    overflow:hidden;
-    border:1px solid rgba(255,255,255,0.04);
-    position:relative;
-    flex:0 0 auto;
+  .card{
+    background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    padding:16px;border-radius:12px;
+    box-shadow:0 8px 22px rgba(0,0,0,0.55);
+    border:1px solid rgba(255,255,255,0.03);
   }
-  .avatar-preview img{
-    display:block;
+
+  .sheet{display:grid;grid-template-columns:1fr;gap:14px;}
+  .section-header{display:flex;justify-content:space-between;align-items:center;cursor:grab;padding:6px 0;margin-bottom:6px}
+  .section-header strong{font-size:15px}
+  .collapse{background:none;border:0;color:var(--muted);cursor:pointer;font-size:18px}
+
+  .row{display:flex;gap:12px;align-items:center;margin-bottom:8px}
+  .field{background:rgba(255,255,255,0.02);padding:10px;border-radius:10px;min-width:0}
+  label{display:block;font-size:12px;color:var(--muted);margin-bottom:8px}
+  input[type="text"], input[type="number"], select, textarea{
     width:100%;
-    height:100%;
-    object-fit:cover;
-    -webkit-user-drag: none;
-    user-select: none;
+    padding:var(--input-padding);
+    border-radius:8px;
+    border:1px solid rgba(255,255,255,0.04);
+    background:transparent;color:var(--paper);
+    height:var(--field-height);
+    font-size:14px;
   }
-  .avatar-controls{display:flex;flex-direction:column;gap:6px;}
-  .small-btn{padding:6px 8px;border-radius:8px;border:0;background:var(--accent);color:#071025;font-weight:600;cursor:pointer;}
-  .avatar-preview.dragover{outline:3px dashed rgba(155,92,246,0.6);}
+  textarea{height:120px;resize:vertical;padding-top:10px;padding-bottom:10px}
 
-  @media print{
-    body{background:white;color:black;}
-    .controls, .collapse{display:none;}
-    .container{grid-template-columns:1fr;}
+  .big{font-size:20px;padding:12px 14px;min-height:48px}
+  .attributes{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .attr{background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02));padding:12px;border-radius:10px;text-align:center}
+  .attr .score{font-size:22px;font-weight:700;margin-top:6px}
+  .attr .mod{font-size:14px;color:var(--muted);margin-top:6px}
+
+  .skills{display:grid;grid-template-columns:1fr;gap:10px}
+  .skill{display:flex;align-items:center;gap:10px;padding:8px;border-radius:8px;background:rgba(255,255,255,0.01)}
+  .skill input[type="checkbox"]{transform:scale(1.05)}
+
+  .weapons table, .spells table{width:100%;border-collapse:collapse;color:var(--paper);font-size:14px}
+  .weapons th, .weapons td, .spells th, .spells td{padding:8px;border-bottom:1px dashed rgba(255,255,255,0.03);text-align:left}
+
+  .right-col{display:flex;flex-direction:column;gap:12px}
+  .small-btn{padding:8px 10px;border-radius:10px;border:0;background:var(--accent);color:#071025;font-weight:700;cursor:pointer;font-size:13px}
+
+  /* Avatar: maior e sem encolhimento */
+  .avatar-wrap{display:flex;gap:14px;align-items:center}
+  .avatar-preview{
+    width:180px;height:180px;min-width:180px;min-height:180px;border-radius:10px;
+    background:rgba(255,255,255,0.02);display:flex;align-items:center;justify-content:center;overflow:hidden;border:1px solid rgba(255,255,255,0.04);flex:0 0 auto;
   }
-  @media (max-width:980px){
-    .container{grid-template-columns:1fr; padding:12px;}
-    .attributes{grid-template-columns:repeat(2,1fr);}
-    .avatar-preview{width:120px;height:120px;min-width:120px;min-height:120px;}
+  .avatar-preview img{width:100%;height:100%;object-fit:cover;display:block}
+
+  /* spacing helpers */
+  .spaced{margin-top:12px;margin-bottom:12px}
+  .muted{color:var(--muted);font-size:13px}
+
+  /* responsive */
+  @media (max-width:1100px){
+    .container{grid-template-columns:1fr 360px}
+  }
+  @media (max-width:900px){
+    .container{grid-template-columns:1fr; padding:12px}
+    .avatar-preview{width:140px;height:140px;min-width:140px;min-height:140px}
+    .attributes{grid-template-columns:repeat(2,1fr)}
+  }
+  @media (max-width:520px){
+    .attributes{grid-template-columns:1fr}
+    input[type="text"], input[type="number"]{height:44px}
+    .avatar-preview{width:120px;height:120px;min-width:120px;min-height:120px}
   }
 </style>
 </head>
 <body>
   <div class="container">
     <header>
-      <h1>Ficha RPG Interativa — Completa</h1>
+      <h1>Ficha RPG — Layout Espaçoso</h1>
       <div class="controls">
         <button id="saveBtn">Salvar</button>
         <button id="loadBtn">Carregar</button>
@@ -90,21 +123,21 @@
     </header>
 
     <main class="card sheet" id="mainSheet">
-      <!-- Identidade com avatar ao lado -->
+      <!-- Identidade -->
       <section class="card" data-section="identidade">
         <div class="section-header" draggable="true">
           <strong>Identidade</strong>
           <div><button class="collapse" data-target="identidade">—</button></div>
         </div>
         <div class="content" id="identidade">
-          <div style="display:flex;gap:12px;align-items:flex-start;">
-            <div style="flex:1;">
+          <div style="display:flex;gap:16px;align-items:flex-start;">
+            <div style="flex:1">
               <div class="row">
                 <div class="field" style="flex:1">
                   <label>Nome do personagem</label>
                   <div id="nome" class="big" contenteditable="true" data-key="nome">Seu Nome</div>
                 </div>
-                <div class="field" style="width:160px">
+                <div class="field" style="width:180px">
                   <label>Classe</label>
                   <input id="classe" data-key="classe" type="text" placeholder="Guerreiro" />
                 </div>
@@ -112,42 +145,42 @@
                   <label>Nível</label>
                   <input id="nivel" data-key="nivel" type="number" min="1" max="20" value="1" />
                 </div>
-                <div class="field" style="width:120px">
+                <div class="field" style="width:140px">
                   <label>XP</label>
                   <input id="xp" data-key="xp" type="number" min="0" />
                 </div>
               </div>
 
-              <div class="row" style="margin-top:8px">
+              <div class="row spaced">
                 <div class="field" style="flex:1">
                   <label>Antecedente / Raça / Subclasse</label>
                   <input id="antecedente" data-key="antecedente" type="text" placeholder="Antecedente" />
                 </div>
-                <div class="field" style="width:140px">
+                <div class="field" style="width:160px">
                   <label>Classe de Armadura</label>
                   <input id="ca" data-key="ca" type="number" min="0" />
                 </div>
-                <div class="field" style="width:120px">
+                <div class="field" style="width:140px">
                   <label>Escudo</label>
                   <input id="escudo" data-key="escudo" type="text" />
                 </div>
               </div>
             </div>
 
-            <div style="width:220px;">
-              <label style="color:var(--muted);font-size:12px;margin-bottom:6px;display:block">Avatar</label>
-              <div class="card" style="padding:10px;">
+            <div style="width:240px">
+              <label class="muted">Avatar</label>
+              <div class="card" style="padding:12px">
                 <div class="avatar-wrap">
                   <div class="avatar-preview" id="avatarPreview" title="Arraste uma imagem aqui">
-                    <span id="avatarPlaceholder" style="color:var(--muted);font-size:13px;text-align:center;padding:8px">Sem imagem</span>
+                    <span id="avatarPlaceholder" class="muted">Sem imagem</span>
                   </div>
-                  <div class="avatar-controls" style="flex:1">
+                  <div style="flex:1;display:flex;flex-direction:column;gap:10px">
                     <input id="avatarInput" type="file" accept="image/*" style="display:none" />
                     <div style="display:flex;gap:8px">
                       <button class="small-btn" id="uploadAvatarBtn">Carregar</button>
                       <button class="small-btn" id="removeAvatarBtn">Remover</button>
                     </div>
-                    <div style="margin-top:8px;color:var(--muted);font-size:12px">A imagem é salva localmente e incluída no JSON exportado.</div>
+                    <div class="muted" style="font-size:13px">Imagem salva localmente e incluída no JSON exportado.</div>
                   </div>
                 </div>
               </div>
@@ -165,15 +198,16 @@
         </div>
         <div class="content" id="hp">
           <div class="row">
-            <div class="field" style="width:120px"><label>Atual</label><input id="hp_atual" data-key="hp_atual" type="number" min="0" /></div>
-            <div class="field" style="width:120px"><label>Máx</label><input id="hp_max" data-key="hp_max" type="number" min="0" /></div>
-            <div class="field" style="width:120px"><label>Temporário</label><input id="hp_temp" data-key="hp_temp" type="number" min="0" /></div>
-            <div class="field" style="width:140px"><label>Dado de Vida</label><input id="dado_vida" data-key="dado_vida" type="text" placeholder="1d10" /></div>
+            <div class="field" style="width:140px"><label>Atual</label><input id="hp_atual" data-key="hp_atual" type="number" min="0" /></div>
+            <div class="field" style="width:140px"><label>Máx</label><input id="hp_max" data-key="hp_max" type="number" min="0" /></div>
+            <div class="field" style="width:140px"><label>Temporário</label><input id="hp_temp" data-key="hp_temp" type="number" min="0" /></div>
+            <div class="field" style="width:160px"><label>Dado de Vida</label><input id="dado_vida" data-key="dado_vida" type="text" placeholder="1d10" /></div>
           </div>
-          <div class="row" style="margin-top:8px">
-            <div class="field" style="width:220px">
+
+          <div class="row spaced">
+            <div class="field" style="width:260px">
               <label>Salvaguardas contra morte</label>
-              <div style="display:flex;gap:8px">
+              <div style="display:flex;gap:10px">
                 <input id="death_success" data-key="death_success" type="number" min="0" max="3" placeholder="Sucessos" />
                 <input id="death_fail" data-key="death_fail" type="number" min="0" max="3" placeholder="Falhas" />
               </div>
@@ -199,57 +233,62 @@
             <div class="attr"><label>Carisma</label><input id="carisma" data-key="carisma" type="number" value="10" /><div class="score" id="carisma_score">10</div><div class="mod" id="carisma_mod">+0</div></div>
           </div>
 
-          <div style="margin-top:10px">
+          <div class="spaced">
             <label><strong>Bônus de Proficiência</strong></label>
-            <div style="display:flex;gap:8px;align-items:center">
-              <input id="prof_bonus" data-key="prof_bonus" type="number" value="2" style="width:80px" />
-              <label style="display:flex;align-items:center;gap:6px;color:var(--muted);margin-left:6px">
+            <div style="display:flex;gap:12px;align-items:center;margin-top:8px">
+              <input id="prof_bonus" data-key="prof_bonus" type="number" value="2" style="width:100px;height:44px;padding:10px" />
+              <label style="display:flex;align-items:center;gap:8px;color:var(--muted)">
                 <input id="autoProf" data-key="autoProf" type="checkbox" /> Calcular proficiência por nível
               </label>
-              <span style="color:var(--muted);margin-left:8px">Automático: níveis 1–4 = +2; 5–8 = +3; 9–12 = +4; 13–16 = +5; 17–20 = +6.</span>
+              <div class="muted">Automático: níveis 1–4 = +2; 5–8 = +3; 9–12 = +4; 13–16 = +5; 17–20 = +6.</div>
             </div>
           </div>
 
-          <div style="margin-top:10px" class="skills">
-            <div class="card" style="padding:8px">
-              <strong>Perícias</strong>
-              <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px">
-                <label class="skill"><input type="checkbox" class="skill-check" data-attr="destreza" data-key="Acrobacia" /> Acrobacia <span id="Acrobacia_val" style="margin-left:auto">+0</span></label>
-                <label class="skill"><input type="checkbox" class="skill-check" data-attr="forca" data-key="Atletismo" /> Atletismo <span id="Atletismo_val" style="margin-left:auto">+0</span></label>
+          <div class="spaced" style="display:flex;gap:12px">
+            <div style="flex:1">
+              <div class="card" style="padding:12px">
+                <strong>Perícias</strong>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px">
+                  <label class="skill"><input type="checkbox" class="skill-check" data-attr="destreza" data-key="Acrobacia" /> Acrobacia <span id="Acrobacia_val" style="margin-left:auto">+0</span></label>
+                  <label class="skill"><input type="checkbox" class="skill-check" data-attr="forca" data-key="Atletismo" /> Atletismo <span id="Atletismo_val" style="margin-left:auto">+0</span></label>
 
-                <label class="skill"><input type="checkbox" class="skill-check" data-attr="destreza" data-key="Prestidigitacao" /> Prestidigitação <span id="Prestidigitacao_val" style="margin-left:auto">+0</span></label>
-                <label class="skill"><input type="checkbox" class="skill-check" data-attr="destreza" data-key="Furtividade" /> Furtividade <span id="Furtividade_val" style="margin-left:auto">+0</span></label>
+                  <label class="skill"><input type="checkbox" class="skill-check" data-attr="destreza" data-key="Prestidigitacao" /> Prestidigitação <span id="Prestidigitacao_val" style="margin-left:auto">+0</span></label>
+                  <label class="skill"><input type="checkbox" class="skill-check" data-attr="destreza" data-key="Furtividade" /> Furtividade <span id="Furtividade_val" style="margin-left:auto">+0</span></label>
 
-                <label class="skill"><input type="checkbox" class="skill-check" data-attr="inteligencia" data-key="Arcanismo" /> Arcanismo <span id="Arcanismo_val" style="margin-left:auto">+0</span></label>
-                <label class="skill"><input type="checkbox" class="skill-check" data-attr="inteligencia" data-key="Historia" /> História <span id="Historia_val" style="margin-left:auto">+0</span></label>
+                  <label class="skill"><input type="checkbox" class="skill-check" data-attr="inteligencia" data-key="Arcanismo" /> Arcanismo <span id="Arcanismo_val" style="margin-left:auto">+0</span></label>
+                  <label class="skill"><input type="checkbox" class="skill-check" data-attr="inteligencia" data-key="Historia" /> História <span id="Historia_val" style="margin-left:auto">+0</span></label>
 
-                <label class="skill"><input type="checkbox" class="skill-check" data-attr="inteligencia" data-key="Investigacao" /> Investigação <span id="Investigacao_val" style="margin-left:auto">+0</span></label>
-                <label class="skill"><input type="checkbox" class="skill-check" data-attr="inteligencia" data-key="Natureza" /> Natureza <span id="Natureza_val" style="margin-left:auto">+0</span></label>
+                  <label class="skill"><input type="checkbox" class="skill-check" data-attr="inteligencia" data-key="Investigacao" /> Investigação <span id="Investigacao_val" style="margin-left:auto">+0</span></label>
+                  <label class="skill"><input type="checkbox" class="skill-check" data-attr="inteligencia" data-key="Natureza" /> Natureza <span id="Natureza_val" style="margin-left:auto">+0</span></label>
 
-                <label class="skill"><input type="checkbox" class="skill-check" data-attr="inteligencia" data-key="Religiao" /> Religião <span id="Religiao_val" style="margin-left:auto">+0</span></label>
-                <label class="skill"><input type="checkbox" class="skill-check" data-attr="sabedoria" data-key="Intuicao" /> Intuição <span id="Intuicao_val" style="margin-left:auto">+0</span></label>
+                  <label class="skill"><input type="checkbox" class="skill-check" data-attr="inteligencia" data-key="Religiao" /> Religião <span id="Religiao_val" style="margin-left:auto">+0</span></label>
+                  <label class="skill"><input type="checkbox" class="skill-check" data-attr="sabedoria" data-key="Intuicao" /> Intuição <span id="Intuicao_val" style="margin-left:auto">+0</span></label>
 
-                <label class="skill"><input type="checkbox" class="skill-check" data-attr="sabedoria" data-key="Medicina" /> Medicina <span id="Medicina_val" style="margin-left:auto">+0</span></label>
-                <label class="skill"><input type="checkbox" class="skill-check" data-attr="sabedoria" data-key="Percepcao" /> Percepção <span id="Percepcao_val" style="margin-left:auto">+0</span></label>
+                  <label class="skill"><input type="checkbox" class="skill-check" data-attr="sabedoria" data-key="Medicina" /> Medicina <span id="Medicina_val" style="margin-left:auto">+0</span></label>
+                  <label class="skill"><input type="checkbox" class="skill-check" data-attr="sabedoria" data-key="Percepcao" /> Percepção <span id="Percepcao_val" style="margin-left:auto">+0</span></label>
 
-                <label class="skill"><input type="checkbox" class="skill-check" data-attr="sabedoria" data-key="Sobrevivencia" /> Sobrevivência <span id="Sobrevivencia_val" style="margin-left:auto">+0</span></label>
-                <label class="skill"><input type="checkbox" class="skill-check" data-attr="carisma" data-key="Atuacao" /> Atuação <span id="Atuacao_val" style="margin-left:auto">+0</span></label>
+                  <label class="skill"><input type="checkbox" class="skill-check" data-attr="sabedoria" data-key="Sobrevivencia" /> Sobrevivência <span id="Sobrevivencia_val" style="margin-left:auto">+0</span></label>
+                  <label class="skill"><input type="checkbox" class="skill-check" data-attr="carisma" data-key="Atuacao" /> Atuação <span id="Atuacao_val" style="margin-left:auto">+0</span></label>
 
-                <label class="skill"><input type="checkbox" class="skill-check" data-attr="carisma" data-key="Enganacao" /> Enganação <span id="Enganacao_val" style="margin-left:auto">+0</span></label>
-                <label class="skill"><input type="checkbox" class="skill-check" data-attr="carisma" data-key="Intimidacao" /> Intimidação <span id="Intimidacao_val" style="margin-left:auto">+0</span></label>
+                  <label class="skill"><input type="checkbox" class="skill-check" data-attr="carisma" data-key="Enganacao" /> Enganação <span id="Enganacao_val" style="margin-left:auto">+0</span></label>
+                  <label class="skill"><input type="checkbox" class="skill-check" data-attr="carisma" data-key="Intimidacao" /> Intimidação <span id="Intimidacao_val" style="margin-left:auto">+0</span></label>
 
-                <label class="skill"><input type="checkbox" class="skill-check" data-attr="carisma" data-key="Persuasao" /> Persuasão <span id="Persuasao_val" style="margin-left:auto">+0</span></label>
+                  <label class="skill"><input type="checkbox" class="skill-check" data-attr="carisma" data-key="Persuasao" /> Persuasão <span id="Persuasao_val" style="margin-left:auto">+0</span></label>
+                </div>
               </div>
             </div>
 
-            <div class="card" style="padding:8px">
-              <strong>Outros</strong>
-              <div style="display:flex;gap:8px">
-                <div style="flex:1"><label>Iniciativa</label><input id="iniciativa" data-key="iniciativa" type="text" readonly /></div>
-                <div style="flex:1"><label>Percepção Passiva</label><input id="percepcao_passiva" data-key="percepcao_passiva" type="number" readonly /></div>
+            <div style="width:320px">
+              <div class="card" style="padding:12px">
+                <strong>Outros</strong>
+                <div style="display:flex;gap:12px;margin-top:10px">
+                  <div style="flex:1"><label>Iniciativa</label><input id="iniciativa" data-key="iniciativa" type="text" readonly /></div>
+                  <div style="flex:1"><label>Percepção Passiva</label><input id="percepcao_passiva" data-key="percepcao_passiva" type="number" readonly /></div>
+                </div>
               </div>
             </div>
           </div>
+
         </div>
       </section>
 
@@ -264,12 +303,12 @@
             <thead><tr><th>Nome</th><th>Bônus Atq / CD</th><th>Dano e Tipo</th><th>Notas</th><th></th></tr></thead>
             <tbody></tbody>
           </table>
-          <div style="margin-top:8px;display:flex;gap:8px">
+          <div style="margin-top:10px;display:flex;gap:8px">
             <input id="w_name" placeholder="Nome" />
-            <input id="w_bonus" placeholder="+Atq / CD" style="width:110px" />
+            <input id="w_bonus" placeholder="+Atq / CD" style="width:140px" />
             <input id="w_dmg" placeholder="1d8 + STR cortante" />
             <input id="w_notes" placeholder="Notas" />
-            <button id="addWeapon">Adicionar</button>
+            <button id="addWeapon" class="small-btn">Adicionar</button>
           </div>
         </div>
       </section>
@@ -285,14 +324,14 @@
             <thead><tr><th>Círculo</th><th>Nome</th><th>Tempo</th><th>Alcance</th><th>Concentração/Ritual/M</th><th>Notas</th><th></th></tr></thead>
             <tbody></tbody>
           </table>
-          <div style="margin-top:8px;display:flex;gap:8px">
-            <input id="s_circle" placeholder="Truque/1/2..." style="width:80px" />
+          <div style="margin-top:10px;display:flex;gap:8px">
+            <input id="s_circle" placeholder="Truque/1/2..." style="width:100px" />
             <input id="s_name" placeholder="Nome da magia" />
-            <input id="s_time" placeholder="Tempo" style="width:120px" />
-            <input id="s_range" placeholder="Alcance" style="width:120px" />
-            <input id="s_flags" placeholder="C / R / M" style="width:80px" />
+            <input id="s_time" placeholder="Tempo" style="width:140px" />
+            <input id="s_range" placeholder="Alcance" style="width:140px" />
+            <input id="s_flags" placeholder="C / R / M" style="width:100px" />
             <input id="s_notes" placeholder="Notas" />
-            <button id="addSpell">Adicionar</button>
+            <button id="addSpell" class="small-btn">Adicionar</button>
           </div>
         </div>
       </section>
@@ -307,35 +346,36 @@
           <div class="row">
             <div class="field" style="flex:1">
               <label>Aparência detalhada</label>
-              <div id="aparencia_text" contenteditable="true" data-key="aparencia_text" style="min-height:80px;padding:8px;border-radius:8px;background:rgba(255,255,255,0.01)"></div>
+              <div id="aparencia_text" contenteditable="true" data-key="aparencia_text" style="min-height:120px;padding:12px;border-radius:10px;background:rgba(255,255,255,0.01)"></div>
             </div>
           </div>
-          <div class="row" style="margin-top:8px">
+          <div class="row spaced">
             <div class="field" style="flex:1">
               <label>História e Personalidade</label>
-              <div id="historia" contenteditable="true" data-key="historia" style="min-height:120px;padding:8px;border-radius:8px;background:rgba(255,255,255,0.01)"></div>
+              <div id="historia" contenteditable="true" data-key="historia" style="min-height:160px;padding:12px;border-radius:10px;background:rgba(255,255,255,0.01)"></div>
             </div>
           </div>
         </div>
       </section>
+
     </main>
 
     <!-- Right column -->
     <aside class="right-col">
       <div class="card">
         <strong>Resumo Rápido</strong>
-        <div style="margin-top:8px">
-          <div style="display:flex;gap:8px">
+        <div style="margin-top:12px">
+          <div style="display:flex;gap:12px">
             <div style="flex:1"><label>HP</label><input id="hp_quick" readonly /></div>
             <div style="flex:1"><label>CA</label><input id="ca_quick" readonly /></div>
           </div>
-          <div style="margin-top:8px"><label>Iniciativa</label><input id="iniciativa_quick" readonly /></div>
+          <div style="margin-top:12px"><label>Iniciativa</label><input id="iniciativa_quick" readonly /></div>
         </div>
       </div>
 
       <div class="card">
         <strong>Moedas</strong>
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px">
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px">
           <div><label>PC</label><input id="pc" data-key="pc" type="number" /></div>
           <div><label>PP</label><input id="pp" data-key="pp" type="number" /></div>
           <div><label>PE</label><input id="pe" data-key="pe" type="number" /></div>
@@ -346,14 +386,14 @@
 
       <div class="card">
         <strong>Exportar / Imprimir</strong>
-        <div style="margin-top:8px;display:flex;gap:8px">
-          <button id="printBtn">Imprimir</button>
-          <button id="downloadBtn">Baixar JSON</button>
+        <div style="margin-top:12px;display:flex;gap:8px">
+          <button id="printBtn" class="small-btn">Imprimir</button>
+          <button id="downloadBtn" class="small-btn">Baixar JSON</button>
         </div>
       </div>
     </aside>
 
-    <footer>Ficha completa com avatar funcional, perícias completas e proficiência automática.</footer>
+    <footer>Ficha otimizada para preenchimento — mais espaçamento, campos maiores e melhor legibilidade.</footer>
   </div>
 
 <script>
@@ -444,14 +484,11 @@ function addSpellRow(obj){
   tbody.appendChild(tr);
 }
 
-/* ---------- Avatar handling robusto ---------- */
+/* ---------- Avatar handling ---------- */
 function createPlaceholder(){
   const ph = document.createElement('span');
   ph.id = 'avatarPlaceholder';
-  ph.style.color = 'var(--muted)';
-  ph.style.fontSize = '13px';
-  ph.style.textAlign = 'center';
-  ph.style.padding = '8px';
+  ph.className = 'muted';
   ph.textContent = 'Sem imagem';
   return ph;
 }
@@ -464,17 +501,8 @@ function setAvatarFromDataURL(dataURL){
     return;
   }
   const img = new Image();
-  img.onload = () => {
-    preview.innerHTML = '';
-    preview.appendChild(img);
-    preview.dataset.image = dataURL;
-  };
-  img.onerror = () => {
-    preview.innerHTML = '';
-    preview.appendChild(createPlaceholder());
-    preview.dataset.image = '';
-    alert('Erro ao carregar a imagem. Tente outro arquivo.');
-  };
+  img.onload = () => { preview.innerHTML = ''; preview.appendChild(img); preview.dataset.image = dataURL; };
+  img.onerror = () => { preview.innerHTML = ''; preview.appendChild(createPlaceholder()); preview.dataset.image = ''; alert('Erro ao carregar a imagem.'); };
   img.src = dataURL;
 }
 function resizeImageFileToDataURL(file, maxDim = 1200, quality = 0.9){
