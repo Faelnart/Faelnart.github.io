@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Ficha RPG Interativa</title>
+<title>Ficha RPG Interativa — Proficiência Automática</title>
 <style>
   :root{
     --bg:#0f1724; --card:#0b1220; --accent:#9b5cf6; --muted:#94a3b8; --paper:#f8fafc;
@@ -35,15 +35,12 @@
   .spells table{width:100%;border-collapse:collapse;}
   .spells th, .spells td{padding:6px;border-bottom:1px dashed rgba(255,255,255,0.03);font-size:13px;}
   footer{grid-column:1/-1;margin-top:12px;color:var(--muted);font-size:13px;text-align:center;}
-  /* draggable visual */
   .dragging{opacity:0.7;transform:scale(0.995);}
-  /* print */
   @media print{
     body{background:white;color:black;}
     .controls, .collapse{display:none;}
     .container{grid-template-columns:1fr;}
   }
-  /* small screens */
   @media (max-width:980px){
     .container{grid-template-columns:1fr; padding:12px;}
     .attributes{grid-template-columns:repeat(2,1fr);}
@@ -79,8 +76,12 @@
               <div id="nome" class="big" contenteditable="true" data-key="nome">Seu Nome</div>
             </div>
             <div class="field" style="width:160px">
-              <label>Classe / Nível</label>
-              <input id="classe" data-key="classe" type="text" placeholder="Guerreiro 5" />
+              <label>Classe</label>
+              <input id="classe" data-key="classe" type="text" placeholder="Guerreiro" />
+            </div>
+            <div class="field" style="width:120px">
+              <label>Nível</label>
+              <input id="nivel" data-key="nivel" type="number" min="1" max="20" value="1" />
             </div>
             <div class="field" style="width:120px">
               <label>XP</label>
@@ -163,7 +164,7 @@
               <div class="score" id="forca_score">10</div>
               <div class="mod" id="forca_mod">+0</div>
               <div style="margin-top:6px">
-                <label><input id="prof_atletismo" type="checkbox" data-skill="Atletismo" /> Atletismo</label>
+                <label><input id="prof_atletismo" type="checkbox" data-key="prof_atletismo" data-skill="Atletismo" /> Atletismo</label>
               </div>
             </div>
             <!-- Destreza -->
@@ -173,7 +174,7 @@
               <div class="score" id="destreza_score">10</div>
               <div class="mod" id="destreza_mod">+0</div>
               <div style="margin-top:6px">
-                <label><input id="prof_acrobacia" type="checkbox" data-skill="Acrobacia" /> Acrobacia</label>
+                <label><input id="prof_acrobacia" type="checkbox" data-key="prof_acrobacia" data-skill="Acrobacia" /> Acrobacia</label>
               </div>
             </div>
             <!-- Constituição -->
@@ -208,8 +209,13 @@
 
           <div style="margin-top:10px">
             <label><strong>Bônus de Proficiência</strong></label>
-            <input id="prof_bonus" data-key="prof_bonus" type="number" value="2" style="width:80px" />
-            <span style="color:var(--muted);margin-left:8px">O bônus é aplicado automaticamente nas perícias marcadas.</span>
+            <div style="display:flex;gap:8px;align-items:center">
+              <input id="prof_bonus" data-key="prof_bonus" type="number" value="2" style="width:80px" />
+              <label style="display:flex;align-items:center;gap:6px;color:var(--muted);margin-left:6px">
+                <input id="autoProf" data-key="autoProf" type="checkbox" /> Calcular proficiência por nível
+              </label>
+              <span style="color:var(--muted);margin-left:8px">Automático: níveis 1–4 = +2; 5–8 = +3; 9–12 = +4; 13–16 = +5; 17–20 = +6.</span>
+            </div>
           </div>
 
           <div style="margin-top:10px" class="skills">
@@ -254,3 +260,378 @@
           </table>
           <div style="margin-top:8px;display:flex;gap:8px">
             <input id="w_name" placeholder="Nome" />
+            <input id="w_bonus" placeholder="+Atq / CD" style="width:110px" />
+            <input id="w_dmg" placeholder="1d8 + STR cortante" />
+            <input id="w_notes" placeholder="Notas" />
+            <button id="addWeapon">Adicionar</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" data-section="magias">
+        <div class="section-header" draggable="true">
+          <strong>Truques e Magias Preparadas</strong>
+          <div>
+            <button class="collapse" data-target="magias">—</button>
+          </div>
+        </div>
+        <div class="content spells" id="magias">
+          <table id="spellsTable">
+            <thead><tr><th>Círculo</th><th>Nome</th><th>Tempo</th><th>Alcance</th><th>Concentração/Ritual/M</th><th>Notas</th><th></th></tr></thead>
+            <tbody></tbody>
+          </table>
+          <div style="margin-top:8px;display:flex;gap:8px">
+            <input id="s_circle" placeholder="Truque/1/2..." style="width:80px" />
+            <input id="s_name" placeholder="Nome da magia" />
+            <input id="s_time" placeholder="Tempo" style="width:120px" />
+            <input id="s_range" placeholder="Alcance" style="width:120px" />
+            <input id="s_flags" placeholder="C / R / M" style="width:80px" />
+            <input id="s_notes" placeholder="Notas" />
+            <button id="addSpell">Adicionar</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" data-section="aparencia">
+        <div class="section-header" draggable="true">
+          <strong>Aparência / História</strong>
+          <div>
+            <button class="collapse" data-target="aparencia">—</button>
+          </div>
+        </div>
+        <div class="content" id="aparencia">
+          <div class="row">
+            <div class="field" style="flex:1">
+              <label>Aparência</label>
+              <div id="aparencia_text" contenteditable="true" data-key="aparencia_text" style="min-height:80px;padding:8px;border-radius:8px;background:rgba(255,255,255,0.01)"></div>
+            </div>
+          </div>
+          <div class="row" style="margin-top:8px">
+            <div class="field" style="flex:1">
+              <label>História e Personalidade</label>
+              <div id="historia" contenteditable="true" data-key="historia" style="min-height:100px;padding:8px;border-radius:8px;background:rgba(255,255,255,0.01)"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Right column: resumo e moedas -->
+    <aside class="right-col">
+      <div class="card">
+        <strong>Resumo Rápido</strong>
+        <div style="margin-top:8px">
+          <div style="display:flex;gap:8px">
+            <div style="flex:1">
+              <label>HP</label>
+              <input id="hp_quick" readonly />
+            </div>
+            <div style="flex:1">
+              <label>CA</label>
+              <input id="ca_quick" readonly />
+            </div>
+          </div>
+          <div style="margin-top:8px">
+            <label>Iniciativa</label>
+            <input id="iniciativa_quick" readonly />
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <strong>Moedas</strong>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px">
+          <div><label>PC</label><input id="pc" data-key="pc" type="number" /></div>
+          <div><label>PP</label><input id="pp" data-key="pp" type="number" /></div>
+          <div><label>PE</label><input id="pe" data-key="pe" type="number" /></div>
+          <div><label>PO</label><input id="po" data-key="po" type="number" /></div>
+          <div><label>PL</label><input id="pl" data-key="pl" type="number" /></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <strong>Exportar / Imprimir</strong>
+        <div style="margin-top:8px;display:flex;gap:8px">
+          <button id="printBtn">Imprimir</button>
+          <button id="downloadBtn">Baixar JSON</button>
+        </div>
+      </div>
+    </aside>
+
+    <footer>
+      Modelo baseado no PDF fornecido — campos como <strong>NOME DO PERSONAGEM</strong> e <strong>PONTOS DE VIDA</strong> foram mantidos e adaptados para edição digital. 
+    </footer>
+  </div>
+
+<script>
+/* ---------- Utilitários ---------- */
+const qs = sel => document.querySelector(sel);
+const qsa = sel => Array.from(document.querySelectorAll(sel));
+const storageKey = 'fichaRPG_v1';
+
+/* ---------- Proficiência por nível ---------- */
+function profFromLevel(level){
+  level = parseInt(level || 1, 10);
+  if(level <= 4) return 2;
+  if(level <= 8) return 3;
+  if(level <= 12) return 4;
+  if(level <= 16) return 5;
+  return 6; // 17-20
+}
+
+/* ---------- Cálculos ---------- */
+function modFromScore(score){
+  return Math.floor((score - 10) / 2);
+}
+function formatMod(n){
+  return (n>=0?'+':'') + n;
+}
+
+/* ---------- Atualizações dinâmicas ---------- */
+function updateAttributes(){
+  const attrs = ['forca','destreza','constituicao','inteligencia','sabedoria','carisma'];
+  attrs.forEach(a=>{
+    const el = qs('#'+a);
+    const val = parseInt(el.value || el.textContent || 10,10);
+    qs('#'+a+'_score').textContent = val;
+    const m = modFromScore(val);
+    qs('#'+a+'_mod').textContent = formatMod(m);
+  });
+
+  // Proficiência automática se marcada
+  const auto = qs('#autoProf').checked;
+  const nivel = parseInt(qs('#nivel').value || 1, 10);
+  if(auto){
+    const prof = profFromLevel(nivel);
+    qs('#prof_bonus').value = prof;
+    qs('#prof_bonus').readOnly = true;
+  } else {
+    qs('#prof_bonus').readOnly = false;
+  }
+
+  // iniciativa = destreza mod
+  const dex = parseInt(qs('#destreza').value||10,10);
+  qs('#iniciativa').value = formatMod(modFromScore(dex));
+  qs('#iniciativa_quick').value = qs('#iniciativa').value;
+
+  // Percepção passiva = 10 + sabedoria mod + prof if checked
+  const sab = parseInt(qs('#sabedoria').value||10,10);
+  const sabMod = modFromScore(sab);
+  const prof = parseInt(qs('#prof_bonus').value||0,10);
+  const percCheck = qsa('.skill-check').find(i=>i.dataset.key==='Percepcao');
+  const passive = 10 + sabMod + ((percCheck && percCheck.checked)?prof:0);
+  qs('#percepcao_passiva').value = passive;
+
+  // update skills shown
+  qsa('.skill-check').forEach(cb=>{
+    const attr = cb.dataset.attr;
+    const key = cb.dataset.key;
+    const attrVal = parseInt(qs('#'+attr).value||10,10);
+    const val = modFromScore(attrVal) + (cb.checked?parseInt(qs('#prof_bonus').value||0,10):0);
+    const el = qs('#'+key+'_val');
+    if(el) el.textContent = formatMod(val);
+  });
+
+  // HP quick
+  const atual = parseInt(qs('#hp_atual').value||0,10);
+  const temp = parseInt(qs('#hp_temp').value||0,10);
+  const max = parseInt(qs('#hp_max').value||0,10);
+  qs('#hp_quick').value = `${atual}/${max} (+${temp})`;
+  qs('#ca_quick').value = qs('#ca').value || '';
+}
+
+/* ---------- Weapons / Spells management ---------- */
+function addWeaponRow(obj){
+  const tbody = qs('#weaponsTable tbody');
+  const tr = document.createElement('tr');
+  tr.innerHTML = `<td>${obj.name}</td><td>${obj.bonus}</td><td>${obj.dmg}</td><td>${obj.notes}</td><td><button class="del">X</button></td>`;
+  tr.querySelector('.del').addEventListener('click',()=>{tr.remove();});
+  tbody.appendChild(tr);
+}
+function addSpellRow(obj){
+  const tbody = qs('#spellsTable tbody');
+  const tr = document.createElement('tr');
+  tr.innerHTML = `<td>${obj.circle}</td><td>${obj.name}</td><td>${obj.time}</td><td>${obj.range}</td><td>${obj.flags}</td><td>${obj.notes}</td><td><button class="del">X</button></td>`;
+  tr.querySelector('.del').addEventListener('click',()=>{tr.remove();});
+  tbody.appendChild(tr);
+}
+
+/* ---------- Save / Load ---------- */
+function gatherData(){
+  const data = {};
+  // simple inputs and contenteditable
+  qsa('[data-key]').forEach(el=>{
+    const key = el.dataset.key;
+    if(el.type === 'checkbox') data[key] = el.checked;
+    else if(el.contentEditable === "true") data[key] = el.innerText.trim();
+    else data[key] = el.value;
+  });
+  // attributes (ensure numeric)
+  ['forca','destreza','constituicao','inteligencia','sabedoria','carisma'].forEach(a=>{
+    data[a] = qs('#'+a).value;
+  });
+  // skills
+  data.skills = {};
+  qsa('.skill-check').forEach(cb=>{
+    data.skills[cb.dataset.key] = {checked:cb.checked, attr:cb.dataset.attr};
+  });
+  // weapons
+  data.weapons = Array.from(qs('#weaponsTable tbody').children).map(tr=>{
+    const tds = tr.querySelectorAll('td');
+    return {name:tds[0].textContent, bonus:tds[1].textContent, dmg:tds[2].textContent, notes:tds[3].textContent};
+  });
+  // spells
+  data.spells = Array.from(qs('#spellsTable tbody').children).map(tr=>{
+    const tds = tr.querySelectorAll('td');
+    return {circle:tds[0].textContent, name:tds[1].textContent, time:tds[2].textContent, range:tds[3].textContent, flags:tds[4].textContent, notes:tds[5].textContent};
+  });
+  return data;
+}
+function applyData(data){
+  if(!data) return;
+  // inputs
+  qsa('[data-key]').forEach(el=>{
+    const key = el.dataset.key;
+    if(key in data){
+      if(el.type === 'checkbox') el.checked = !!data[key];
+      else if(el.contentEditable === "true") el.innerText = data[key] || '';
+      else el.value = data[key] || '';
+    }
+  });
+  // attributes
+  ['forca','destreza','constituicao','inteligencia','sabedoria','carisma'].forEach(a=>{
+    if(data[a] !== undefined) qs('#'+a).value = data[a];
+  });
+  // skills
+  qsa('.skill-check').forEach(cb=>{
+    const key = cb.dataset.key;
+    if(data.skills && data.skills[key]) cb.checked = !!data.skills[key].checked;
+  });
+  // weapons
+  qs('#weaponsTable tbody').innerHTML = '';
+  (data.weapons||[]).forEach(addWeaponRow);
+  // spells
+  qs('#spellsTable tbody').innerHTML = '';
+  (data.spells||[]).forEach(addSpellRow);
+  updateAttributes();
+}
+
+/* ---------- Persistence ---------- */
+function saveToLocal(){
+  const data = gatherData();
+  localStorage.setItem(storageKey, JSON.stringify(data));
+  alert('Ficha salva no navegador.');
+}
+function loadFromLocal(){
+  const raw = localStorage.getItem(storageKey);
+  if(!raw){ alert('Nenhuma ficha salva localmente.'); return; }
+  applyData(JSON.parse(raw));
+  alert('Ficha carregada.');
+}
+function exportJSON(){
+  const data = gatherData();
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'ficha-rpg.json'; a.click();
+  URL.revokeObjectURL(url);
+}
+function importJSON(){
+  const inp = document.createElement('input');
+  inp.type='file'; inp.accept='application/json';
+  inp.onchange = e=>{
+    const f = e.target.files[0];
+    if(!f) return;
+    const reader = new FileReader();
+    reader.onload = ev=>{
+      try{
+        const data = JSON.parse(ev.target.result);
+        applyData(data);
+        alert('JSON importado.');
+      }catch(err){ alert('Arquivo inválido.'); }
+    };
+    reader.readAsText(f);
+  };
+  inp.click();
+}
+function clearAll(){
+  if(!confirm('Limpar todos os campos?')) return;
+  qsa('[data-key]').forEach(el=>{
+    if(el.type === 'checkbox') el.checked = false;
+    else if(el.contentEditable === "true") el.innerText = '';
+    else el.value = '';
+  });
+  qs('#weaponsTable tbody').innerHTML = '';
+  qs('#spellsTable tbody').innerHTML = '';
+  updateAttributes();
+}
+
+/* ---------- Event wiring ---------- */
+document.addEventListener('input', e=>{
+  if(e.target.matches('[data-key]') || e.target.matches('.skill-check') || e.target.matches('#prof_bonus')){
+    updateAttributes();
+  }
+});
+qs('#addWeapon').addEventListener('click', ()=>{
+  const obj = {name:qs('#w_name').value, bonus:qs('#w_bonus').value, dmg:qs('#w_dmg').value, notes:qs('#w_notes').value};
+  addWeaponRow(obj);
+  qs('#w_name').value=''; qs('#w_bonus').value=''; qs('#w_dmg').value=''; qs('#w_notes').value='';
+});
+qs('#addSpell').addEventListener('click', ()=>{
+  const obj = {circle:qs('#s_circle').value, name:qs('#s_name').value, time:qs('#s_time').value, range:qs('#s_range').value, flags:qs('#s_flags').value, notes:qs('#s_notes').value};
+  addSpellRow(obj);
+  qs('#s_circle').value=''; qs('#s_name').value=''; qs('#s_time').value=''; qs('#s_range').value=''; qs('#s_flags').value=''; qs('#s_notes').value='';
+});
+qs('#saveBtn').addEventListener('click', saveToLocal);
+qs('#loadBtn').addEventListener('click', loadFromLocal);
+qs('#exportBtn').addEventListener('click', exportJSON);
+qs('#importBtn').addEventListener('click', importJSON);
+qs('#clearBtn').addEventListener('click', clearAll);
+qs('#printBtn').addEventListener('click', ()=>window.print());
+qs('#downloadBtn').addEventListener('click', exportJSON);
+
+/* ---------- Drag & collapse behavior ---------- */
+qsa('.section-header').forEach(h=>{
+  h.addEventListener('dragstart', e=>{
+    h.classList.add('dragging');
+    e.dataTransfer.setData('text/plain', h.parentElement.dataset.section);
+  });
+  h.addEventListener('dragend', ()=>h.classList.remove('dragging'));
+});
+const main = qs('#mainSheet');
+main.addEventListener('dragover', e=>e.preventDefault());
+main.addEventListener('drop', e=>{
+  e.preventDefault();
+  const id = e.dataTransfer.getData('text/plain');
+  const src = qsa(`[data-section="${id}"]`)[0];
+  if(!src) return;
+  const target = e.target.closest('.card');
+  if(target && target !== src){
+    main.insertBefore(src, target);
+  }
+});
+qsa('.collapse').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    const target = qs('#'+btn.dataset.target);
+    if(!target) return;
+    if(target.style.display === 'none'){ target.style.display='block'; btn.textContent='—'; }
+    else { target.style.display='none'; btn.textContent='+'; }
+  });
+});
+
+/* ---------- Init ---------- */
+(function init(){
+  qs('#nome').innerText = 'Nome do Personagem';
+  qs('#hp_max').value = 10;
+  qs('#hp_atual').value = 10;
+  // ensure default level/prof
+  if(!qs('#nivel').value) qs('#nivel').value = 1;
+  // if autoProf checked by default, compute
+  updateAttributes();
+  // try load from local automatically if exists
+  const raw = localStorage.getItem(storageKey);
+  if(raw) applyData(JSON.parse(raw));
+})();
+</script>
+</body>
+</html>
