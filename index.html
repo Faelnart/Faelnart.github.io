@@ -147,3 +147,221 @@
             <div class="attr"><label>Destreza</label><input id="destreza" data-key="destreza" type="number" value="10" /><div class="score" id="destreza_score">10</div><div class="mod" id="destreza_mod">+0</div></div>
             <div class="attr"><label>Constituição</label><input id="constituicao" data-key="constituicao" type="number" value="10" /><div class="score" id="constituicao_score">10</div><div class="mod" id="constituicao_mod">+0</div></div>
             <div class="attr"><label>Inteligência</label><input id="inteligencia" data-key="inteligencia" type="number" value="10" /><div class="score" id="inteligencia_score">10</div><div class="mod" id="inteligencia_mod">+0</div></div>
+            <div class="attr"><label>Sabedoria</label><input id="sabedoria" data-key="sabedoria" type="number" value="10" /><div class="score" id="sabedoria_score">10</div><div class="mod" id="sabedoria_mod">+0</div></div>
+            <div class="attr"><label>Carisma</label><input id="carisma" data-key="carisma" type="number" value="10" /><div class="score" id="carisma_score">10</div><div class="mod" id="carisma_mod">+0</div></div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <aside class="right-col">
+      <div class="card"><strong>Resumo</strong><div style="margin-top:8px"><label>HP</label><input id="hp_quick" readonly /></div></div>
+    </aside>
+
+    <footer>Avatar salvo como data URL; arraste ou carregue uma imagem.</footer>
+  </div>
+
+<script>
+/* ---------- Utilitários ---------- */
+const qs = sel => document.querySelector(sel);
+const qsa = sel => Array.from(document.querySelectorAll(sel));
+const storageKey = 'fichaRPG_v1';
+
+/* ---------- Avatar handling corrigido ---------- */
+function createPlaceholder(){
+  const ph = document.createElement('span');
+  ph.id = 'avatarPlaceholder';
+  ph.style.color = 'var(--muted)';
+  ph.style.fontSize = '13px';
+  ph.style.textAlign = 'center';
+  ph.style.padding = '8px';
+  ph.textContent = 'Sem imagem';
+  return ph;
+}
+
+function setAvatarFromDataURL(dataURL){
+  const preview = qs('#avatarPreview');
+  preview.innerHTML = '';
+  if(!dataURL){
+    preview.appendChild(createPlaceholder());
+    preview.dataset.image = '';
+    return;
+  }
+  const img = new Image();
+  img.onload = () => {
+    // imagem carregada com sucesso — atualiza preview e dataset
+    preview.innerHTML = '';
+    preview.appendChild(img);
+    preview.dataset.image = dataURL;
+  };
+  img.onerror = () => {
+    // fallback: se houver erro, mostra placeholder e limpa dataset
+    preview.innerHTML = '';
+    preview.appendChild(createPlaceholder());
+    preview.dataset.image = '';
+    alert('Erro ao carregar a imagem. Tente outro arquivo.');
+  };
+  img.src = dataURL;
+}
+
+/* Redimensiona imagem em um canvas e retorna dataURL via Promise */
+function resizeImageFileToDataURL(file, maxDim = 1200, quality = 0.85){
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error('Falha ao ler o arquivo.'));
+    reader.onload = () => {
+      const img = new Image();
+      img.onerror = () => reject(new Error('Arquivo não é uma imagem válida.'));
+      img.onload = () => {
+        let w = img.width, h = img.height;
+        if(w > h && w > maxDim){ h = Math.round(h * (maxDim / w)); w = maxDim; }
+        else if(h >= w && h > maxDim){ w = Math.round(w * (maxDim / h)); h = maxDim; }
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, w, h);
+        // prefer JPEG para reduzir tamanho; mantém PNG if original has transparency
+        const mime = file.type === 'image/png' ? 'image/png' : 'image/jpeg';
+        const dataURL = canvas.toDataURL(mime, quality);
+        resolve(dataURL);
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+/* Handler unificado: processa arquivo (resize se necessário) e atualiza preview */
+async function processAndSetAvatar(file){
+  if(!file) return;
+  try{
+    // limite prático para evitar dataURLs gigantescos; se pequeno, usa direto
+    const maxInlineBytes = 1.5 * 1024 * 1024; // 1.5MB
+    let dataURL;
+    if(file.size > maxInlineBytes){
+      dataURL = await resizeImageFileToDataURL(file, 1000, 0.8);
+    } else {
+      // ainda convertemos via canvas para normalizar orientation/size e evitar corruptos
+      dataURL = await resizeImageFileToDataURL(file, 1200, 0.92);
+    }
+    setAvatarFromDataURL(dataURL);
+  } catch(err){
+    console.error(err);
+    alert('Não foi possível processar a imagem: ' + (err.message || err));
+    setAvatarFromDataURL(null);
+  }
+}
+
+/* ---------- Eventos de UI ---------- */
+qs('#uploadAvatarBtn').addEventListener('click', ()=>qs('#avatarInput').click());
+qs('#removeAvatarBtn').addEventListener('click', ()=>{
+  qs('#avatarInput').value = '';
+  setAvatarFromDataURL(null);
+});
+
+/* input file change */
+qs('#avatarInput').addEventListener('change', e=>{
+  const f = e.target.files && e.target.files[0];
+  if(!f) return;
+  processAndSetAvatar(f);
+});
+
+/* drag & drop support */
+const previewEl = qs('#avatarPreview');
+['dragenter','dragover'].forEach(ev=>{
+  previewEl.addEventListener(ev, (e)=>{
+    e.preventDefault(); e.stopPropagation();
+    previewEl.classList.add('dragover');
+  });
+});
+['dragleave','drop'].forEach(ev=>{
+  previewEl.addEventListener(ev, (e)=>{
+    e.preventDefault(); e.stopPropagation();
+    previewEl.classList.remove('dragover');
+  });
+});
+previewEl.addEventListener('drop', (e)=>{
+  const f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+  if(!f) return;
+  processAndSetAvatar(f);
+});
+
+/* ---------- Save / Load (exemplo mínimo) ---------- */
+function gatherData(){
+  const data = {};
+  data.nome = qs('#nome').innerText || '';
+  data.classe = qs('#classe').value || '';
+  data.nivel = qs('#nivel').value || '';
+  data.avatarDataURL = qs('#avatarPreview').dataset.image || '';
+  return data;
+}
+function applyData(data){
+  if(!data) return;
+  if(data.nome) qs('#nome').innerText = data.nome;
+  if(data.classe) qs('#classe').value = data.classe;
+  if(data.nivel) qs('#nivel').value = data.nivel;
+  if(data.avatarDataURL) setAvatarFromDataURL(data.avatarDataURL);
+  else setAvatarFromDataURL(null);
+}
+
+function saveToLocal(){
+  const data = gatherData();
+  localStorage.setItem(storageKey, JSON.stringify(data));
+  alert('Ficha salva no navegador.');
+}
+function loadFromLocal(){
+  const raw = localStorage.getItem(storageKey);
+  if(!raw){ alert('Nenhuma ficha salva localmente.'); return; }
+  applyData(JSON.parse(raw));
+  alert('Ficha carregada.');
+}
+function exportJSON(){
+  const data = gatherData();
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'ficha-rpg.json'; a.click();
+  URL.revokeObjectURL(url);
+}
+function importJSON(){
+  const inp = document.createElement('input');
+  inp.type='file'; inp.accept='application/json';
+  inp.onchange = e=>{
+    const f = e.target.files[0];
+    if(!f) return;
+    const reader = new FileReader();
+    reader.onload = ev=>{
+      try{
+        const data = JSON.parse(ev.target.result);
+        applyData(data);
+        alert('JSON importado.');
+      }catch(err){ alert('Arquivo inválido.'); }
+    };
+    reader.readAsText(f);
+  };
+  inp.click();
+}
+function clearAll(){
+  if(!confirm('Limpar todos os campos?')) return;
+  qs('#nome').innerText = '';
+  qs('#classe').value = '';
+  qs('#nivel').value = 1;
+  setAvatarFromDataURL(null);
+}
+
+/* ---------- Botões ---------- */
+qs('#saveBtn').addEventListener('click', saveToLocal);
+qs('#loadBtn').addEventListener('click', loadFromLocal);
+qs('#exportBtn').addEventListener('click', exportJSON);
+qs('#importBtn').addEventListener('click', importJSON);
+qs('#clearBtn').addEventListener('click', clearAll);
+
+/* ---------- Init ---------- */
+(function init(){
+  setAvatarFromDataURL(null);
+  const raw = localStorage.getItem(storageKey);
+  if(raw) applyData(JSON.parse(raw));
+})();
+</script>
+</body>
+</html>
