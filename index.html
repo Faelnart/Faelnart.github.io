@@ -3,174 +3,148 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Ficha RPG — Layout Espaçoso (sem Aparência/História)</title>
+<title>Ficha RPG — Visual Polido (Degradê Branco→Cinza)</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <style>
+  /* -------------------------
+     Paleta: degradê branco → cinza
+     Tipografia e tokens visuais
+     ------------------------- */
   :root{
-    --bg:#071025;
-    --card:#071827;
-    --accent:#8b5cf6;
-    --muted:#9fb0c8;
-    --paper:#eef6fb;
-    --gap:18px;
-    --field-height:44px;
+    --bg-start: #ffffff;
+    --bg-end:   #e6e6e6;
+    --card-start: #ffffff;
+    --card-end:   #f3f4f6;
+    --accent: #7c5cff;
+    --accent-2: #4b5563;
+    --muted: #6b7280;
+    --text: #0f1724;
+    --radius: 12px;
+    --shadow: 0 10px 30px rgba(15,23,36,0.08);
+    --glass: rgba(255,255,255,0.6);
+    --gap: 18px;
+    --field-height:48px;
     --input-padding:12px;
-    --radius:10px;
   }
 
+  /* Reset & base */
   *{box-sizing:border-box}
+  html,body{height:100%}
   body{
-    font-family:Inter,system-ui,Segoe UI,Roboto,Arial;
-    background:linear-gradient(180deg,var(--bg) 0%, #071a2a 100%);
-    color:var(--paper);
     margin:0;
-    padding:24px;
+    font-family:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    background: linear-gradient(180deg, var(--bg-start) 0%, var(--bg-end) 100%);
+    color:var(--text);
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    padding:28px;
   }
 
+  /* Layout */
   .container{
     max-width:1320px;
     margin:0 auto;
     display:grid;
-    grid-template-columns:1fr 380px;
+    grid-template-columns: 1fr 380px;
     gap:var(--gap);
     align-items:start;
   }
-
-  header{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
-  header h1{font-size:20px;margin:0;color:var(--accent);letter-spacing:0.2px}
-  .controls button{margin-left:8px;padding:10px 12px;border-radius:10px;border:0;background:var(--accent);color:#071025;font-weight:700;cursor:pointer;font-size:13px}
-
-  .card{
-    background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-    padding:16px;border-radius:12px;
-    box-shadow:0 8px 22px rgba(0,0,0,0.55);
-    border:1px solid rgba(255,255,255,0.03);
+  header{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+  header h1{margin:0;font-size:20px;color:var(--accent);letter-spacing:0.2px}
+  .controls{display:flex;gap:10px}
+  .btn{
+    background:linear-gradient(90deg,var(--accent),#5f3df5);
+    color:white;border:0;padding:10px 12px;border-radius:10px;font-weight:700;cursor:pointer;
+    box-shadow:var(--shadow);transition:transform .12s ease, box-shadow .12s ease;
+  }
+  .btn:active{transform:translateY(1px)}
+  .btn-ghost{
+    background:transparent;border:1px solid rgba(15,23,36,0.06);padding:10px 12px;border-radius:10px;color:var(--accent-2);cursor:pointer;
   }
 
-  .sheet{display:grid;grid-template-columns:1fr;gap:14px;}
-  .section-header{display:flex;justify-content:space-between;align-items:center;cursor:grab;padding:6px 0;margin-bottom:6px}
+  /* Card */
+  .card{
+    background: linear-gradient(180deg,var(--card-start), var(--card-end));
+    padding:16px;border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid rgba(15,23,36,0.04);
+  }
+  .sheet{display:grid;grid-template-columns:1fr;gap:14px}
+
+  .section-header{display:flex;justify-content:space-between;align-items:center;padding:6px 0;margin-bottom:6px}
   .section-header strong{font-size:15px}
   .collapse{background:none;border:0;color:var(--muted);cursor:pointer;font-size:18px}
 
+  /* Form */
   .row{display:flex;gap:12px;align-items:center;margin-bottom:8px}
-  .field{background:rgba(255,255,255,0.02);padding:10px;border-radius:10px;min-width:0}
+  .field{background:transparent;padding:6px;border-radius:10px;min-width:0}
   label{display:block;font-size:12px;color:var(--muted);margin-bottom:8px}
   input[type="text"], input[type="number"], select, textarea{
-    width:100%;
-    padding:var(--input-padding);
-    border-radius:8px;
-    border:1px solid rgba(255,255,255,0.04);
-    background:transparent;color:var(--paper);
-    height:var(--field-height);
-    font-size:14px;
+    width:100%;padding:var(--input-padding);border-radius:8px;border:1px solid rgba(15,23,36,0.06);
+    background:linear-gradient(180deg, rgba(255,255,255,0.9), rgba(250,250,250,0.9));
+    color:var(--text);height:var(--field-height);font-size:14px;outline:none;transition:box-shadow .12s ease, border-color .12s ease;
   }
-  textarea{height:120px;resize:vertical;padding-top:10px;padding-bottom:10px}
+  input:focus, textarea:focus{box-shadow:0 6px 18px rgba(124,92,255,0.08);border-color:rgba(124,92,255,0.18)}
+  textarea{min-height:120px;resize:vertical;padding-top:12px;padding-bottom:12px}
 
-  .big{font-size:20px;padding:12px 14px;min-height:48px}
+  .big{font-size:20px;padding:12px 14px;min-height:52px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.95), rgba(250,250,250,0.95));border:1px solid rgba(15,23,36,0.04)}
+
+  /* Attributes */
   .attributes{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-  .attr{background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02));padding:12px;border-radius:10px;text-align:center}
+  .attr{padding:12px;border-radius:10px;background:linear-gradient(180deg,#ffffff,#fbfbfb);border:1px solid rgba(15,23,36,0.03);text-align:center}
   .attr .score{font-size:22px;font-weight:700;margin-top:6px}
   .attr .mod{font-size:14px;color:var(--muted);margin-top:6px}
 
-  .skills{display:grid;grid-template-columns:1fr;gap:10px}
-  .skill{display:flex;align-items:center;gap:10px;padding:8px;border-radius:8px;background:rgba(255,255,255,0.01)}
+  /* Skills */
+  .skills-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .skill{display:flex;align-items:center;gap:10px;padding:8px;border-radius:8px;background:linear-gradient(180deg,#fff,#fcfcfc);border:1px solid rgba(15,23,36,0.03)}
   .skill input[type="checkbox"]{transform:scale(1.05)}
 
-  .weapons table, .spells table{width:100%;border-collapse:collapse;color:var(--paper);font-size:14px}
-  .weapons th, .weapons td, .spells th, .spells td{padding:8px;border-bottom:1px dashed rgba(255,255,255,0.03);text-align:left}
+  /* Tables */
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th,td{padding:8px;border-bottom:1px dashed rgba(15,23,36,0.04);text-align:left}
+  .small-btn{padding:8px 10px;border-radius:8px;border:0;background:var(--accent);color:white;cursor:pointer;font-weight:700}
 
-  .right-col{display:flex;flex-direction:column;gap:12px}
-  .small-btn{padding:8px 10px;border-radius:8px;border:0;background:var(--accent);color:#071025;font-weight:700;cursor:pointer;font-size:13px}
-<div class="avatar-wrap">
-  <div class="avatar-preview" id="avatarPreview" title="Arraste uma imagem aqui">
-    <span id="avatarPlaceholder" class="muted">Sem imagem</span>
-  </div>
-
-  <div class="avatar-controls">
-    <input id="avatarInput" type="file" accept="image/*" style="display:none" />
-
-    <div class="btn-row">
-      <button class="small-btn" id="uploadAvatarBtn" type="button">Carregar</button>
-      <button class="small-btn" id="removeAvatarBtn" type="button">Remover</button>
-    </div>
-
-    <div class="muted" style="font-size:13px">Imagem salva localmente e incluída no JSON exportado.</div>
-  </div>
-</div>
-
-.avatar-preview{
-  width:180px;
-  height:180px;
-  min-width:180px;
-  min-height:180px;
-  border-radius:10px;
-  background:rgba(255,255,255,0.02);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  overflow:hidden;
-  border:1px solid rgba(255,255,255,0.04);
-  flex:0 0 auto;                /* evita shrink */
-}
-.avatar-preview img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  display:block;
-}
-
-/* Controles: fix para ficar dentro do card e ocupar o espaço restante */
-.avatar-controls{
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-  justify-content:space-between; /* mantém botões agrupados e dentro do bloco */
-  align-items:flex-start;
-  flex:1 1 auto;                 /* ocupa o restante do espaço sem empurrar para fora */
-  min-width:0;                   /* evita overflow em telas pequenas */
-}
-
-/* Botões: garantir que não ultrapassem o contêiner */
-.avatar-controls .btn-row{
-  display:flex;
-  gap:8px;
-  width:100%;
-  flex-wrap:wrap;
-}
-.avatar-controls .small-btn{
-  flex:0 0 auto;
-  white-space:nowrap;
-}
-
-  /* spacing helpers */
-  .spaced{margin-top:12px;margin-bottom:12px}
+  /* Avatar area: crop 1:1 + circular toggle */
+  .avatar-wrap{display:flex;gap:14px;align-items:flex-start;width:100%;box-sizing:border-box}
+  .avatar-preview{
+    width:180px;height:180px;min-width:180px;min-height:180px;border-radius:12px;
+    background:linear-gradient(180deg,#fff,#f7f7f7);display:flex;align-items:center;justify-content:center;overflow:hidden;border:1px solid rgba(15,23,36,0.04);flex:0 0 auto;
+    position:relative;
+  }
+  .avatar-preview img{display:block;width:100%;height:100%;object-fit:cover}
+  .avatar-controls{display:flex;flex-direction:column;gap:10px;flex:1 1 auto;min-width:0}
+  .btn-row{display:flex;gap:8px;flex-wrap:wrap}
   .muted{color:var(--muted);font-size:13px}
 
-  /* responsive */
-  @media (max-width:1100px){
-    .container{grid-template-columns:1fr 360px}
+  /* Tooltip */
+  .tip{position:relative;display:inline-block}
+  .tip[data-tip]:hover::after{
+    content:attr(data-tip);
+    position:absolute;left:50%;transform:translateX(-50%);top:calc(100% + 8px);
+    background:#0f1724;color:white;padding:8px;border-radius:8px;font-size:13px;white-space:nowrap;z-index:40;
+    box-shadow:0 8px 24px rgba(15,23,36,0.18)
   }
-  @media (max-width:900px){
-    .container{grid-template-columns:1fr; padding:12px}
-    .avatar-preview{width:140px;height:140px;min-width:140px;min-height:140px}
-    .attributes{grid-template-columns:repeat(2,1fr)}
-  }
-  @media (max-width:520px){
-    .attributes{grid-template-columns:1fr}
-    input[type="text"], input[type="number"]{height:44px}
-    .avatar-preview{width:120px;height:120px;min-width:120px;min-height:120px}
-  }
+
+  /* Microinteractions */
+  .fade-in{transition:opacity .18s ease, transform .18s ease}
+  .card .add-anim{transition:transform .18s ease, opacity .18s ease}
+  .del{background:transparent;border:0;color:var(--muted);cursor:pointer}
+
+  /* Responsive */
+  @media (max-width:1100px){ .container{grid-template-columns:1fr 360px} }
+  @media (max-width:900px){ .container{grid-template-columns:1fr;padding:12px} .avatar-preview{width:140px;height:140px;min-width:140px;min-height:140px} .attributes{grid-template-columns:repeat(2,1fr)} }
+  @media (max-width:520px){ .attributes{grid-template-columns:1fr} .avatar-preview{width:120px;height:120px;min-width:120px;min-height:120px} }
 </style>
 </head>
 <body>
   <div class="container">
     <header>
-      <h1>Ficha RPG — Layout Espaçoso (sem Aparência/História)</h1>
+      <h1>Ficha RPG — Visual Polido</h1>
       <div class="controls">
-        <button id="saveBtn">Salvar</button>
-        <button id="loadBtn">Carregar</button>
-        <button id="exportBtn">Exportar JSON</button>
-        <button id="importBtn">Importar JSON</button>
-        <button id="clearBtn">Limpar</button>
+        <button id="saveBtn" class="btn" title="Salvar localmente">Salvar</button>
+        <button id="loadBtn" class="btn-ghost" title="Carregar do navegador">Carregar</button>
+        <button id="exportBtn" class="btn-ghost" title="Exportar JSON">Exportar</button>
+        <button id="importBtn" class="btn-ghost" title="Importar JSON">Importar</button>
+        <button id="clearBtn" class="btn-ghost" title="Limpar ficha">Limpar</button>
       </div>
     </header>
 
@@ -203,7 +177,7 @@
                 </div>
               </div>
 
-              <div class="row spaced">
+              <div class="row" style="margin-top:12px">
                 <div class="field" style="flex:1">
                   <label>Antecedente / Raça / Subclasse</label>
                   <input id="antecedente" data-key="antecedente" type="text" placeholder="Antecedente" />
@@ -226,13 +200,17 @@
                   <div class="avatar-preview" id="avatarPreview" title="Arraste uma imagem aqui">
                     <span id="avatarPlaceholder" class="muted">Sem imagem</span>
                   </div>
-                  <div style="flex:1;display:flex;flex-direction:column;gap:10px">
+
+                  <div class="avatar-controls">
                     <input id="avatarInput" type="file" accept="image/*" style="display:none" />
-                    <div style="display:flex;gap:8px">
-                      <button class="small-btn" id="uploadAvatarBtn">Carregar</button>
-                      <button class="small-btn" id="removeAvatarBtn">Remover</button>
+                    <div class="btn-row">
+                      <button class="small-btn" id="uploadAvatarBtn" type="button">Carregar</button>
+                      <button class="small-btn" id="removeAvatarBtn" type="button">Remover</button>
+                      <label class="tip" data-tip="Exibe o avatar com máscara circular">
+                        <input id="toggleCircular" type="checkbox" style="margin-left:8px" /> Circular
+                      </label>
                     </div>
-                    <div class="muted" style="font-size:13px">Imagem salva localmente e incluída no JSON exportado.</div>
+                    <div class="muted" style="font-size:13px">Imagem salva localmente e incluída no JSON exportado. Faz crop central 1:1 automaticamente.</div>
                   </div>
                 </div>
               </div>
@@ -256,7 +234,7 @@
             <div class="field" style="width:160px"><label>Dado de Vida</label><input id="dado_vida" data-key="dado_vida" type="text" placeholder="1d10" /></div>
           </div>
 
-          <div class="row spaced">
+          <div class="row" style="margin-top:12px">
             <div class="field" style="width:260px">
               <label>Salvaguardas contra morte</label>
               <div style="display:flex;gap:10px">
@@ -285,7 +263,7 @@
             <div class="attr"><label>Carisma</label><input id="carisma" data-key="carisma" type="number" value="10" /><div class="score" id="carisma_score">10</div><div class="mod" id="carisma_mod">+0</div></div>
           </div>
 
-          <div class="spaced">
+          <div style="margin-top:12px">
             <label><strong>Bônus de Proficiência</strong></label>
             <div style="display:flex;gap:12px;align-items:center;margin-top:8px">
               <input id="prof_bonus" data-key="prof_bonus" type="number" value="2" style="width:100px;height:44px;padding:10px" />
@@ -296,11 +274,11 @@
             </div>
           </div>
 
-          <div class="spaced" style="display:flex;gap:12px">
+          <div style="margin-top:12px;display:flex;gap:12px">
             <div style="flex:1">
               <div class="card" style="padding:12px">
                 <strong>Perícias</strong>
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px">
+                <div class="skills-grid" style="margin-top:10px">
                   <label class="skill"><input type="checkbox" class="skill-check" data-attr="destreza" data-key="Acrobacia" /> Acrobacia <span id="Acrobacia_val" style="margin-left:auto">+0</span></label>
                   <label class="skill"><input type="checkbox" class="skill-check" data-attr="forca" data-key="Atletismo" /> Atletismo <span id="Atletismo_val" style="margin-left:auto">+0</span></label>
 
@@ -423,14 +401,14 @@
       </div>
     </aside>
 
-    <footer>Ficha otimizada para preenchimento — mais espaçamento, campos maiores e melhor legibilidade.</footer>
+    <footer style="grid-column:1/-1;margin-top:12px;color:var(--muted);font-size:13px">Design atualizado: degradê branco→cinza, tipografia refinada, microinterações e crop 1:1 do avatar.</footer>
   </div>
 
 <script>
 /* ---------- Utilitários ---------- */
 const qs = sel => document.querySelector(sel);
 const qsa = sel => Array.from(document.querySelectorAll(sel));
-const storageKey = 'fichaRPG_v1';
+const storageKey = 'fichaRPG_v2';
 
 /* ---------- Proficiência por nível ---------- */
 function profFromLevel(level){
@@ -502,6 +480,7 @@ function updateAttributes(){
 function addWeaponRow(obj){
   const tbody = qs('#weaponsTable tbody');
   const tr = document.createElement('tr');
+  tr.className = 'add-anim';
   tr.innerHTML = `<td>${obj.name}</td><td>${obj.bonus}</td><td>${obj.dmg}</td><td>${obj.notes}</td><td><button class="del">X</button></td>`;
   tr.querySelector('.del').addEventListener('click',()=>{tr.remove();});
   tbody.appendChild(tr);
@@ -509,12 +488,13 @@ function addWeaponRow(obj){
 function addSpellRow(obj){
   const tbody = qs('#spellsTable tbody');
   const tr = document.createElement('tr');
+  tr.className = 'add-anim';
   tr.innerHTML = `<td>${obj.circle}</td><td>${obj.name}</td><td>${obj.time}</td><td>${obj.range}</td><td>${obj.flags}</td><td>${obj.notes}</td><td><button class="del">X</button></td>`;
   tr.querySelector('.del').addEventListener('click',()=>{tr.remove();});
   tbody.appendChild(tr);
 }
 
-/* ---------- Avatar handling ---------- */
+/* ---------- Avatar handling: crop central 1:1 + circular preview toggle ---------- */
 function createPlaceholder(){
   const ph = document.createElement('span');
   ph.id = 'avatarPlaceholder';
@@ -531,11 +511,37 @@ function setAvatarFromDataURL(dataURL){
     return;
   }
   const img = new Image();
-  img.onload = () => { preview.innerHTML = ''; preview.appendChild(img); preview.dataset.image = dataURL; };
-  img.onerror = () => { preview.innerHTML = ''; preview.appendChild(createPlaceholder()); preview.dataset.image = ''; alert('Erro ao carregar a imagem.'); };
+  img.onload = () => {
+    preview.innerHTML = '';
+    preview.appendChild(img);
+    preview.dataset.image = dataURL;
+    applyCircularMask(); // aplica máscara conforme toggle
+  };
+  img.onerror = () => {
+    preview.innerHTML = '';
+    preview.appendChild(createPlaceholder());
+    preview.dataset.image = '';
+    alert('Erro ao carregar a imagem. Tente outro arquivo.');
+  };
   img.src = dataURL;
 }
-function resizeImageFileToDataURL(file, maxDim = 1200, quality = 0.9){
+
+/* central crop 1:1 via canvas; retorna dataURL */
+function cropCenterSquareImage(img, mime='image/jpeg', quality=0.92, size=null){
+  const w = img.width, h = img.height;
+  const side = Math.min(w,h);
+  const sx = Math.floor((w - side)/2);
+  const sy = Math.floor((h - side)/2);
+  const canvas = document.createElement('canvas');
+  const outSize = size || side; // se size fornecido, redimensiona para esse tamanho
+  canvas.width = outSize; canvas.height = outSize;
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(img, sx, sy, side, side, 0, 0, outSize, outSize);
+  return canvas.toDataURL(mime, quality);
+}
+
+/* redimensiona e cropa arquivo para dataURL */
+function resizeAndCropFileToDataURL(file, maxDim = 1200, quality = 0.9){
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onerror = () => reject(new Error('Falha ao ler o arquivo.'));
@@ -543,37 +549,64 @@ function resizeImageFileToDataURL(file, maxDim = 1200, quality = 0.9){
       const img = new Image();
       img.onerror = () => reject(new Error('Arquivo não é uma imagem válida.'));
       img.onload = () => {
-        let w = img.width, h = img.height;
-        if(w > h && w > maxDim){ h = Math.round(h * (maxDim / w)); w = maxDim; }
-        else if(h >= w && h > maxDim){ w = Math.round(w * (maxDim / h)); h = maxDim; }
-        const canvas = document.createElement('canvas');
-        canvas.width = w; canvas.height = h;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0, w, h);
-        const mime = file.type === 'image/png' ? 'image/png' : 'image/jpeg';
-        const dataURL = canvas.toDataURL(mime, quality);
-        resolve(dataURL);
+        // se imagem muito grande, redimensiona mantendo proporção antes do crop
+        const maxSide = Math.max(img.width, img.height);
+        if(maxSide > maxDim){
+          // redimensiona para que maior lado = maxDim
+          const scale = maxDim / maxSide;
+          const canvas = document.createElement('canvas');
+          canvas.width = Math.round(img.width * scale);
+          canvas.height = Math.round(img.height * scale);
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          const resized = new Image();
+          resized.onload = () => {
+            try{
+              const cropped = cropCenterSquareImage(resized, file.type === 'image/png' ? 'image/png' : 'image/jpeg', quality, Math.min(canvas.width, canvas.height));
+              resolve(cropped);
+            }catch(e){ reject(e); }
+          };
+          resized.src = canvas.toDataURL(file.type === 'image/png' ? 'image/png' : 'image/jpeg', quality);
+        } else {
+          try{
+            const cropped = cropCenterSquareImage(img, file.type === 'image/png' ? 'image/png' : 'image/jpeg', quality);
+            resolve(cropped);
+          }catch(e){ reject(e); }
+        }
       };
       img.src = reader.result;
     };
     reader.readAsDataURL(file);
   });
 }
+
+/* processa arquivo e atualiza preview */
 async function processAndSetAvatar(file){
   if(!file) return;
   try{
     const maxInlineBytes = 1.5 * 1024 * 1024;
     let dataURL;
     if(file.size > maxInlineBytes){
-      dataURL = await resizeImageFileToDataURL(file, 1000, 0.8);
+      dataURL = await resizeAndCropFileToDataURL(file, 1000, 0.8);
     } else {
-      dataURL = await resizeImageFileToDataURL(file, 1200, 0.92);
+      dataURL = await resizeAndCropFileToDataURL(file, 1200, 0.92);
     }
     setAvatarFromDataURL(dataURL);
   } catch(err){
     console.error(err);
     alert('Não foi possível processar a imagem: ' + (err.message || err));
     setAvatarFromDataURL(null);
+  }
+}
+
+/* aplica máscara circular no preview se toggle ativo */
+function applyCircularMask(){
+  const preview = qs('#avatarPreview');
+  const toggle = qs('#toggleCircular').checked;
+  if(toggle){
+    preview.style.borderRadius = '50%';
+  } else {
+    preview.style.borderRadius = '12px';
   }
 }
 
@@ -602,6 +635,7 @@ function gatherData(){
     return {circle:tds[0].textContent, name:tds[1].textContent, time:tds[2].textContent, range:tds[3].textContent, flags:tds[4].textContent, notes:tds[5].textContent};
   });
   data.avatarDataURL = qs('#avatarPreview').dataset.image || '';
+  data.avatarCircular = !!qs('#toggleCircular').checked;
   return data;
 }
 function applyData(data){
@@ -630,6 +664,8 @@ function applyData(data){
   } else {
     setAvatarFromDataURL(null);
   }
+  if(data.avatarCircular !== undefined) qs('#toggleCircular').checked = !!data.avatarCircular;
+  applyCircularMask();
   updateAttributes();
 }
 function saveToLocal(){
@@ -729,6 +765,7 @@ previewEl.addEventListener('drop', (e)=>{
   if(!f) return;
   processAndSetAvatar(f);
 });
+qs('#toggleCircular').addEventListener('change', applyCircularMask);
 
 /* ---------- Drag & collapse behavior ---------- */
 qsa('.section-header').forEach(h=>{
