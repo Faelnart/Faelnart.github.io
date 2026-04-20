@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Ficha RPG Interativa — Aparência ao lado do Nome</title>
+<title>Ficha RPG Interativa — Avatar Somente</title>
 <style>
   :root{
     --bg:#0f1724; --card:#0b1220; --accent:#9b5cf6; --muted:#94a3b8; --paper:#f8fafc;
@@ -38,7 +38,7 @@
   .dragging{opacity:0.7;transform:scale(0.995);}
   .avatar-wrap{display:flex;gap:12px;align-items:center;}
   .avatar-preview{width:140px;height:140px;border-radius:8px;background:rgba(255,255,255,0.02);display:flex;align-items:center;justify-content:center;overflow:hidden;border:1px solid rgba(255,255,255,0.04);}
-  .avatar-preview img{width:100%;height:100%;object-fit:cover;display:block;}
+  .avatar-preview img{width:100%;height:100%;object-fit:cover;display:block;image-rendering: -webkit-optimize-contrast;}
   .avatar-controls{display:flex;flex-direction:column;gap:6px;}
   .small-btn{padding:6px 8px;border-radius:8px;border:0;background:var(--accent);color:#071025;font-weight:600;cursor:pointer;}
   @media print{
@@ -49,14 +49,13 @@
   @media (max-width:980px){
     .container{grid-template-columns:1fr; padding:12px;}
     .attributes{grid-template-columns:repeat(2,1fr);}
-    .avatar-wrap{flex-direction:row;}
   }
 </style>
 </head>
 <body>
   <div class="container">
     <header>
-      <h1>Ficha RPG Interativa — Aparência ao lado do Nome</h1>
+      <h1>Ficha RPG Interativa — Avatar Somente</h1>
       <div class="controls">
         <button id="saveBtn">Salvar</button>
         <button id="loadBtn">Carregar</button>
@@ -66,9 +65,7 @@
       </div>
     </header>
 
-    <!-- Left column: ficha principal -->
     <main class="card sheet" id="mainSheet">
-      <!-- Identidade: nome e aparência lado a lado -->
       <section class="card" data-section="identidade">
         <div class="section-header" draggable="true">
           <strong>Identidade</strong>
@@ -78,7 +75,6 @@
         </div>
         <div class="content" id="identidade">
           <div style="display:flex;gap:12px;align-items:flex-start;">
-            <!-- Coluna esquerda: nome e dados -->
             <div style="flex:1;">
               <div class="row">
                 <div class="field" style="flex:1">
@@ -115,9 +111,9 @@
               </div>
             </div>
 
-            <!-- Coluna direita: avatar e aparência curta -->
-            <div style="width:320px;">
-              <label style="color:var(--muted);font-size:12px;margin-bottom:6px;display:block">Aparência / Avatar</label>
+            <!-- Avatar apenas: sem descrição -->
+            <div style="width:180px;">
+              <label style="color:var(--muted);font-size:12px;margin-bottom:6px;display:block">Avatar</label>
               <div class="card" style="padding:10px;">
                 <div class="avatar-wrap">
                   <div class="avatar-preview" id="avatarPreview">
@@ -129,17 +125,17 @@
                       <button class="small-btn" id="uploadAvatarBtn">Carregar</button>
                       <button class="small-btn" id="removeAvatarBtn">Remover</button>
                     </div>
-                    <label style="margin-top:8px;color:var(--muted);font-size:12px">Aparência curta</label>
-                    <textarea id="aparencia_short" data-key="aparencia_short" rows="4" placeholder="Descrição curta (idade, altura, traços)"></textarea>
+                    <div style="margin-top:8px;color:var(--muted);font-size:12px">A imagem é salva localmente e incluída no JSON exportado.</div>
                   </div>
                 </div>
               </div>
             </div>
+
           </div>
         </div>
       </section>
 
-      <!-- HP, atributos, armas, magias, etc. (mantidos) -->
+      <!-- Mantém as demais seções (HP, atributos, perícias, armas, magias, aparência completa) -->
       <section class="card" data-section="hp">
         <div class="section-header" draggable="true">
           <strong>Pontos de Vida</strong>
@@ -361,7 +357,6 @@
       </section>
     </main>
 
-    <!-- Right column: resumo e moedas -->
     <aside class="right-col">
       <div class="card">
         <strong>Resumo Rápido</strong>
@@ -404,7 +399,7 @@
     </aside>
 
     <footer>
-      Modelo baseado no PDF fornecido — agora com campo de avatar ao lado do nome e descrição curta de aparência.
+      Avatar salvo como data URL no navegador; exporte o JSON para transferir a ficha com a imagem.
     </footer>
   </div>
 
@@ -421,7 +416,7 @@ function profFromLevel(level){
   if(level <= 8) return 3;
   if(level <= 12) return 4;
   if(level <= 16) return 5;
-  return 6; // 17-20
+  return 6;
 }
 
 /* ---------- Cálculos ---------- */
@@ -443,7 +438,6 @@ function updateAttributes(){
     qs('#'+a+'_mod').textContent = formatMod(m);
   });
 
-  // Proficiência automática se marcada
   const auto = qs('#autoProf').checked;
   const nivel = parseInt(qs('#nivel').value || 1, 10);
   if(auto){
@@ -454,12 +448,10 @@ function updateAttributes(){
     qs('#prof_bonus').readOnly = false;
   }
 
-  // iniciativa = destreza mod
   const dex = parseInt(qs('#destreza').value||10,10);
   qs('#iniciativa').value = formatMod(modFromScore(dex));
   qs('#iniciativa_quick').value = qs('#iniciativa').value;
 
-  // Percepção passiva = 10 + sabedoria mod + prof if checked
   const sab = parseInt(qs('#sabedoria').value||10,10);
   const sabMod = modFromScore(sab);
   const prof = parseInt(qs('#prof_bonus').value||0,10);
@@ -467,7 +459,6 @@ function updateAttributes(){
   const passive = 10 + sabMod + ((percCheck && percCheck.checked)?prof:0);
   qs('#percepcao_passiva').value = passive;
 
-  // update skills shown
   qsa('.skill-check').forEach(cb=>{
     const attr = cb.dataset.attr;
     const key = cb.dataset.key;
@@ -477,7 +468,6 @@ function updateAttributes(){
     if(el) el.textContent = formatMod(val);
   });
 
-  // HP quick
   const atual = parseInt(qs('#hp_atual').value||0,10);
   const temp = parseInt(qs('#hp_temp').value||0,10);
   const max = parseInt(qs('#hp_max').value||0,10);
@@ -485,7 +475,7 @@ function updateAttributes(){
   qs('#ca_quick').value = qs('#ca').value || '';
 }
 
-/* ---------- Weapons / Spells management ---------- */
+/* ---------- Weapons / Spells ---------- */
 function addWeaponRow(obj){
   const tbody = qs('#weaponsTable tbody');
   const tr = document.createElement('tr');
@@ -501,75 +491,96 @@ function addSpellRow(obj){
   tbody.appendChild(tr);
 }
 
-/* ---------- Avatar handling ---------- */
+/* ---------- Avatar handling (imagem somente) ---------- */
 function setAvatarFromDataURL(dataURL){
   const preview = qs('#avatarPreview');
   preview.innerHTML = '';
   if(!dataURL){
-    qs('#avatarPlaceholder').style.display = 'block';
-    preview.appendChild(qs('#avatarPlaceholder'));
+    const ph = document.createElement('span');
+    ph.id = 'avatarPlaceholder';
+    ph.style.color = 'var(--muted)';
+    ph.style.fontSize = '13px';
+    ph.style.textAlign = 'center';
+    ph.style.padding = '8px';
+    ph.textContent = 'Sem imagem';
+    preview.appendChild(ph);
+    preview.dataset.image = '';
     return;
   }
   const img = document.createElement('img');
   img.src = dataURL;
   preview.appendChild(img);
+  preview.dataset.image = dataURL;
 }
 qs('#uploadAvatarBtn').addEventListener('click', ()=>qs('#avatarInput').click());
 qs('#removeAvatarBtn').addEventListener('click', ()=>{
   qs('#avatarInput').value = '';
   setAvatarFromDataURL(null);
-  // clear stored data key
-  qs('#avatarPreview').dataset.image = '';
 });
 qs('#avatarInput').addEventListener('change', e=>{
   const f = e.target.files[0];
   if(!f) return;
-  const reader = new FileReader();
-  reader.onload = ev=>{
-    const dataURL = ev.target.result;
-    setAvatarFromDataURL(dataURL);
-    // store on preview dataset for gatherData
-    qs('#avatarPreview').dataset.image = dataURL;
-  };
-  reader.readAsDataURL(f);
+  // Limit file size for performance (optional): skip if too large
+  const maxBytes = 2 * 1024 * 1024; // 2MB
+  if(f.size > maxBytes){
+    // resize via canvas to reduce size
+    const reader = new FileReader();
+    reader.onload = ev=>{
+      const img = new Image();
+      img.onload = ()=>{
+        const canvas = document.createElement('canvas');
+        const maxDim = 800;
+        let w = img.width, h = img.height;
+        if(w > h && w > maxDim){ h = Math.round(h * (maxDim / w)); w = maxDim; }
+        else if(h > maxDim && h > w){ w = Math.round(w * (maxDim / h)); h = maxDim; }
+        canvas.width = w; canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img,0,0,w,h);
+        const dataURL = canvas.toDataURL('image/jpeg', 0.85);
+        setAvatarFromDataURL(dataURL);
+      };
+      img.src = ev.target.result;
+    };
+    reader.readAsDataURL(f);
+  } else {
+    const reader = new FileReader();
+    reader.onload = ev=>{
+      const dataURL = ev.target.result;
+      setAvatarFromDataURL(dataURL);
+    };
+    reader.readAsDataURL(f);
+  }
 });
 
 /* ---------- Save / Load ---------- */
 function gatherData(){
   const data = {};
-  // simple inputs and contenteditable
   qsa('[data-key]').forEach(el=>{
     const key = el.dataset.key;
     if(el.type === 'checkbox') data[key] = el.checked;
     else if(el.contentEditable === "true") data[key] = el.innerText.trim();
     else data[key] = el.value;
   });
-  // attributes (ensure numeric)
   ['forca','destreza','constituicao','inteligencia','sabedoria','carisma'].forEach(a=>{
     data[a] = qs('#'+a).value;
   });
-  // skills
   data.skills = {};
   qsa('.skill-check').forEach(cb=>{
     data.skills[cb.dataset.key] = {checked:cb.checked, attr:cb.dataset.attr};
   });
-  // weapons
   data.weapons = Array.from(qs('#weaponsTable tbody').children).map(tr=>{
     const tds = tr.querySelectorAll('td');
     return {name:tds[0].textContent, bonus:tds[1].textContent, dmg:tds[2].textContent, notes:tds[3].textContent};
   });
-  // spells
   data.spells = Array.from(qs('#spellsTable tbody').children).map(tr=>{
     const tds = tr.querySelectorAll('td');
     return {circle:tds[0].textContent, name:tds[1].textContent, time:tds[2].textContent, range:tds[3].textContent, flags:tds[4].textContent, notes:tds[5].textContent};
   });
-  // avatar dataURL (if present)
   data.avatarDataURL = qs('#avatarPreview').dataset.image || '';
   return data;
 }
 function applyData(data){
   if(!data) return;
-  // inputs
   qsa('[data-key]').forEach(el=>{
     const key = el.dataset.key;
     if(key in data){
@@ -578,27 +589,20 @@ function applyData(data){
       else el.value = data[key] || '';
     }
   });
-  // attributes
   ['forca','destreza','constituicao','inteligencia','sabedoria','carisma'].forEach(a=>{
     if(data[a] !== undefined) qs('#'+a).value = data[a];
   });
-  // skills
   qsa('.skill-check').forEach(cb=>{
     const key = cb.dataset.key;
     if(data.skills && data.skills[key]) cb.checked = !!data.skills[key].checked;
   });
-  // weapons
   qs('#weaponsTable tbody').innerHTML = '';
   (data.weapons||[]).forEach(addWeaponRow);
-  // spells
   qs('#spellsTable tbody').innerHTML = '';
   (data.spells||[]).forEach(addSpellRow);
-  // avatar
   if(data.avatarDataURL){
-    qs('#avatarPreview').dataset.image = data.avatarDataURL;
     setAvatarFromDataURL(data.avatarDataURL);
   } else {
-    qs('#avatarPreview').dataset.image = '';
     setAvatarFromDataURL(null);
   }
   updateAttributes();
@@ -651,7 +655,6 @@ function clearAll(){
   });
   qs('#weaponsTable tbody').innerHTML = '';
   qs('#spellsTable tbody').innerHTML = '';
-  qs('#avatarPreview').dataset.image = '';
   setAvatarFromDataURL(null);
   updateAttributes();
 }
@@ -680,7 +683,7 @@ qs('#clearBtn').addEventListener('click', clearAll);
 qs('#printBtn').addEventListener('click', ()=>window.print());
 qs('#downloadBtn').addEventListener('click', exportJSON);
 
-/* ---------- Drag & collapse behavior ---------- */
+/* ---------- Drag & collapse ---------- */
 qsa('.section-header').forEach(h=>{
   h.addEventListener('dragstart', e=>{
     h.classList.add('dragging');
