@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Ficha RPG — Visual Polido</title>
+<title>Ficha RPG — Visual Polido Completo</title>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <style>
   :root{
@@ -14,7 +14,7 @@
     --accent: #7c5cff;
     --accent-2: #4b5563;
     --muted: #4b5563;
-    --text: #111827;
+    --text: #000000;
     --radius: 12px;
     --shadow: 0 10px 30px rgba(15,23,36,0.08);
     --gap: 18px;
@@ -26,7 +26,7 @@
   html,body{height:100%}
   body{
     margin:0;
-    font-family:Inter, system-ui, sans-serif;
+    font-family:Inter, system-ui, -apple-system, sans-serif;
     background: linear-gradient(180deg, var(--bg-start) 0%, var(--bg-end) 100%);
     color:var(--text);
     -webkit-font-smoothing:antialiased;
@@ -41,67 +41,63 @@
     gap:var(--gap);
     align-items:start;
   }
-
   header{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
-  header h1{margin:0;font-size:22px;color:var(--accent);font-weight:800}
+  header h1{margin:0;font-size:20px;color:var(--accent);letter-spacing:0.2px}
   
   .controls{display:flex;gap:10px}
   .btn{
     background:linear-gradient(90deg,var(--accent),#5f3df5);
-    color:white;border:0;padding:10px 16px;border-radius:10px;font-weight:700;cursor:pointer;
-    box-shadow:var(--shadow);transition:transform .1s;
+    color:white;border:0;padding:10px 12px;border-radius:10px;font-weight:700;cursor:pointer;
+    box-shadow:var(--shadow);transition:transform .12s ease;
   }
-  .btn:active{transform:scale(0.98)}
+  .btn:active{transform:translateY(1px)}
   .btn-ghost{
-    background:rgba(255,255,255,0.5);border:1px solid rgba(0,0,0,0.1);padding:10px 12px;border-radius:10px;color:var(--accent-2);cursor:pointer;
+    background:transparent;border:1px solid rgba(15,23,36,0.1);padding:10px 12px;border-radius:10px;color:var(--accent-2);cursor:pointer;
   }
 
   .card{
     background: linear-gradient(180deg,var(--card-start), var(--card-end));
-    padding:16px;border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid rgba(255,255,255,0.2);
+    padding:16px;border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid rgba(15,23,36,0.04);
   }
   .sheet{display:grid;grid-template-columns:1fr;gap:14px}
 
   .section-header{display:flex;justify-content:space-between;align-items:center;padding:6px 0;margin-bottom:6px}
-  .section-header strong{font-size:16px;text-transform:uppercase;letter-spacing:0.5px}
+  .section-header strong{font-size:15px}
+  .collapse{background:none;border:0;color:var(--muted);cursor:pointer;font-size:18px}
 
   .row{display:flex;gap:12px;align-items:center;margin-bottom:8px}
   .field{background:transparent;padding:6px;border-radius:10px;min-width:0}
-  label{display:block;font-size:11px;font-weight:700;color:var(--muted);margin-bottom:6px;text-transform:uppercase}
+  label{display:block;font-size:12px;color:var(--muted);margin-bottom:8px}
   
   input[type="text"], input[type="number"], select, textarea{
-    width:100%;padding:var(--input-padding);border-radius:8px;border:1px solid rgba(0,0,0,0.1);
+    width:100%;padding:var(--input-padding);border-radius:8px;border:1px solid rgba(15,23,36,0.06);
     background:rgba(255,255,255,0.9);color:var(--text);height:var(--field-height);font-size:14px;outline:none;
   }
-  input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(124,92,255,0.1)}
-
-  .big{font-size:20px;padding:12px;min-height:52px;border-radius:10px;background:#fff;border:1px solid rgba(0,0,0,0.05);font-weight:700}
+  
+  .big{font-size:20px;padding:12px 14px;min-height:52px;border-radius:10px;background:rgba(255,255,255,0.95);border:1px solid rgba(15,23,36,0.04);font-weight:700}
 
   .attributes{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-  .attr{padding:12px;border-radius:10px;background:#fff;text-align:center;border:1px solid rgba(0,0,0,0.05)}
-  .attr .score{font-size:24px;font-weight:900;color:var(--accent)}
-  .attr .mod{font-size:14px;font-weight:700;color:var(--muted)}
+  .attr{padding:12px;border-radius:10px;background:#ffffff;border:1px solid rgba(15,23,36,0.03);text-align:center}
+  .attr .score{font-size:22px;font-weight:700;margin-top:6px}
+  .attr .mod{font-size:14px;color:var(--muted);margin-top:6px}
 
-  .skills-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-  .skill{display:flex;align-items:center;gap:8px;padding:8px;border-radius:8px;background:#fff;font-size:13px;border:1px solid rgba(0,0,0,0.03)}
+  .skills-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .skill{display:flex;align-items:center;gap:10px;padding:8px;border-radius:8px;background:#fff;border:1px solid rgba(15,23,36,0.03)}
 
-  table{width:100%;border-collapse:collapse;font-size:13px}
-  th,td{padding:10px;border-bottom:1px solid rgba(0,0,0,0.05);text-align:left}
-  .small-btn{padding:8px 12px;border-radius:8px;border:0;background:var(--accent);color:white;cursor:pointer;font-weight:700}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th,td{padding:8px;border-bottom:1px dashed rgba(15,23,36,0.1);text-align:left}
+  .small-btn{padding:8px 10px;border-radius:8px;border:0;background:var(--accent);color:white;cursor:pointer;font-weight:700}
 
-  /* Avatar Area - Somente Arrastar */
+  /* Avatar Drop Zone */
   .avatar-preview{
     width:180px;height:180px;border-radius:12px;
     background:#fff;display:flex;align-items:center;justify-content:center;
-    overflow:hidden;border:2px dashed rgba(0,0,0,0.1);
+    overflow:hidden;border:2px dashed rgba(15,23,36,0.1);
     transition: all 0.2s ease;
-    position:relative;
-    cursor: default; /* Remove o cursor de clique */
+    cursor: default;
   }
   .avatar-preview img{width:100%;height:100%;object-fit:cover}
-  
-  .right-col .card{margin-bottom:var(--gap)}
-  
+
   @media (max-width:900px){ .container{grid-template-columns:1fr} }
 </style>
 </head>
@@ -109,41 +105,71 @@
 
 <div class="container">
   <header>
-    <h1>FICHA RPG — PRO</h1>
+    <h1>Ficha RPG — Visual Polido</h1>
     <div class="controls">
       <button id="saveBtn" class="btn">Salvar</button>
+      <button id="loadBtn" class="btn-ghost">Carregar</button>
       <button id="exportBtn" class="btn-ghost">Exportar JSON</button>
+      <button id="importBtn" class="btn-ghost">Importar</button>
       <button id="clearBtn" class="btn-ghost">Limpar</button>
     </div>
   </header>
 
-  <main class="card sheet">
-    <section class="card" style="background:#f9fafb">
-      <div class="section-header"><strong>Identidade do Herói</strong></div>
-      <div style="display:flex;gap:20px;flex-wrap:wrap">
+  <main class="card sheet" id="mainSheet">
+    <section class="card">
+      <div class="section-header"><strong>Identidade</strong></div>
+      <div style="display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap">
         <div style="flex:1; min-width:300px">
-          <div class="field">
-            <label>Nome do Personagem</label>
-            <div id="nome" class="big" contenteditable="true" data-key="nome">Novo Aventureiro</div>
+          <div class="row">
+            <div class="field" style="flex:1">
+              <label>Nome do personagem</label>
+              <div id="nome" class="big" contenteditable="true" data-key="nome">Seu Nome</div>
+            </div>
+            <div class="field" style="width:180px"><label>Classe</label><input id="classe" data-key="classe" type="text" /></div>
+            <div class="field" style="width:120px"><label>Nível</label><input id="nivel" data-key="nivel" type="number" value="1" /></div>
+            <div class="field" style="width:140px"><label>XP</label><input id="xp" data-key="xp" type="number" /></div>
           </div>
           <div class="row">
-            <div class="field" style="flex:2"><label>Classe</label><input id="classe" data-key="classe" type="text" /></div>
-            <div class="field" style="flex:1"><label>Nível</label><input id="nivel" data-key="nivel" type="number" value="1" /></div>
+            <div class="field" style="flex:1"><label>Antecedente / Raça</label><input id="antecedente" data-key="antecedente" type="text" /></div>
+            <div class="field" style="width:160px"><label>CA</label><input id="ca" data-key="ca" type="number" /></div>
+            <div class="field" style="width:140px"><label>Escudo</label><input id="escudo" data-key="escudo" type="text" /></div>
           </div>
         </div>
         
-        <div>
-          <label>Avatar (Arraste a imagem aqui)</label>
+        <div style="width:200px">
+          <label>Avatar (Arraste aqui)</label>
           <div class="avatar-preview" id="avatarPreview">
-            <span id="avatarPlaceholder" style="font-size:12px; color:#9ca3af; text-align:center; padding:10px">Solte a foto aqui</span>
+            <span class="muted" style="font-size:11px; text-align:center">Arraste a imagem para cá</span>
           </div>
-          <input type="checkbox" id="toggleCircular" style="margin-top:8px"> <span style="font-size:12px">Circular</span>
+          <label style="margin-top:10px; display:flex; align-items:center; gap:5px">
+            <input id="toggleCircular" type="checkbox" /> Circular
+          </label>
         </div>
       </div>
     </section>
 
-    <section class="card" style="background:#fff">
-      <div class="section-header"><strong>Atributos e Modificadores</strong></div>
+    <section class="card">
+      <div class="section-header"><strong>Pontos de Vida & Defesa</strong></div>
+      <div class="row">
+        <div class="field" style="width:140px"><label>Atual</label><input id="hp_atual" data-key="hp_atual" type="number" /></div>
+        <div class="field" style="width:140px"><label>Máx</label><input id="hp_max" data-key="hp_max" type="number" /></div>
+        <div class="field" style="width:140px"><label>Temp</label><input id="hp_temp" data-key="hp_temp" type="number" /></div>
+        <div class="field" style="width:160px"><label>Dado Vida</label><input id="dado_vida" data-key="dado_vida" type="text" placeholder="1d10" /></div>
+      </div>
+      <div class="row">
+        <div class="field" style="width:260px">
+          <label>Salvaguardas contra Morte</label>
+          <div style="display:flex;gap:10px">
+            <input id="death_success" data-key="death_success" type="number" placeholder="Sucessos (0-3)" />
+            <input id="death_fail" data-key="death_fail" type="number" placeholder="Falhas (0-3)" />
+          </div>
+        </div>
+        <div class="field" style="flex:1"><label>Inspiração</label><input id="inspiracao" data-key="inspiracao" type="text" /></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="section-header"><strong>Atributos e Perícias</strong></div>
       <div class="attributes">
         <div class="attr"><label>FOR</label><input id="forca" data-key="forca" type="number" value="10" /><div class="score" id="forca_score">10</div><div class="mod" id="forca_mod">+0</div></div>
         <div class="attr"><label>DES</label><input id="destreza" data-key="destreza" type="number" value="10" /><div class="score" id="destreza_score">10</div><div class="mod" id="destreza_mod">+0</div></div>
@@ -152,34 +178,71 @@
         <div class="attr"><label>SAB</label><input id="sabedoria" data-key="sabedoria" type="number" value="10" /><div class="score" id="sabedoria_score">10</div><div class="mod" id="sabedoria_mod">+0</div></div>
         <div class="attr"><label>CAR</label><input id="carisma" data-key="carisma" type="number" value="10" /><div class="score" id="carisma_score">10</div><div class="mod" id="carisma_mod">+0</div></div>
       </div>
+
+      <div style="margin-top:20px; display:grid; grid-template-columns: 1fr 300px; gap:20px">
+        <div class="card" style="background:rgba(255,255,255,0.5)">
+          <strong>Perícias</strong>
+          <div class="skills-grid" style="margin-top:10px">
+            <label class="skill"><input type="checkbox" class="skill-check" data-attr="destreza" data-key="Acrobacia" /> Acro <span id="Acrobacia_val">+0</span></label>
+            <label class="skill"><input type="checkbox" class="skill-check" data-attr="forca" data-key="Atletismo" /> Atle <span id="Atletismo_val">+0</span></label>
+            <label class="skill"><input type="checkbox" class="skill-check" data-attr="inteligencia" data-key="Arcanismo" /> Arca <span id="Arcanismo_val">+0</span></label>
+            <label class="skill"><input type="checkbox" class="skill-check" data-attr="sabedoria" data-key="Percepcao" /> Perc <span id="Percepcao_val">+0</span></label>
+            <label class="skill"><input type="checkbox" class="skill-check" data-attr="carisma" data-key="Persuasao" /> Pers <span id="Persuasao_val">+0</span></label>
+            <label class="skill"><input type="checkbox" class="skill-check" data-attr="destreza" data-key="Furtividade" /> Furt <span id="Furtividade_val">+0</span></label>
+          </div>
+        </div>
+        <div>
+          <div class="field"><label>Proficiência</label><input id="prof_bonus" data-key="prof_bonus" type="number" value="2" /></div>
+          <div class="field"><label>Percepção Passiva</label><input id="percepcao_passiva" readonly /></div>
+          <div class="field"><label>Iniciativa</label><input id="iniciativa" readonly /></div>
+        </div>
+      </div>
     </section>
 
-    <section class="card" style="background:#fff">
-        <div class="section-header"><strong>Combate</strong></div>
-        <table id="weaponsTable">
-          <thead><tr><th>Arma</th><th>Bônus</th><th>Dano</th><th>Notas</th><th></th></tr></thead>
-          <tbody></tbody>
-        </table>
-        <div class="row" style="margin-top:10px">
-          <input id="w_name" placeholder="Nome">
-          <input id="w_bonus" placeholder="Atq" style="width:80px">
-          <input id="w_dmg" placeholder="Dano">
-          <button id="addWeapon" class="small-btn">Add</button>
-        </div>
+    <section class="card">
+      <div class="section-header"><strong>Ataques</strong></div>
+      <table id="weaponsTable">
+        <thead><tr><th>Nome</th><th>Atq</th><th>Dano</th><th>Notas</th><th></th></tr></thead>
+        <tbody></tbody>
+      </table>
+      <div class="row" style="margin-top:10px">
+        <input id="w_name" placeholder="Nome" />
+        <input id="w_bonus" placeholder="+5" style="width:80px" />
+        <input id="w_dmg" placeholder="1d8+3" />
+        <button id="addWeapon" class="small-btn">Add</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="section-header"><strong>Magias</strong></div>
+      <table id="spellsTable">
+        <thead><tr><th>Nível</th><th>Nome</th><th>Tempo</th><th>Alcance</th><th>Notas</th><th></th></tr></thead>
+        <tbody></tbody>
+      </table>
+      <div class="row" style="margin-top:10px">
+        <input id="s_circle" placeholder="0" style="width:60px" />
+        <input id="s_name" placeholder="Nome" />
+        <input id="s_time" placeholder="1 ação" />
+        <button id="addSpell" class="small-btn">Add</button>
+      </div>
     </section>
   </main>
 
   <aside class="right-col">
-    <div class="card" style="background:#111827; color:#fff">
-      <strong>Status Rápidos</strong>
-      <div style="margin-top:15px">
-        <label style="color:#9ca3af">Vida (HP)</label>
-        <div style="display:flex; gap:5px">
-            <input id="hp_atual" data-key="hp_atual" type="number" placeholder="Atual" style="background:#1f2937; color:#fff; border:0">
-            <input id="hp_max" data-key="hp_max" type="number" placeholder="Máx" style="background:#1f2937; color:#fff; border:0">
-        </div>
-        <label style="color:#9ca3af; margin-top:10px">Iniciativa</label>
-        <input id="iniciativa" readonly style="background:#1f2937; color:var(--accent); border:0; font-weight:800; font-size:18px">
+    <div class="card">
+      <strong>Moedas</strong>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px">
+        <div><label>PO</label><input id="po" data-key="po" type="number" /></div>
+        <div><label>PL</label><input id="pl" data-key="pl" type="number" /></div>
+        <div><label>PP</label><input id="pp" data-key="pp" type="number" /></div>
+        <div><label>PC</label><input id="pc" data-key="pc" type="number" /></div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:18px">
+      <strong>Ações</strong>
+      <div style="display:flex; flex-direction:column; gap:10px; margin-top:10px">
+        <button onclick="window.print()" class="btn">Imprimir Ficha</button>
+        <button id="downloadBtn" class="btn-ghost">Baixar JSON</button>
       </div>
     </div>
   </aside>
@@ -188,9 +251,9 @@
 <script>
 const qs = sel => document.querySelector(sel);
 const qsa = sel => Array.from(document.querySelectorAll(sel));
-const storageKey = 'ficha_rpg_polished';
+const storageKey = 'ficha_rpg_full_v3';
 
-/* --- Lógica de Atributos --- */
+/* --- Cálculos --- */
 function modFromScore(s) { return Math.floor((s - 10) / 2); }
 function formatMod(n) { return (n >= 0 ? '+' : '') + n; }
 
@@ -199,36 +262,49 @@ function updateAttributes() {
   attrs.forEach(a => {
     const val = parseInt(qs('#'+a).value || 10, 10);
     qs('#'+a+'_score').textContent = val;
-    qs('#'+a+'_mod').textContent = formatMod(modFromScore(val));
+    const m = modFromScore(val);
+    qs('#'+a+'_mod').textContent = formatMod(m);
   });
-  const dexVal = parseInt(qs('#destreza').value || 10, 10);
-  qs('#iniciativa').value = formatMod(modFromScore(dexVal));
+
+  const prof = parseInt(qs('#prof_bonus').value || 0, 10);
+  const dexMod = modFromScore(parseInt(qs('#destreza').value || 10, 10));
+  const sabMod = modFromScore(parseInt(qs('#sabedoria').value || 10, 10));
+
+  qs('#iniciativa').value = formatMod(dexMod);
+  
+  // Perícias
+  qsa('.skill-check').forEach(cb => {
+    const attr = cb.dataset.attr;
+    const attrVal = parseInt(qs('#'+attr).value || 10, 10);
+    const total = modFromScore(attrVal) + (cb.checked ? prof : 0);
+    qs('#' + cb.dataset.key + '_val').textContent = formatMod(total);
+  });
+
+  const percChecked = qsa('.skill-check').find(c => c.dataset.key === 'Percepcao').checked;
+  qs('#percepcao_passiva').value = 10 + sabMod + (percChecked ? prof : 0);
 }
 
-/* --- Avatar: Drag & Drop Apenas --- */
+/* --- Avatar (Arraste e Solte Apenas) --- */
 const avPreview = qs('#avatarPreview');
 
 avPreview.addEventListener('dragover', e => {
   e.preventDefault();
   avPreview.style.borderColor = 'var(--accent)';
-  avPreview.style.background = '#f3f0ff';
+  avPreview.style.background = 'rgba(124,92,255,0.05)';
 });
 
 avPreview.addEventListener('dragleave', () => {
-  avPreview.style.borderColor = 'rgba(0,0,0,0.1)';
+  avPreview.style.borderColor = 'rgba(15,23,36,0.1)';
   avPreview.style.background = '#fff';
 });
 
 avPreview.addEventListener('drop', e => {
   e.preventDefault();
-  avPreview.style.borderColor = 'rgba(0,0,0,0.1)';
+  avPreview.style.borderColor = 'rgba(15,23,36,0.1)';
   avPreview.style.background = '#fff';
-  
   if (e.dataTransfer.files && e.dataTransfer.files[0]) {
     const file = e.dataTransfer.files[0];
-    if (file.type.startsWith('image/')) {
-        processAndSetAvatar(file);
-    }
+    if (file.type.startsWith('image/')) processAndSetAvatar(file);
   }
 });
 
@@ -252,21 +328,41 @@ async function processAndSetAvatar(file) {
 }
 
 qs('#toggleCircular').onchange = e => {
-    avPreview.style.borderRadius = e.target.checked ? '50%' : '12px';
+  avPreview.style.borderRadius = e.target.checked ? '50%' : '12px';
 };
 
-/* --- Gerenciamento de Dados --- */
+/* --- Funções de Tabela --- */
+function addWeaponRow(obj) {
+  const tr = document.createElement('tr');
+  tr.innerHTML = `<td>${obj.name}</td><td>${obj.bonus}</td><td>${obj.dmg}</td><td>${obj.notes||''}</td><td><button class="del">X</button></td>`;
+  tr.querySelector('.del').onclick = () => tr.remove();
+  qs('#weaponsTable tbody').appendChild(tr);
+}
+
+function addSpellRow(obj) {
+  const tr = document.createElement('tr');
+  tr.innerHTML = `<td>${obj.circle}</td><td>${obj.name}</td><td>${obj.time}</td><td>${obj.range||'-'}</td><td>${obj.notes||''}</td><td><button class="del">X</button></td>`;
+  tr.querySelector('.del').onclick = () => tr.remove();
+  qs('#spellsTable tbody').appendChild(tr);
+}
+
+/* --- Dados --- */
 function gatherData() {
-  const data = { weapons: [] };
+  const data = { weapons: [], spells: [], skills: {} };
   qsa('[data-key]').forEach(el => {
     data[el.dataset.key] = el.contentEditable === 'true' ? el.innerText : el.value;
   });
+  qsa('.skill-check').forEach(cb => data.skills[cb.dataset.key] = cb.checked);
+  qsa('#weaponsTable tbody tr').forEach(tr => {
+    const tds = tr.querySelectorAll('td');
+    data.weapons.push({name: tds[0].innerText, bonus: tds[1].innerText, dmg: tds[2].innerText, notes: tds[3].innerText});
+  });
+  qsa('#spellsTable tbody tr').forEach(tr => {
+    const tds = tr.querySelectorAll('td');
+    data.spells.push({circle: tds[0].innerText, name: tds[1].innerText, time: tds[2].innerText, range: tds[3].innerText, notes: tds[4].innerText});
+  });
   data.avatar = avPreview.dataset.image || '';
   data.circular = qs('#toggleCircular').checked;
-  qsa('#weaponsTable tbody tr').forEach(tr => {
-      const tds = tr.querySelectorAll('td');
-      data.weapons.push({n: tds[0].innerText, b: tds[1].innerText, d: tds[2].innerText});
-  });
   return data;
 }
 
@@ -277,53 +373,53 @@ function applyData(data) {
     if (el.contentEditable === 'true') el.innerText = val || '';
     else el.value = val || '';
   });
+  qsa('.skill-check').forEach(cb => cb.checked = !!data.skills[cb.dataset.key]);
   if(data.avatar) {
-      avPreview.innerHTML = `<img src="${data.avatar}">`;
-      avPreview.dataset.image = data.avatar;
+    avPreview.innerHTML = `<img src="${data.avatar}">`;
+    avPreview.dataset.image = data.avatar;
   }
   qs('#toggleCircular').checked = !!data.circular;
   avPreview.style.borderRadius = data.circular ? '50%' : '12px';
-  const tbody = qs('#weaponsTable tbody');
-  tbody.innerHTML = '';
-  (data.weapons || []).forEach(w => addWeaponRow(w));
+  qs('#weaponsTable tbody').innerHTML = '';
+  (data.weapons || []).forEach(addWeaponRow);
+  qs('#spellsTable tbody').innerHTML = '';
+  (data.spells || []).forEach(addSpellRow);
   updateAttributes();
-}
-
-function addWeaponRow(w) {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `<td>${w.n}</td><td>${w.b}</td><td>${w.d}</td><td>-</td><td><button onclick="this.parentElement.parentElement.remove()">X</button></td>`;
-    qs('#weaponsTable tbody').appendChild(tr);
 }
 
 /* --- Eventos --- */
 qs('#addWeapon').onclick = () => {
-    addWeaponRow({n: qs('#w_name').value, b: qs('#w_bonus').value, d: qs('#w_dmg').value});
-    qs('#w_name').value = ''; qs('#w_bonus').value = ''; qs('#w_dmg').value = '';
+  addWeaponRow({name: qs('#w_name').value, bonus: qs('#w_bonus').value, dmg: qs('#w_dmg').value});
+  qs('#w_name').value=''; qs('#w_bonus').value=''; qs('#w_dmg').value='';
+};
+qs('#addSpell').onclick = () => {
+  addSpellRow({circle: qs('#s_circle').value, name: qs('#s_name').value, time: qs('#s_time').value});
+  qs('#s_circle').value=''; qs('#s_name').value=''; qs('#s_time').value='';
 };
 
-qs('#saveBtn').onclick = () => {
-    localStorage.setItem(storageKey, JSON.stringify(gatherData()));
-    alert('Salvo!');
-};
-
+qs('#saveBtn').onclick = () => { localStorage.setItem(storageKey, JSON.stringify(gatherData())); alert('Salvo!'); };
+qs('#loadBtn').onclick = () => applyData(JSON.parse(localStorage.getItem(storageKey)));
 qs('#exportBtn').onclick = () => {
-    const blob = new Blob([JSON.stringify(gatherData())], {type: 'application/json'});
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'ficha.json';
-    a.click();
+  const blob = new Blob([JSON.stringify(gatherData())], {type: 'application/json'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'ficha.json'; a.click();
 };
+qs('#importBtn').onclick = () => {
+  const input = document.createElement('input'); input.type='file';
+  input.onchange = e => {
+    const reader = new FileReader();
+    reader.onload = re => applyData(JSON.parse(re.target.result));
+    reader.readAsText(e.target.files[0]);
+  };
+  input.click();
+};
+qs('#clearBtn').onclick = () => { if(confirm('Limpar?')) { localStorage.removeItem(storageKey); location.reload(); } };
 
-qs('#clearBtn').onclick = () => { if(confirm('Limpar tudo?')) { localStorage.removeItem(storageKey); location.reload(); } };
-
-qsa('input').forEach(i => i.oninput = updateAttributes);
-
+qsa('input, .skill-check').forEach(i => i.oninput = updateAttributes);
 window.onload = () => {
-    const saved = localStorage.getItem(storageKey);
-    if(saved) applyData(JSON.parse(saved));
-    updateAttributes();
+  const s = localStorage.getItem(storageKey);
+  if(s) applyData(JSON.parse(s));
+  updateAttributes();
 };
 </script>
-
 </body>
 </html>
