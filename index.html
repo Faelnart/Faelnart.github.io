@@ -3,13 +3,9 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Ficha RPG — Visual Polido (Degradê Branco→Cinza)</title>
+<title>Ficha RPG — Visual Polido</title>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <style>
-  /* -------------------------
-     Paleta: degradê branco → cinza
-     Tipografia e tokens visuais
-     ------------------------- */
   :root{
     --bg-start: #1c1c1c;
     --bg-end:   #e6e6e6;
@@ -17,30 +13,26 @@
     --card-end:   #f3f4f6;
     --accent: #7c5cff;
     --accent-2: #4b5563;
-    --muted: #000000;
-    --text: #000000;
+    --muted: #4b5563;
+    --text: #111827;
     --radius: 12px;
     --shadow: 0 10px 30px rgba(15,23,36,0.08);
-    --glass: rgba(255,255,255,0.6);
     --gap: 18px;
     --field-height:48px;
     --input-padding:12px;
   }
 
-  /* Reset & base */
   *{box-sizing:border-box}
   html,body{height:100%}
   body{
     margin:0;
-    font-family:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    font-family:Inter, system-ui, sans-serif;
     background: linear-gradient(180deg, var(--bg-start) 0%, var(--bg-end) 100%);
     color:var(--text);
     -webkit-font-smoothing:antialiased;
-    -moz-osx-font-smoothing:grayscale;
     padding:28px;
   }
 
-  /* Layout */
   .container{
     max-width:1320px;
     margin:0 auto;
@@ -49,759 +41,289 @@
     gap:var(--gap);
     align-items:start;
   }
+
   header{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
-  header h1{margin:0;font-size:20px;color:var(--accent);letter-spacing:0.2px}
+  header h1{margin:0;font-size:22px;color:var(--accent);font-weight:800}
+  
   .controls{display:flex;gap:10px}
   .btn{
     background:linear-gradient(90deg,var(--accent),#5f3df5);
-    color:white;border:0;padding:10px 12px;border-radius:10px;font-weight:700;cursor:pointer;
-    box-shadow:var(--shadow);transition:transform .12s ease, box-shadow .12s ease;
+    color:white;border:0;padding:10px 16px;border-radius:10px;font-weight:700;cursor:pointer;
+    box-shadow:var(--shadow);transition:transform .1s;
   }
-  .btn:active{transform:translateY(1px)}
+  .btn:active{transform:scale(0.98)}
   .btn-ghost{
-    background:transparent;border:1px solid rgba(15,23,36,0.06);padding:10px 12px;border-radius:10px;color:var(--accent-2);cursor:pointer;
+    background:rgba(255,255,255,0.5);border:1px solid rgba(0,0,0,0.1);padding:10px 12px;border-radius:10px;color:var(--accent-2);cursor:pointer;
   }
 
-  /* Card */
   .card{
     background: linear-gradient(180deg,var(--card-start), var(--card-end));
-    padding:16px;border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid rgba(15,23,36,0.04);
+    padding:16px;border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid rgba(255,255,255,0.2);
   }
   .sheet{display:grid;grid-template-columns:1fr;gap:14px}
 
   .section-header{display:flex;justify-content:space-between;align-items:center;padding:6px 0;margin-bottom:6px}
-  .section-header strong{font-size:15px}
-  .collapse{background:none;border:0;color:var(--muted);cursor:pointer;font-size:18px}
+  .section-header strong{font-size:16px;text-transform:uppercase;letter-spacing:0.5px}
 
-  /* Form */
   .row{display:flex;gap:12px;align-items:center;margin-bottom:8px}
   .field{background:transparent;padding:6px;border-radius:10px;min-width:0}
-  label{display:block;font-size:12px;color:var(--muted);margin-bottom:8px}
+  label{display:block;font-size:11px;font-weight:700;color:var(--muted);margin-bottom:6px;text-transform:uppercase}
+  
   input[type="text"], input[type="number"], select, textarea{
-    width:100%;padding:var(--input-padding);border-radius:8px;border:1px solid rgba(15,23,36,0.06);
-    background:linear-gradient(180deg, rgba(255,255,255,0.9), rgba(250,250,250,0.9));
-    color:var(--text);height:var(--field-height);font-size:14px;outline:none;transition:box-shadow .12s ease, border-color .12s ease;
+    width:100%;padding:var(--input-padding);border-radius:8px;border:1px solid rgba(0,0,0,0.1);
+    background:rgba(255,255,255,0.9);color:var(--text);height:var(--field-height);font-size:14px;outline:none;
   }
-  input:focus, textarea:focus{box-shadow:0 6px 18px rgba(124,92,255,0.08);border-color:rgba(124,92,255,0.18)}
-  textarea{min-height:120px;resize:vertical;padding-top:12px;padding-bottom:12px}
+  input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(124,92,255,0.1)}
 
-  .big{font-size:20px;padding:12px 14px;min-height:52px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.95), rgba(250,250,250,0.95));border:1px solid rgba(15,23,36,0.04)}
+  .big{font-size:20px;padding:12px;min-height:52px;border-radius:10px;background:#fff;border:1px solid rgba(0,0,0,0.05);font-weight:700}
 
-  /* Attributes */
   .attributes{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-  .attr{padding:12px;border-radius:10px;background:linear-gradient(180deg,#ffffff,#fbfbfb);border:1px solid rgba(15,23,36,0.03);text-align:center}
-  .attr .score{font-size:22px;font-weight:700;margin-top:6px}
-  .attr .mod{font-size:14px;color:var(--muted);margin-top:6px}
+  .attr{padding:12px;border-radius:10px;background:#fff;text-align:center;border:1px solid rgba(0,0,0,0.05)}
+  .attr .score{font-size:24px;font-weight:900;color:var(--accent)}
+  .attr .mod{font-size:14px;font-weight:700;color:var(--muted)}
 
-  /* Skills */
-  .skills-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-  .skill{display:flex;align-items:center;gap:10px;padding:8px;border-radius:8px;background:linear-gradient(180deg,#fff,#fcfcfc);border:1px solid rgba(15,23,36,0.03)}
-  .skill input[type="checkbox"]{transform:scale(1.05)}
+  .skills-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .skill{display:flex;align-items:center;gap:8px;padding:8px;border-radius:8px;background:#fff;font-size:13px;border:1px solid rgba(0,0,0,0.03)}
 
-  /* Tables */
-  table{width:100%;border-collapse:collapse;font-size:14px}
-  th,td{padding:8px;border-bottom:1px dashed rgba(15,23,36,0.04);text-align:left}
-  .small-btn{padding:8px 10px;border-radius:8px;border:0;background:var(--accent);color:white;cursor:pointer;font-weight:700}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th,td{padding:10px;border-bottom:1px solid rgba(0,0,0,0.05);text-align:left}
+  .small-btn{padding:8px 12px;border-radius:8px;border:0;background:var(--accent);color:white;cursor:pointer;font-weight:700}
 
-  /* Avatar area: crop 1:1 + circular toggle */
-  .avatar-wrap{display:flex;gap:14px;align-items:flex-start;width:100%;box-sizing:border-box}
+  /* Avatar Area - Somente Arrastar */
   .avatar-preview{
-    width:180px;height:180px;min-width:180px;min-height:180px;border-radius:12px;
-    background:linear-gradient(180deg,#fff,#f7f7f7);display:flex;align-items:center;justify-content:center;overflow:hidden;border:1px solid rgba(15,23,36,0.04);flex:0 0 auto;
+    width:180px;height:180px;border-radius:12px;
+    background:#fff;display:flex;align-items:center;justify-content:center;
+    overflow:hidden;border:2px dashed rgba(0,0,0,0.1);
+    transition: all 0.2s ease;
     position:relative;
+    cursor: default; /* Remove o cursor de clique */
   }
-  .avatar-preview img{display:block;width:100%;height:100%;object-fit:cover}
-  .avatar-controls{display:flex;flex-direction:column;gap:10px;flex:1 1 auto;min-width:0}
-  .btn-row{display:flex;gap:8px;flex-wrap:wrap}
-  .muted{color:var(--muted);font-size:13px}
-
-  /* Tooltip */
-  .tip{position:relative;display:inline-block}
-  .tip[data-tip]:hover::after{
-    content:attr(data-tip);
-    position:absolute;left:50%;transform:translateX(-50%);top:calc(100% + 8px);
-    background:#0f1724;color:white;padding:8px;border-radius:8px;font-size:13px;white-space:nowrap;z-index:40;
-    box-shadow:0 8px 24px rgba(15,23,36,0.18)
-  }
-
-  /* Microinteractions */
-  .fade-in{transition:opacity .18s ease, transform .18s ease}
-  .card .add-anim{transition:transform .18s ease, opacity .18s ease}
-  .del{background:transparent;border:0;color:var(--muted);cursor:pointer}
-
-  /* Responsive */
-  @media (max-width:1100px){ .container{grid-template-columns:1fr 360px} }
-  @media (max-width:900px){ .container{grid-template-columns:1fr;padding:12px} .avatar-preview{width:140px;height:140px;min-width:140px;min-height:140px} .attributes{grid-template-columns:repeat(2,1fr)} }
-  @media (max-width:520px){ .attributes{grid-template-columns:1fr} .avatar-preview{width:120px;height:120px;min-width:120px;min-height:120px} }
+  .avatar-preview img{width:100%;height:100%;object-fit:cover}
+  
+  .right-col .card{margin-bottom:var(--gap)}
+  
+  @media (max-width:900px){ .container{grid-template-columns:1fr} }
 </style>
 </head>
 <body>
-  <div class="container">
-    <header>
-      <h1>Ficha RPG — Visual Polido</h1>
-      <div class="controls">
-        <button id="saveBtn" class="btn" title="Salvar localmente">Salvar</button>
-        <button id="loadBtn" class="btn-ghost" title="Carregar do navegador">Carregar</button>
-        <button id="exportBtn" class="btn-ghost" title="Exportar JSON">Exportar</button>
-        <button id="importBtn" class="btn-ghost" title="Importar JSON">Importar</button>
-        <button id="clearBtn" class="btn-ghost" title="Limpar ficha">Limpar</button>
-      </div>
-    </header>
 
-    <main class="card sheet" id="mainSheet">
-      <!-- Identidade -->
-      <section class="card" data-section="identidade">
-        <div class="section-header" draggable="true">
-          <strong>Identidade</strong>
-          <div><button class="collapse" data-target="identidade">—</button></div>
-        </div>
-        <div class="content" id="identidade">
-          <div style="display:flex;gap:16px;align-items:flex-start;">
-            <div style="flex:1">
-              <div class="row">
-                <div class="field" style="flex:1">
-                  <label>Nome do personagem</label>
-                  <div id="nome" class="big" contenteditable="true" data-key="nome">Seu Nome</div>
-                </div>
-                <div class="field" style="width:180px">
-                  <label>Classe</label>
-                  <input id="classe" data-key="classe" type="text" placeholder="Guerreiro" />
-                </div>
-                <div class="field" style="width:120px">
-                  <label>Nível</label>
-                  <input id="nivel" data-key="nivel" type="number" min="1" max="20" value="1" />
-                </div>
-                <div class="field" style="width:140px">
-                  <label>XP</label>
-                  <input id="xp" data-key="xp" type="number" min="0" />
-                </div>
-              </div>
+<div class="container">
+  <header>
+    <h1>FICHA RPG — PRO</h1>
+    <div class="controls">
+      <button id="saveBtn" class="btn">Salvar</button>
+      <button id="exportBtn" class="btn-ghost">Exportar JSON</button>
+      <button id="clearBtn" class="btn-ghost">Limpar</button>
+    </div>
+  </header>
 
-              <div class="row" style="margin-top:12px">
-                <div class="field" style="flex:1">
-                  <label>Antecedente / Raça / Subclasse</label>
-                  <input id="antecedente" data-key="antecedente" type="text" placeholder="Antecedente" />
-                </div>
-                <div class="field" style="width:160px">
-                  <label>Classe de Armadura</label>
-                  <input id="ca" data-key="ca" type="number" min="0" />
-                </div>
-                <div class="field" style="width:140px">
-                  <label>Escudo</label>
-                  <input id="escudo" data-key="escudo" type="text" />
-                </div>
-              </div>
-            </div>
-
-            <div style="width:240px">
-              <label class="muted">Avatar</label>
-              <div class="card" style="padding:12px">
-                <div class="avatar-wrap">
-                  <div class="avatar-preview" id="avatarPreview" title="Arraste uma imagem aqui">
-                    <span id="avatarPlaceholder" class="muted">Sem imagem</span>
-                  </div>
-
-                  <div class="avatar-controls">
-                    <input id="avatarInput" type="file" accept="image/*" style="display:none" />
-                    <div class="btn-row">
-                      <label class="tip" data-tip="Exibe o avatar com máscara circular">
-                        <input id="toggleCircular" type="checkbox" style="margin-left:8px" /> Circular
-                      </label>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
+  <main class="card sheet">
+    <section class="card" style="background:#f9fafb">
+      <div class="section-header"><strong>Identidade do Herói</strong></div>
+      <div style="display:flex;gap:20px;flex-wrap:wrap">
+        <div style="flex:1; min-width:300px">
+          <div class="field">
+            <label>Nome do Personagem</label>
+            <div id="nome" class="big" contenteditable="true" data-key="nome">Novo Aventureiro</div>
           </div>
-        </div>
-      </section>
-
-      <!-- HP -->
-      <section class="card" data-section="hp">
-        <div class="section-header" draggable="true">
-          <strong>Pontos de Vida</strong>
-          <div><button class="collapse" data-target="hp">—</button></div>
-        </div>
-        <div class="content" id="hp">
           <div class="row">
-            <div class="field" style="width:140px"><label>Atual</label><input id="hp_atual" data-key="hp_atual" type="number" min="0" /></div>
-            <div class="field" style="width:140px"><label>Máx</label><input id="hp_max" data-key="hp_max" type="number" min="0" /></div>
-            <div class="field" style="width:140px"><label>Temporário</label><input id="hp_temp" data-key="hp_temp" type="number" min="0" /></div>
-            <div class="field" style="width:160px"><label>Dado de Vida</label><input id="dado_vida" data-key="dado_vida" type="text" placeholder="1d10" /></div>
-          </div>
-
-          <div class="row" style="margin-top:12px">
-            <div class="field" style="width:260px">
-              <label>Salvaguardas contra morte</label>
-              <div style="display:flex;gap:10px">
-                <input id="death_success" data-key="death_success" type="number" min="0" max="3" placeholder="Sucessos" />
-                <input id="death_fail" data-key="death_fail" type="number" min="0" max="3" placeholder="Falhas" />
-              </div>
-            </div>
-            <div class="field" style="flex:1"><label>Inspiração</label><input id="inspiracao" data-key="inspiracao" type="text" placeholder="Inspiração heroica" /></div>
+            <div class="field" style="flex:2"><label>Classe</label><input id="classe" data-key="classe" type="text" /></div>
+            <div class="field" style="flex:1"><label>Nível</label><input id="nivel" data-key="nivel" type="number" value="1" /></div>
           </div>
         </div>
-      </section>
-
-      <!-- Atributos e perícias -->
-      <section class="card" data-section="atributos">
-        <div class="section-header" draggable="true">
-          <strong>Atributos e Perícias</strong>
-          <div><button class="collapse" data-target="atributos">—</button></div>
-        </div>
-        <div class="content" id="atributos">
-          <div class="attributes">
-            <div class="attr"><label>Força</label><input id="forca" data-key="forca" type="number" value="10" /><div class="score" id="forca_score">10</div><div class="mod" id="forca_mod">+0</div></div>
-            <div class="attr"><label>Destreza</label><input id="destreza" data-key="destreza" type="number" value="10" /><div class="score" id="destreza_score">10</div><div class="mod" id="destreza_mod">+0</div></div>
-            <div class="attr"><label>Constituição</label><input id="constituicao" data-key="constituicao" type="number" value="10" /><div class="score" id="constituicao_score">10</div><div class="mod" id="constituicao_mod">+0</div></div>
-            <div class="attr"><label>Inteligência</label><input id="inteligencia" data-key="inteligencia" type="number" value="10" /><div class="score" id="inteligencia_score">10</div><div class="mod" id="inteligencia_mod">+0</div></div>
-            <div class="attr"><label>Sabedoria</label><input id="sabedoria" data-key="sabedoria" type="number" value="10" /><div class="score" id="sabedoria_score">10</div><div class="mod" id="sabedoria_mod">+0</div></div>
-            <div class="attr"><label>Carisma</label><input id="carisma" data-key="carisma" type="number" value="10" /><div class="score" id="carisma_score">10</div><div class="mod" id="carisma_mod">+0</div></div>
+        
+        <div>
+          <label>Avatar (Arraste a imagem aqui)</label>
+          <div class="avatar-preview" id="avatarPreview">
+            <span id="avatarPlaceholder" style="font-size:12px; color:#9ca3af; text-align:center; padding:10px">Solte a foto aqui</span>
           </div>
-
-          <div style="margin-top:12px">
-            <label><strong>Bônus de Proficiência</strong></label>
-            <div style="display:flex;gap:12px;align-items:center;margin-top:8px">
-              <input id="prof_bonus" data-key="prof_bonus" type="number" value="2" style="width:100px;height:44px;padding:10px" />
-              <label style="display:flex;align-items:center;gap:8px;color:var(--muted)">
-                <input id="autoProf" data-key="autoProf" type="checkbox" /> Calcular proficiência por nível
-              </label>
-              <div class="muted">Automático: níveis 1–4 = +2; 5–8 = +3; 9–12 = +4; 13–16 = +5; 17–20 = +6.</div>
-            </div>
-          </div>
-
-          <div style="margin-top:12px;display:flex;gap:12px">
-            <div style="flex:1">
-              <div class="card" style="padding:12px">
-                <strong>Perícias</strong>
-                <div class="skills-grid" style="margin-top:10px">
-                  <label class="skill"><input type="checkbox" class="skill-check" data-attr="destreza" data-key="Acrobacia" /> Acrobacia <span id="Acrobacia_val" style="margin-left:auto">+0</span></label>
-                  <label class="skill"><input type="checkbox" class="skill-check" data-attr="forca" data-key="Atletismo" /> Atletismo <span id="Atletismo_val" style="margin-left:auto">+0</span></label>
-
-                  <label class="skill"><input type="checkbox" class="skill-check" data-attr="destreza" data-key="Prestidigitacao" /> Prestidigitação <span id="Prestidigitacao_val" style="margin-left:auto">+0</span></label>
-                  <label class="skill"><input type="checkbox" class="skill-check" data-attr="destreza" data-key="Furtividade" /> Furtividade <span id="Furtividade_val" style="margin-left:auto">+0</span></label>
-
-                  <label class="skill"><input type="checkbox" class="skill-check" data-attr="inteligencia" data-key="Arcanismo" /> Arcanismo <span id="Arcanismo_val" style="margin-left:auto">+0</span></label>
-                  <label class="skill"><input type="checkbox" class="skill-check" data-attr="inteligencia" data-key="Historia" /> História <span id="Historia_val" style="margin-left:auto">+0</span></label>
-
-                  <label class="skill"><input type="checkbox" class="skill-check" data-attr="inteligencia" data-key="Investigacao" /> Investigação <span id="Investigacao_val" style="margin-left:auto">+0</span></label>
-                  <label class="skill"><input type="checkbox" class="skill-check" data-attr="inteligencia" data-key="Natureza" /> Natureza <span id="Natureza_val" style="margin-left:auto">+0</span></label>
-
-                  <label class="skill"><input type="checkbox" class="skill-check" data-attr="inteligencia" data-key="Religiao" /> Religião <span id="Religiao_val" style="margin-left:auto">+0</span></label>
-                  <label class="skill"><input type="checkbox" class="skill-check" data-attr="sabedoria" data-key="Intuicao" /> Intuição <span id="Intuicao_val" style="margin-left:auto">+0</span></label>
-
-                  <label class="skill"><input type="checkbox" class="skill-check" data-attr="sabedoria" data-key="Medicina" /> Medicina <span id="Medicina_val" style="margin-left:auto">+0</span></label>
-                  <label class="skill"><input type="checkbox" class="skill-check" data-attr="sabedoria" data-key="Percepcao" /> Percepção <span id="Percepcao_val" style="margin-left:auto">+0</span></label>
-
-                  <label class="skill"><input type="checkbox" class="skill-check" data-attr="sabedoria" data-key="Sobrevivencia" /> Sobrevivência <span id="Sobrevivencia_val" style="margin-left:auto">+0</span></label>
-                  <label class="skill"><input type="checkbox" class="skill-check" data-attr="carisma" data-key="Atuacao" /> Atuação <span id="Atuacao_val" style="margin-left:auto">+0</span></label>
-
-                  <label class="skill"><input type="checkbox" class="skill-check" data-attr="carisma" data-key="Enganacao" /> Enganação <span id="Enganacao_val" style="margin-left:auto">+0</span></label>
-                  <label class="skill"><input type="checkbox" class="skill-check" data-attr="carisma" data-key="Intimidacao" /> Intimidação <span id="Intimidacao_val" style="margin-left:auto">+0</span></label>
-
-                  <label class="skill"><input type="checkbox" class="skill-check" data-attr="carisma" data-key="Persuasao" /> Persuasão <span id="Persuasao_val" style="margin-left:auto">+0</span></label>
-                </div>
-              </div>
-            </div>
-
-            <div style="width:320px">
-              <div class="card" style="padding:12px">
-                <strong>Outros</strong>
-                <div style="display:flex;gap:12px;margin-top:10px">
-                  <div style="flex:1"><label>Iniciativa</label><input id="iniciativa" data-key="iniciativa" type="text" readonly /></div>
-                  <div style="flex:1"><label>Percepção Passiva</label><input id="percepcao_passiva" data-key="percepcao_passiva" type="number" readonly /></div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-        </div>
-      </section>
-
-      <!-- Armas -->
-      <section class="card" data-section="armas">
-        <div class="section-header" draggable="true">
-          <strong>Armas e Truques de Dano</strong>
-          <div><button class="collapse" data-target="armas">—</button></div>
-        </div>
-        <div class="content weapons" id="armas">
-          <table id="weaponsTable">
-            <thead><tr><th>Nome</th><th>Bônus Atq / CD</th><th>Dano e Tipo</th><th>Notas</th><th></th></tr></thead>
-            <tbody></tbody>
-          </table>
-          <div style="margin-top:10px;display:flex;gap:8px">
-            <input id="w_name" placeholder="Nome" />
-            <input id="w_bonus" placeholder="+Atq / CD" style="width:140px" />
-            <input id="w_dmg" placeholder="1d8 + STR cortante" />
-            <input id="w_notes" placeholder="Notas" />
-            <button id="addWeapon" class="small-btn">Adicionar</button>
-          </div>
-        </div>
-      </section>
-
-      <!-- Magias -->
-      <section class="card" data-section="magias">
-        <div class="section-header" draggable="true">
-          <strong>Truques e Magias Preparadas</strong>
-          <div><button class="collapse" data-target="magias">—</button></div>
-        </div>
-        <div class="content spells" id="magias">
-          <table id="spellsTable">
-            <thead><tr><th>Círculo</th><th>Nome</th><th>Tempo</th><th>Alcance</th><th>Concentração/Ritual/M</th><th>Notas</th><th></th></tr></thead>
-            <tbody></tbody>
-          </table>
-          <div style="margin-top:10px;display:flex;gap:8px">
-            <input id="s_circle" placeholder="Truque/1/2..." style="width:100px" />
-            <input id="s_name" placeholder="Nome da magia" />
-            <input id="s_time" placeholder="Tempo" style="width:140px" />
-            <input id="s_range" placeholder="Alcance" style="width:140px" />
-            <input id="s_flags" placeholder="C / R / M" style="width:100px" />
-            <input id="s_notes" placeholder="Notas" />
-            <button id="addSpell" class="small-btn">Adicionar</button>
-          </div>
-        </div>
-      </section>
-
-    </main>
-
-    <!-- Right column -->
-    <aside class="right-col">
-      <div class="card">
-        <strong>Resumo Rápido</strong>
-        <div style="margin-top:12px">
-          <div style="display:flex;gap:12px">
-            <div style="flex:1"><label>HP</label><input id="hp_quick" readonly /></div>
-            <div style="flex:1"><label>CA</label><input id="ca_quick" readonly /></div>
-          </div>
-          <div style="margin-top:12px"><label>Iniciativa</label><input id="iniciativa_quick" readonly /></div>
+          <input type="checkbox" id="toggleCircular" style="margin-top:8px"> <span style="font-size:12px">Circular</span>
         </div>
       </div>
+    </section>
 
-      <div class="card">
-        <strong>Moedas</strong>
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px">
-          <div><label>PC</label><input id="pc" data-key="pc" type="number" /></div>
-          <div><label>PP</label><input id="pp" data-key="pp" type="number" /></div>
-          <div><label>PE</label><input id="pe" data-key="pe" type="number" /></div>
-          <div><label>PO</label><input id="po" data-key="po" type="number" /></div>
-          <div><label>PL</label><input id="pl" data-key="pl" type="number" /></div>
-        </div>
+    <section class="card" style="background:#fff">
+      <div class="section-header"><strong>Atributos e Modificadores</strong></div>
+      <div class="attributes">
+        <div class="attr"><label>FOR</label><input id="forca" data-key="forca" type="number" value="10" /><div class="score" id="forca_score">10</div><div class="mod" id="forca_mod">+0</div></div>
+        <div class="attr"><label>DES</label><input id="destreza" data-key="destreza" type="number" value="10" /><div class="score" id="destreza_score">10</div><div class="mod" id="destreza_mod">+0</div></div>
+        <div class="attr"><label>CON</label><input id="constituicao" data-key="constituicao" type="number" value="10" /><div class="score" id="constituicao_score">10</div><div class="mod" id="constituicao_mod">+0</div></div>
+        <div class="attr"><label>INT</label><input id="inteligencia" data-key="inteligencia" type="number" value="10" /><div class="score" id="inteligencia_score">10</div><div class="mod" id="inteligencia_mod">+0</div></div>
+        <div class="attr"><label>SAB</label><input id="sabedoria" data-key="sabedoria" type="number" value="10" /><div class="score" id="sabedoria_score">10</div><div class="mod" id="sabedoria_mod">+0</div></div>
+        <div class="attr"><label>CAR</label><input id="carisma" data-key="carisma" type="number" value="10" /><div class="score" id="carisma_score">10</div><div class="mod" id="carisma_mod">+0</div></div>
       </div>
+    </section>
 
-      <div class="card">
-        <strong>Exportar / Imprimir</strong>
-        <div style="margin-top:12px;display:flex;gap:8px">
-          <button id="printBtn" class="small-btn">Imprimir</button>
-          <button id="downloadBtn" class="small-btn">Baixar JSON</button>
+    <section class="card" style="background:#fff">
+        <div class="section-header"><strong>Combate</strong></div>
+        <table id="weaponsTable">
+          <thead><tr><th>Arma</th><th>Bônus</th><th>Dano</th><th>Notas</th><th></th></tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="row" style="margin-top:10px">
+          <input id="w_name" placeholder="Nome">
+          <input id="w_bonus" placeholder="Atq" style="width:80px">
+          <input id="w_dmg" placeholder="Dano">
+          <button id="addWeapon" class="small-btn">Add</button>
         </div>
-      </div>
-    </aside>
+    </section>
+  </main>
 
-    <footer style="grid-column:1/-1;margin-top:12px;color:var(--muted);font-size:13px">Design atualizado: degradê branco→cinza, tipografia refinada, microinterações e crop 1:1 do avatar.</footer>
-  </div>
+  <aside class="right-col">
+    <div class="card" style="background:#111827; color:#fff">
+      <strong>Status Rápidos</strong>
+      <div style="margin-top:15px">
+        <label style="color:#9ca3af">Vida (HP)</label>
+        <div style="display:flex; gap:5px">
+            <input id="hp_atual" data-key="hp_atual" type="number" placeholder="Atual" style="background:#1f2937; color:#fff; border:0">
+            <input id="hp_max" data-key="hp_max" type="number" placeholder="Máx" style="background:#1f2937; color:#fff; border:0">
+        </div>
+        <label style="color:#9ca3af; margin-top:10px">Iniciativa</label>
+        <input id="iniciativa" readonly style="background:#1f2937; color:var(--accent); border:0; font-weight:800; font-size:18px">
+      </div>
+    </div>
+  </aside>
+</div>
 
 <script>
-/* ---------- Utilitários ---------- */
 const qs = sel => document.querySelector(sel);
 const qsa = sel => Array.from(document.querySelectorAll(sel));
-const storageKey = 'fichaRPG_v2';
+const storageKey = 'ficha_rpg_polished';
 
-/* ---------- Proficiência por nível ---------- */
-function profFromLevel(level){
-  level = parseInt(level || 1, 10);
-  if(level <= 4) return 2;
-  if(level <= 8) return 3;
-  if(level <= 12) return 4;
-  if(level <= 16) return 5;
-  return 6;
-}
+/* --- Lógica de Atributos --- */
+function modFromScore(s) { return Math.floor((s - 10) / 2); }
+function formatMod(n) { return (n >= 0 ? '+' : '') + n; }
 
-/* ---------- Modificadores ---------- */
-function modFromScore(score){
-  return Math.floor((score - 10) / 2);
-}
-function formatMod(n){
-  return (n>=0?'+':'') + n;
-}
-
-/* ---------- Atualizações dinâmicas ---------- */
-function updateAttributes(){
+function updateAttributes() {
   const attrs = ['forca','destreza','constituicao','inteligencia','sabedoria','carisma'];
-  attrs.forEach(a=>{
-    const el = qs('#'+a);
-    const val = parseInt(el.value || el.textContent || 10,10);
+  attrs.forEach(a => {
+    const val = parseInt(qs('#'+a).value || 10, 10);
     qs('#'+a+'_score').textContent = val;
-    const m = modFromScore(val);
-    qs('#'+a+'_mod').textContent = formatMod(m);
+    qs('#'+a+'_mod').textContent = formatMod(modFromScore(val));
   });
-
-  const auto = qs('#autoProf').checked;
-  const nivel = parseInt(qs('#nivel').value || 1, 10);
-  if(auto){
-    const prof = profFromLevel(nivel);
-    qs('#prof_bonus').value = prof;
-    qs('#prof_bonus').readOnly = true;
-  } else {
-    qs('#prof_bonus').readOnly = false;
-  }
-
-  const dex = parseInt(qs('#destreza').value||10,10);
-  qs('#iniciativa').value = formatMod(modFromScore(dex));
-  qs('#iniciativa_quick').value = qs('#iniciativa').value;
-
-  const sab = parseInt(qs('#sabedoria').value||10,10);
-  const sabMod = modFromScore(sab);
-  const prof = parseInt(qs('#prof_bonus').value||0,10);
-  const percCheck = qsa('.skill-check').find(i=>i.dataset.key==='Percepcao');
-  const passive = 10 + sabMod + ((percCheck && percCheck.checked)?prof:0);
-  qs('#percepcao_passiva').value = passive;
-
-  qsa('.skill-check').forEach(cb=>{
-    const attr = cb.dataset.attr;
-    const key = cb.dataset.key;
-    const attrVal = parseInt(qs('#'+attr).value||10,10);
-    const val = modFromScore(attrVal) + (cb.checked?parseInt(qs('#prof_bonus').value||0,10):0);
-    const el = qs('#'+key+'_val');
-    if(el) el.textContent = formatMod(val);
-  });
-
-  const atual = parseInt(qs('#hp_atual').value||0,10);
-  const temp = parseInt(qs('#hp_temp').value||0,10);
-  const max = parseInt(qs('#hp_max').value||0,10);
-  qs('#hp_quick').value = `${atual}/${max} (+${temp})`;
-  qs('#ca_quick').value = qs('#ca').value || '';
+  const dexVal = parseInt(qs('#destreza').value || 10, 10);
+  qs('#iniciativa').value = formatMod(modFromScore(dexVal));
 }
 
-/* ---------- Weapons / Spells ---------- */
-function addWeaponRow(obj){
-  const tbody = qs('#weaponsTable tbody');
-  const tr = document.createElement('tr');
-  tr.className = 'add-anim';
-  tr.innerHTML = `<td>${obj.name}</td><td>${obj.bonus}</td><td>${obj.dmg}</td><td>${obj.notes}</td><td><button class="del">X</button></td>`;
-  tr.querySelector('.del').addEventListener('click',()=>{tr.remove();});
-  tbody.appendChild(tr);
-}
-function addSpellRow(obj){
-  const tbody = qs('#spellsTable tbody');
-  const tr = document.createElement('tr');
-  tr.className = 'add-anim';
-  tr.innerHTML = `<td>${obj.circle}</td><td>${obj.name}</td><td>${obj.time}</td><td>${obj.range}</td><td>${obj.flags}</td><td>${obj.notes}</td><td><button class="del">X</button></td>`;
-  tr.querySelector('.del').addEventListener('click',()=>{tr.remove();});
-  tbody.appendChild(tr);
-}
+/* --- Avatar: Drag & Drop Apenas --- */
+const avPreview = qs('#avatarPreview');
 
-/* ---------- Avatar handling: crop central 1:1 + circular preview toggle ---------- */
-function createPlaceholder(){
-  const ph = document.createElement('span');
-  ph.id = 'avatarPlaceholder';
-  ph.className = 'muted';
-  ph.textContent = 'Sem imagem';
-  return ph;
-}
-function setAvatarFromDataURL(dataURL){
-  const preview = qs('#avatarPreview');
-  preview.innerHTML = '';
-  if(!dataURL){
-    preview.appendChild(createPlaceholder());
-    preview.dataset.image = '';
-    return;
-  }
-  const img = new Image();
-  img.onload = () => {
-    preview.innerHTML = '';
-    preview.appendChild(img);
-    preview.dataset.image = dataURL;
-    applyCircularMask(); // aplica máscara conforme toggle
-  };
-  img.onerror = () => {
-    preview.innerHTML = '';
-    preview.appendChild(createPlaceholder());
-    preview.dataset.image = '';
-    alert('Erro ao carregar a imagem. Tente outro arquivo.');
-  };
-  img.src = dataURL;
-}
+avPreview.addEventListener('dragover', e => {
+  e.preventDefault();
+  avPreview.style.borderColor = 'var(--accent)';
+  avPreview.style.background = '#f3f0ff';
+});
 
-/* central crop 1:1 via canvas; retorna dataURL */
-function cropCenterSquareImage(img, mime='image/jpeg', quality=0.92, size=null){
-  const w = img.width, h = img.height;
-  const side = Math.min(w,h);
-  const sx = Math.floor((w - side)/2);
-  const sy = Math.floor((h - side)/2);
-  const canvas = document.createElement('canvas');
-  const outSize = size || side; // se size fornecido, redimensiona para esse tamanho
-  canvas.width = outSize; canvas.height = outSize;
-  const ctx = canvas.getContext('2d');
-  ctx.drawImage(img, sx, sy, side, side, 0, 0, outSize, outSize);
-  return canvas.toDataURL(mime, quality);
-}
+avPreview.addEventListener('dragleave', () => {
+  avPreview.style.borderColor = 'rgba(0,0,0,0.1)';
+  avPreview.style.background = '#fff';
+});
 
-/* redimensiona e cropa arquivo para dataURL */
-function resizeAndCropFileToDataURL(file, maxDim = 1200, quality = 0.9){
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onerror = () => reject(new Error('Falha ao ler o arquivo.'));
-    reader.onload = () => {
-      const img = new Image();
-      img.onerror = () => reject(new Error('Arquivo não é uma imagem válida.'));
-      img.onload = () => {
-        // se imagem muito grande, redimensiona mantendo proporção antes do crop
-        const maxSide = Math.max(img.width, img.height);
-        if(maxSide > maxDim){
-          // redimensiona para que maior lado = maxDim
-          const scale = maxDim / maxSide;
-          const canvas = document.createElement('canvas');
-          canvas.width = Math.round(img.width * scale);
-          canvas.height = Math.round(img.height * scale);
-          const ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-          const resized = new Image();
-          resized.onload = () => {
-            try{
-              const cropped = cropCenterSquareImage(resized, file.type === 'image/png' ? 'image/png' : 'image/jpeg', quality, Math.min(canvas.width, canvas.height));
-              resolve(cropped);
-            }catch(e){ reject(e); }
-          };
-          resized.src = canvas.toDataURL(file.type === 'image/png' ? 'image/png' : 'image/jpeg', quality);
-        } else {
-          try{
-            const cropped = cropCenterSquareImage(img, file.type === 'image/png' ? 'image/png' : 'image/jpeg', quality);
-            resolve(cropped);
-          }catch(e){ reject(e); }
-        }
-      };
-      img.src = reader.result;
-    };
-    reader.readAsDataURL(file);
-  });
-}
-
-/* processa arquivo e atualiza preview */
-async function processAndSetAvatar(file){
-  if(!file) return;
-  try{
-    const maxInlineBytes = 1.5 * 1024 * 1024;
-    let dataURL;
-    if(file.size > maxInlineBytes){
-      dataURL = await resizeAndCropFileToDataURL(file, 1000, 0.8);
-    } else {
-      dataURL = await resizeAndCropFileToDataURL(file, 1200, 0.92);
+avPreview.addEventListener('drop', e => {
+  e.preventDefault();
+  avPreview.style.borderColor = 'rgba(0,0,0,0.1)';
+  avPreview.style.background = '#fff';
+  
+  if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+    const file = e.dataTransfer.files[0];
+    if (file.type.startsWith('image/')) {
+        processAndSetAvatar(file);
     }
-    setAvatarFromDataURL(dataURL);
-  } catch(err){
-    console.error(err);
-    alert('Não foi possível processar a imagem: ' + (err.message || err));
-    setAvatarFromDataURL(null);
   }
+});
+
+async function processAndSetAvatar(file) {
+  const reader = new FileReader();
+  reader.onload = e => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      const side = Math.min(img.width, img.height);
+      canvas.width = 400; canvas.height = 400;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, (img.width-side)/2, (img.height-side)/2, side, side, 0, 0, 400, 400);
+      const dataURL = canvas.toDataURL('image/jpeg', 0.8);
+      avPreview.innerHTML = `<img src="${dataURL}">`;
+      avPreview.dataset.image = dataURL;
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
 }
 
-/* aplica máscara circular no preview se toggle ativo */
-function applyCircularMask(){
-  const preview = qs('#avatarPreview');
-  const toggle = qs('#toggleCircular').checked;
-  if(toggle){
-    preview.style.borderRadius = '50%';
-  } else {
-    preview.style.borderRadius = '12px';
-  }
-}
+qs('#toggleCircular').onchange = e => {
+    avPreview.style.borderRadius = e.target.checked ? '50%' : '12px';
+};
 
-/* ---------- Save / Load / Export / Import ---------- */
-function gatherData(){
-  const data = {};
-  qsa('[data-key]').forEach(el=>{
-    const key = el.dataset.key;
-    if(el.type === 'checkbox') data[key] = el.checked;
-    else if(el.contentEditable === "true") data[key] = el.innerText.trim();
-    else data[key] = el.value;
+/* --- Gerenciamento de Dados --- */
+function gatherData() {
+  const data = { weapons: [] };
+  qsa('[data-key]').forEach(el => {
+    data[el.dataset.key] = el.contentEditable === 'true' ? el.innerText : el.value;
   });
-  ['forca','destreza','constituicao','inteligencia','sabedoria','carisma'].forEach(a=>{
-    data[a] = qs('#'+a).value;
+  data.avatar = avPreview.dataset.image || '';
+  data.circular = qs('#toggleCircular').checked;
+  qsa('#weaponsTable tbody tr').forEach(tr => {
+      const tds = tr.querySelectorAll('td');
+      data.weapons.push({n: tds[0].innerText, b: tds[1].innerText, d: tds[2].innerText});
   });
-  data.skills = {};
-  qsa('.skill-check').forEach(cb=>{
-    data.skills[cb.dataset.key] = {checked:cb.checked, attr:cb.dataset.attr};
-  });
-  data.weapons = Array.from(qs('#weaponsTable tbody').children).map(tr=>{
-    const tds = tr.querySelectorAll('td');
-    return {name:tds[0].textContent, bonus:tds[1].textContent, dmg:tds[2].textContent, notes:tds[3].textContent};
-  });
-  data.spells = Array.from(qs('#spellsTable tbody').children).map(tr=>{
-    const tds = tr.querySelectorAll('td');
-    return {circle:tds[0].textContent, name:tds[1].textContent, time:tds[2].textContent, range:tds[3].textContent, flags:tds[4].textContent, notes:tds[5].textContent};
-  });
-  data.avatarDataURL = qs('#avatarPreview').dataset.image || '';
-  data.avatarCircular = !!qs('#toggleCircular').checked;
   return data;
 }
-function applyData(data){
+
+function applyData(data) {
   if(!data) return;
-  qsa('[data-key]').forEach(el=>{
-    const key = el.dataset.key;
-    if(key in data){
-      if(el.type === 'checkbox') el.checked = !!data[key];
-      else if(el.contentEditable === "true") el.innerText = data[key] || '';
-      else el.value = data[key] || '';
-    }
+  qsa('[data-key]').forEach(el => {
+    const val = data[el.dataset.key];
+    if (el.contentEditable === 'true') el.innerText = val || '';
+    else el.value = val || '';
   });
-  ['forca','destreza','constituicao','inteligencia','sabedoria','carisma'].forEach(a=>{
-    if(data[a] !== undefined) qs('#'+a).value = data[a];
-  });
-  qsa('.skill-check').forEach(cb=>{
-    const key = cb.dataset.key;
-    if(data.skills && data.skills[key]) cb.checked = !!data.skills[key].checked;
-  });
-  qs('#weaponsTable tbody').innerHTML = '';
-  (data.weapons||[]).forEach(addWeaponRow);
-  qs('#spellsTable tbody').innerHTML = '';
-  (data.spells||[]).forEach(addSpellRow);
-  if(data.avatarDataURL){
-    setAvatarFromDataURL(data.avatarDataURL);
-  } else {
-    setAvatarFromDataURL(null);
+  if(data.avatar) {
+      avPreview.innerHTML = `<img src="${data.avatar}">`;
+      avPreview.dataset.image = data.avatar;
   }
-  if(data.avatarCircular !== undefined) qs('#toggleCircular').checked = !!data.avatarCircular;
-  applyCircularMask();
-  updateAttributes();
-}
-function saveToLocal(){
-  const data = gatherData();
-  localStorage.setItem(storageKey, JSON.stringify(data));
-  alert('Ficha salva no navegador.');
-}
-function loadFromLocal(){
-  const raw = localStorage.getItem(storageKey);
-  if(!raw){ alert('Nenhuma ficha salva localmente.'); return; }
-  applyData(JSON.parse(raw));
-  alert('Ficha carregada.');
-}
-function exportJSON(){
-  const data = gatherData();
-  const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = 'ficha-rpg.json'; a.click();
-  URL.revokeObjectURL(url);
-}
-function importJSON(){
-  const inp = document.createElement('input');
-  inp.type='file'; inp.accept='application/json';
-  inp.onchange = e=>{
-    const f = e.target.files[0];
-    if(!f) return;
-    const reader = new FileReader();
-    reader.onload = ev=>{
-      try{
-        const data = JSON.parse(ev.target.result);
-        applyData(data);
-        alert('JSON importado.');
-      }catch(err){ alert('Arquivo inválido.'); }
-    };
-    reader.readAsText(f);
-  };
-  inp.click();
-}
-function clearAll(){
-  if(!confirm('Limpar todos os campos?')) return;
-  qsa('[data-key]').forEach(el=>{
-    if(el.type === 'checkbox') el.checked = false;
-    else if(el.contentEditable === "true") el.innerText = '';
-    else el.value = '';
-  });
-  qs('#weaponsTable tbody').innerHTML = '';
-  qs('#spellsTable tbody').innerHTML = '';
-  setAvatarFromDataURL(null);
+  qs('#toggleCircular').checked = !!data.circular;
+  avPreview.style.borderRadius = data.circular ? '50%' : '12px';
+  const tbody = qs('#weaponsTable tbody');
+  tbody.innerHTML = '';
+  (data.weapons || []).forEach(w => addWeaponRow(w));
   updateAttributes();
 }
 
-/* ---------- Event wiring ---------- */
-document.addEventListener('input', e=>{
-  if(e.target.matches('[data-key]') || e.target.matches('.skill-check') || e.target.matches('#prof_bonus')){
+function addWeaponRow(w) {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${w.n}</td><td>${w.b}</td><td>${w.d}</td><td>-</td><td><button onclick="this.parentElement.parentElement.remove()">X</button></td>`;
+    qs('#weaponsTable tbody').appendChild(tr);
+}
+
+/* --- Eventos --- */
+qs('#addWeapon').onclick = () => {
+    addWeaponRow({n: qs('#w_name').value, b: qs('#w_bonus').value, d: qs('#w_dmg').value});
+    qs('#w_name').value = ''; qs('#w_bonus').value = ''; qs('#w_dmg').value = '';
+};
+
+qs('#saveBtn').onclick = () => {
+    localStorage.setItem(storageKey, JSON.stringify(gatherData()));
+    alert('Salvo!');
+};
+
+qs('#exportBtn').onclick = () => {
+    const blob = new Blob([JSON.stringify(gatherData())], {type: 'application/json'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'ficha.json';
+    a.click();
+};
+
+qs('#clearBtn').onclick = () => { if(confirm('Limpar tudo?')) { localStorage.removeItem(storageKey); location.reload(); } };
+
+qsa('input').forEach(i => i.oninput = updateAttributes);
+
+window.onload = () => {
+    const saved = localStorage.getItem(storageKey);
+    if(saved) applyData(JSON.parse(saved));
     updateAttributes();
-  }
-});
-qs('#addWeapon').addEventListener('click', ()=>{
-  const obj = {name:qs('#w_name').value, bonus:qs('#w_bonus').value, dmg:qs('#w_dmg').value, notes:qs('#w_notes').value};
-  addWeaponRow(obj);
-  qs('#w_name').value=''; qs('#w_bonus').value=''; qs('#w_dmg').value=''; qs('#w_notes').value='';
-});
-qs('#addSpell').addEventListener('click', ()=>{
-  const obj = {circle:qs('#s_circle').value, name:qs('#s_name').value, time:qs('#s_time').value, range:qs('#s_range').value, flags:qs('#s_flags').value, notes:qs('#s_notes').value};
-  addSpellRow(obj);
-  qs('#s_circle').value=''; qs('#s_name').value=''; qs('#s_time').value=''; qs('#s_range').value=''; qs('#s_flags').value=''; qs('#s_notes').value='';
-});
-qs('#saveBtn').addEventListener('click', saveToLocal);
-qs('#loadBtn').addEventListener('click', loadFromLocal);
-qs('#exportBtn').addEventListener('click', exportJSON);
-qs('#importBtn').addEventListener('click', importJSON);
-qs('#clearBtn').addEventListener('click', clearAll);
-qs('#printBtn').addEventListener('click', ()=>window.print());
-qs('#downloadBtn').addEventListener('click', exportJSON);
-
-/* ---------- Avatar UI events ---------- */
-qs('#uploadAvatarBtn').addEventListener('click', ()=>qs('#avatarInput').click());
-qs('#removeAvatarBtn').addEventListener('click', ()=>{
-  qs('#avatarInput').value = '';
-  setAvatarFromDataURL(null);
-});
-qs('#avatarInput').addEventListener('change', e=>{
-  const f = e.target.files && e.target.files[0];
-  if(!f) return;
-  processAndSetAvatar(f);
-});
-const previewEl = qs('#avatarPreview');
-['dragenter','dragover'].forEach(ev=>{
-  previewEl.addEventListener(ev, (e)=>{ e.preventDefault(); e.stopPropagation(); previewEl.classList.add('dragover'); });
-});
-['dragleave','drop'].forEach(ev=>{
-  previewEl.addEventListener(ev, (e)=>{ e.preventDefault(); e.stopPropagation(); previewEl.classList.remove('dragover'); });
-});
-previewEl.addEventListener('drop', (e)=>{
-  const f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
-  if(!f) return;
-  processAndSetAvatar(f);
-});
-qs('#toggleCircular').addEventListener('change', applyCircularMask);
-
-/* ---------- Drag & collapse behavior ---------- */
-qsa('.section-header').forEach(h=>{
-  h.addEventListener('dragstart', e=>{
-    h.classList.add('dragging');
-    e.dataTransfer.setData('text/plain', h.parentElement.dataset.section);
-  });
-  h.addEventListener('dragend', ()=>h.classList.remove('dragging'));
-});
-const main = qs('#mainSheet');
-main.addEventListener('dragover', e=>e.preventDefault());
-main.addEventListener('drop', e=>{
-  e.preventDefault();
-  const id = e.dataTransfer.getData('text/plain');
-  const src = qsa(`[data-section="${id}"]`)[0];
-  if(!src) return;
-  const target = e.target.closest('.card');
-  if(target && target !== src) main.insertBefore(src, target);
-});
-qsa('.collapse').forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    const target = qs('#'+btn.dataset.target);
-    if(!target) return;
-    if(target.style.display === 'none'){ target.style.display='block'; btn.textContent='—'; }
-    else { target.style.display='none'; btn.textContent='+'; }
-  });
-});
-
-/* ---------- Init ---------- */
-(function init(){
-  qs('#nome').innerText = 'Nome do Personagem';
-  qs('#hp_max').value = 10;
-  qs('#hp_atual').value = 10;
-  if(!qs('#nivel').value) qs('#nivel').value = 1;
-  setAvatarFromDataURL(null);
-  updateAttributes();
-  const raw = localStorage.getItem(storageKey);
-  if(raw) applyData(JSON.parse(raw));
-})();
+};
 </script>
+
 </body>
 </html>
