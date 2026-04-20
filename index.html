@@ -80,15 +80,23 @@
 
   .right-col{display:flex;flex-direction:column;gap:12px}
   .small-btn{padding:8px 10px;border-radius:8px;border:0;background:var(--accent);color:#071025;font-weight:700;cursor:pointer;font-size:13px}
+<div class="avatar-wrap">
+  <div class="avatar-preview" id="avatarPreview" title="Arraste uma imagem aqui">
+    <span id="avatarPlaceholder" class="muted">Sem imagem</span>
+  </div>
 
- /* Avatar: layout fix — evita overflow e mantém botões dentro do card */
-.avatar-wrap{
-  display:flex;
-  gap:14px;
-  align-items:flex-start;       /* alinha topo para que controles não "desçam" */
-  width:100%;
-  box-sizing:border-box;
-}
+  <div class="avatar-controls">
+    <input id="avatarInput" type="file" accept="image/*" style="display:none" />
+
+    <div class="btn-row">
+      <button class="small-btn" id="uploadAvatarBtn" type="button">Carregar</button>
+      <button class="small-btn" id="removeAvatarBtn" type="button">Remover</button>
+    </div>
+
+    <div class="muted" style="font-size:13px">Imagem salva localmente e incluída no JSON exportado.</div>
+  </div>
+</div>
+
 .avatar-preview{
   width:180px;
   height:180px;
