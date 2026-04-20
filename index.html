@@ -3,423 +3,226 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Ficha RPG — Visual Polido Completo</title>
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<title>Ficha RPG — Versão Definitiva</title>
 <style>
   :root{
     --bg-start: #1c1c1c;
     --bg-end:   #e6e6e6;
-    --card-start: #696969;
-    --card-end:   #f3f4f6;
+    --card-start: #ffffff;
+    --card-end:   #f8fafc;
     --accent: #7c5cff;
     --accent-2: #4b5563;
-    --muted: #4b5563;
-    --text: #000000;
+    --muted: #64748b;
+    --text: #1e293b;
     --radius: 12px;
-    --shadow: 0 10px 30px rgba(15,23,36,0.08);
-    --gap: 18px;
-    --field-height:48px;
-    --input-padding:12px;
+    --shadow: 0 10px 25px rgba(0,0,0,0.1);
+    --gap: 20px;
   }
 
-  *{box-sizing:border-box}
-  html,body{height:100%}
+  *{box-sizing:border-box; font-family: 'Inter', system-ui, sans-serif;}
   body{
-    margin:0;
-    font-family:Inter, system-ui, -apple-system, sans-serif;
-    background: linear-gradient(180deg, var(--bg-start) 0%, var(--bg-end) 100%);
-    color:var(--text);
-    -webkit-font-smoothing:antialiased;
-    padding:28px;
+    margin:0; padding:25px;
+    background: linear-gradient(180deg, #121212 0%, #2d2d2d 100%);
+    color:var(--text); min-height:100vh;
   }
 
   .container{
-    max-width:1320px;
-    margin:0 auto;
-    display:grid;
-    grid-template-columns: 1fr 380px;
-    gap:var(--gap);
-    align-items:start;
+    max-width:1300px; margin:0 auto;
+    display:grid; grid-template-columns: 1fr 350px; gap:var(--gap);
   }
-  header{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
-  header h1{margin:0;font-size:20px;color:var(--accent);letter-spacing:0.2px}
+
+  header{grid-column:1/-1; display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;}
+  header h1{color:var(--accent); font-size:24px; margin:0; text-transform: uppercase; letter-spacing: 1px;}
   
-  .controls{display:flex;gap:10px}
+  .btn-group{display:flex; gap:10px;}
   .btn{
-    background:linear-gradient(90deg,var(--accent),#5f3df5);
-    color:white;border:0;padding:10px 12px;border-radius:10px;font-weight:700;cursor:pointer;
-    box-shadow:var(--shadow);transition:transform .12s ease;
+    background: var(--accent); color:white; border:0; padding:10px 20px; 
+    border-radius:8px; font-weight:700; cursor:pointer; transition: 0.2s;
   }
-  .btn:active{transform:translateY(1px)}
-  .btn-ghost{
-    background:transparent;border:1px solid rgba(15,23,36,0.1);padding:10px 12px;border-radius:10px;color:var(--accent-2);cursor:pointer;
-  }
+  .btn:hover{filter: brightness(1.1); transform: translateY(-1px);}
+  .btn-secondary{background: #334155; color: white;}
 
   .card{
-    background: linear-gradient(180deg,var(--card-start), var(--card-end));
-    padding:16px;border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid rgba(15,23,36,0.04);
+    background: white; padding:20px; border-radius:var(--radius); 
+    box-shadow:var(--shadow); margin-bottom:var(--gap);
   }
-  .sheet{display:grid;grid-template-columns:1fr;gap:14px}
 
-  .section-header{display:flex;justify-content:space-between;align-items:center;padding:6px 0;margin-bottom:6px}
-  .section-header strong{font-size:15px}
-  .collapse{background:none;border:0;color:var(--muted);cursor:pointer;font-size:18px}
+  .section-title{
+    display:block; font-size:13px; font-weight:800; color:var(--muted);
+    text-transform:uppercase; margin-bottom:15px; border-bottom:1px solid #f1f5f9; padding-bottom:5px;
+  }
 
-  .row{display:flex;gap:12px;align-items:center;margin-bottom:8px}
-  .field{background:transparent;padding:6px;border-radius:10px;min-width:0}
-  label{display:block;font-size:12px;color:var(--muted);margin-bottom:8px}
+  .field-group{display:grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap:15px;}
+  .field{display:flex; flex-direction:column; gap:5px;}
+  label{font-size:11px; font-weight:700; color:var(--muted); text-transform: uppercase;}
   
-  input[type="text"], input[type="number"], select, textarea{
-    width:100%;padding:var(--input-padding);border-radius:8px;border:1px solid rgba(15,23,36,0.06);
-    background:rgba(255,255,255,0.9);color:var(--text);height:var(--field-height);font-size:14px;outline:none;
+  input, select, textarea{
+    padding:10px; border-radius:6px; border:1px solid #e2e8f0;
+    font-size:14px; outline:none; background: #fcfcfc;
   }
-  
-  .big{font-size:20px;padding:12px 14px;min-height:52px;border-radius:10px;background:rgba(255,255,255,0.95);border:1px solid rgba(15,23,36,0.04);font-weight:700}
+  input:focus{border-color:var(--accent); background: #fff;}
 
-  .attributes{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-  .attr{padding:12px;border-radius:10px;background:#ffffff;border:1px solid rgba(15,23,36,0.03);text-align:center}
-  .attr .score{font-size:22px;font-weight:700;margin-top:6px}
-  .attr .mod{font-size:14px;color:var(--muted);margin-top:6px}
+  .big-input{font-size:22px; font-weight:800; border:0; background:transparent; padding:0; width:100%; color:var(--accent);}
 
-  .skills-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-  .skill{display:flex;align-items:center;gap:10px;padding:8px;border-radius:8px;background:#fff;border:1px solid rgba(15,23,36,0.03)}
-
-  table{width:100%;border-collapse:collapse;font-size:14px}
-  th,td{padding:8px;border-bottom:1px dashed rgba(15,23,36,0.1);text-align:left}
-  .small-btn{padding:8px 10px;border-radius:8px;border:0;background:var(--accent);color:white;cursor:pointer;font-weight:700}
-
-  /* Avatar Drop Zone */
-  .avatar-preview{
-    width:180px;height:180px;border-radius:12px;
-    background:#fff;display:flex;align-items:center;justify-content:center;
-    overflow:hidden;border:2px dashed rgba(15,23,36,0.1);
-    transition: all 0.2s ease;
-    cursor: default;
+  /* Atributos */
+  .attr-grid{display:grid; grid-template-columns: repeat(6, 1fr); gap:10px;}
+  .attr-box{
+    text-align:center; padding:10px; background:#f8fafc; border-radius:10px;
+    border:1px solid #e2e8f0;
   }
-  .avatar-preview img{width:100%;height:100%;object-fit:cover}
+  .attr-box input{width:50px; text-align:center; font-size:18px; font-weight:800; padding:5px; margin-bottom:5px;}
+  .attr-mod{display:block; font-size:16px; font-weight:700; color:var(--accent);}
 
-  @media (max-width:900px){ .container{grid-template-columns:1fr} }
+  /* Perícias - Lista Completa */
+  .skills-container{
+    display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin-top:10px;
+  }
+  .skill-item{
+    display:flex; align-items:center; gap:8px; font-size:13px;
+    padding:6px 10px; background:#fff; border:1px solid #f1f5f9; border-radius:6px;
+  }
+  .skill-item input[type="checkbox"]{width:16px; height:16px; cursor:pointer;}
+  .skill-val{margin-left:auto; font-weight:800; color:var(--accent); min-width:25px; text-align:right;}
+
+  /* Avatar */
+  .avatar-zone{
+    width:100%; aspect-ratio:1/1; border-radius:12px; border:2px dashed #cbd5e1;
+    display:flex; align-items:center; justify-content:center; overflow:hidden;
+    background:#f8fafc; transition:0.3s; position:relative; cursor: default;
+  }
+  .avatar-zone img{width:100%; height:100%; object-fit:cover;}
+  .avatar-hint{font-size:11px; color:var(--muted); text-align:center; padding:20px;}
+
+  table{width:100%; border-collapse:collapse; margin-top:10px;}
+  th{text-align:left; font-size:11px; color:var(--muted); padding:8px;}
+  td{padding:5px; border-bottom:1px solid #f1f5f9;}
+
+  @media (max-width: 1000px) {
+    .container{grid-template-columns: 1fr;}
+  }
 </style>
 </head>
 <body>
 
 <div class="container">
   <header>
-    <h1>Ficha RPG — Visual Polido</h1>
-    <div class="controls">
-      <button id="saveBtn" class="btn">Salvar</button>
-      <button id="loadBtn" class="btn-ghost">Carregar</button>
-      <button id="exportBtn" class="btn-ghost">Exportar JSON</button>
-      <button id="importBtn" class="btn-ghost">Importar</button>
-      <button id="clearBtn" class="btn-ghost">Limpar</button>
+    <h1>Ficha de Personagem</h1>
+    <div class="btn-group">
+      <button class="btn" onclick="saveData()">Salvar</button>
+      <button class="btn btn-secondary" onclick="exportJSON()">Exportar</button>
+      <button class="btn btn-secondary" onclick="clearData()">Resetar</button>
     </div>
   </header>
 
-  <main class="card sheet" id="mainSheet">
-    <section class="card">
-      <div class="section-header"><strong>Identidade</strong></div>
-      <div style="display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap">
-        <div style="flex:1; min-width:300px">
-          <div class="row">
-            <div class="field" style="flex:1">
-              <label>Nome do personagem</label>
-              <div id="nome" class="big" contenteditable="true" data-key="nome">Seu Nome</div>
-            </div>
-            <div class="field" style="width:180px"><label>Classe</label><input id="classe" data-key="classe" type="text" /></div>
-            <div class="field" style="width:120px"><label>Nível</label><input id="nivel" data-key="nivel" type="number" value="1" /></div>
-            <div class="field" style="width:140px"><label>XP</label><input id="xp" data-key="xp" type="number" /></div>
+  <main>
+    <div class="card">
+      <span class="section-title">Informações Básicas</span>
+      <div style="display:grid; grid-template-columns: 1fr 200px; gap:20px;">
+        <div class="field-group">
+          <div class="field" style="grid-column: span 2;">
+            <label>Nome do Personagem</label>
+            <input id="nome" data-key="nome" class="big-input" type="text" placeholder="Ex: Valerius">
           </div>
-          <div class="row">
-            <div class="field" style="flex:1"><label>Antecedente / Raça</label><input id="antecedente" data-key="antecedente" type="text" /></div>
-            <div class="field" style="width:160px"><label>CA</label><input id="ca" data-key="ca" type="number" /></div>
-            <div class="field" style="width:140px"><label>Escudo</label><input id="escudo" data-key="escudo" type="text" /></div>
-          </div>
+          <div class="field"><label>Classe/Nível</label><input id="classe" data-key="classe" type="text"></div>
+          <div class="field"><label>Antecedente</label><input id="antecedente" data-key="antecedente" type="text"></div>
+          <div class="field"><label>Raça</label><input id="raca" data-key="raca" type="text"></div>
+          <div class="field"><label>Tendência</label><input id="tendencia" data-key="tendencia" type="text"></div>
         </div>
         
-        <div style="width:200px">
-          <label>Avatar (Arraste aqui)</label>
-          <div class="avatar-preview" id="avatarPreview">
-            <span class="muted" style="font-size:11px; text-align:center">Arraste a imagem para cá</span>
+        <div class="field">
+          <label>Avatar (Solte a imagem aqui)</label>
+          <div class="avatar-zone" id="avatarPreview">
+            <div class="avatar-hint">Arraste uma foto para cá</div>
           </div>
-          <label style="margin-top:10px; display:flex; align-items:center; gap:5px">
-            <input id="toggleCircular" type="checkbox" /> Circular
+          <label style="margin-top:10px; display:flex; align-items:center; gap:5px; cursor:pointer">
+            <input type="checkbox" id="toggleCircular"> Estilo Circular
           </label>
         </div>
       </div>
-    </section>
+    </div>
 
-    <section class="card">
-      <div class="section-header"><strong>Pontos de Vida & Defesa</strong></div>
-      <div class="row">
-        <div class="field" style="width:140px"><label>Atual</label><input id="hp_atual" data-key="hp_atual" type="number" /></div>
-        <div class="field" style="width:140px"><label>Máx</label><input id="hp_max" data-key="hp_max" type="number" /></div>
-        <div class="field" style="width:140px"><label>Temp</label><input id="hp_temp" data-key="hp_temp" type="number" /></div>
-        <div class="field" style="width:160px"><label>Dado Vida</label><input id="dado_vida" data-key="dado_vida" type="text" placeholder="1d10" /></div>
-      </div>
-      <div class="row">
-        <div class="field" style="width:260px">
-          <label>Salvaguardas contra Morte</label>
-          <div style="display:flex;gap:10px">
-            <input id="death_success" data-key="death_success" type="number" placeholder="Sucessos (0-3)" />
-            <input id="death_fail" data-key="death_fail" type="number" placeholder="Falhas (0-3)" />
-          </div>
-        </div>
-        <div class="field" style="flex:1"><label>Inspiração</label><input id="inspiracao" data-key="inspiracao" type="text" /></div>
-      </div>
-    </section>
-
-    <section class="card">
-      <div class="section-header"><strong>Atributos e Perícias</strong></div>
-      <div class="attributes">
-        <div class="attr"><label>FOR</label><input id="forca" data-key="forca" type="number" value="10" /><div class="score" id="forca_score">10</div><div class="mod" id="forca_mod">+0</div></div>
-        <div class="attr"><label>DES</label><input id="destreza" data-key="destreza" type="number" value="10" /><div class="score" id="destreza_score">10</div><div class="mod" id="destreza_mod">+0</div></div>
-        <div class="attr"><label>CON</label><input id="constituicao" data-key="constituicao" type="number" value="10" /><div class="score" id="constituicao_score">10</div><div class="mod" id="constituicao_mod">+0</div></div>
-        <div class="attr"><label>INT</label><input id="inteligencia" data-key="inteligencia" type="number" value="10" /><div class="score" id="inteligencia_score">10</div><div class="mod" id="inteligencia_mod">+0</div></div>
-        <div class="attr"><label>SAB</label><input id="sabedoria" data-key="sabedoria" type="number" value="10" /><div class="score" id="sabedoria_score">10</div><div class="mod" id="sabedoria_mod">+0</div></div>
-        <div class="attr"><label>CAR</label><input id="carisma" data-key="carisma" type="number" value="10" /><div class="score" id="carisma_score">10</div><div class="mod" id="carisma_mod">+0</div></div>
-      </div>
-
-      <div style="margin-top:20px; display:grid; grid-template-columns: 1fr 300px; gap:20px">
-        <div class="card" style="background:rgba(255,255,255,0.5)">
-          <strong>Perícias</strong>
-          <div class="skills-grid" style="margin-top:10px">
-            <label class="skill"><input type="checkbox" class="skill-check" data-attr="destreza" data-key="Acrobacia" /> Acro <span id="Acrobacia_val">+0</span></label>
-            <label class="skill"><input type="checkbox" class="skill-check" data-attr="forca" data-key="Atletismo" /> Atle <span id="Atletismo_val">+0</span></label>
-            <label class="skill"><input type="checkbox" class="skill-check" data-attr="inteligencia" data-key="Arcanismo" /> Arca <span id="Arcanismo_val">+0</span></label>
-            <label class="skill"><input type="checkbox" class="skill-check" data-attr="sabedoria" data-key="Percepcao" /> Perc <span id="Percepcao_val">+0</span></label>
-            <label class="skill"><input type="checkbox" class="skill-check" data-attr="carisma" data-key="Persuasao" /> Pers <span id="Persuasao_val">+0</span></label>
-            <label class="skill"><input type="checkbox" class="skill-check" data-attr="destreza" data-key="Furtividade" /> Furt <span id="Furtividade_val">+0</span></label>
-          </div>
-        </div>
-        <div>
-          <div class="field"><label>Proficiência</label><input id="prof_bonus" data-key="prof_bonus" type="number" value="2" /></div>
-          <div class="field"><label>Percepção Passiva</label><input id="percepcao_passiva" readonly /></div>
-          <div class="field"><label>Iniciativa</label><input id="iniciativa" readonly /></div>
-        </div>
-      </div>
-    </section>
-
-    <section class="card">
-      <div class="section-header"><strong>Ataques</strong></div>
-      <table id="weaponsTable">
-        <thead><tr><th>Nome</th><th>Atq</th><th>Dano</th><th>Notas</th><th></th></tr></thead>
-        <tbody></tbody>
-      </table>
-      <div class="row" style="margin-top:10px">
-        <input id="w_name" placeholder="Nome" />
-        <input id="w_bonus" placeholder="+5" style="width:80px" />
-        <input id="w_dmg" placeholder="1d8+3" />
-        <button id="addWeapon" class="small-btn">Add</button>
-      </div>
-    </section>
-
-    <section class="card">
-      <div class="section-header"><strong>Magias</strong></div>
-      <table id="spellsTable">
-        <thead><tr><th>Nível</th><th>Nome</th><th>Tempo</th><th>Alcance</th><th>Notas</th><th></th></tr></thead>
-        <tbody></tbody>
-      </table>
-      <div class="row" style="margin-top:10px">
-        <input id="s_circle" placeholder="0" style="width:60px" />
-        <input id="s_name" placeholder="Nome" />
-        <input id="s_time" placeholder="1 ação" />
-        <button id="addSpell" class="small-btn">Add</button>
-      </div>
-    </section>
-  </main>
-
-  <aside class="right-col">
     <div class="card">
-      <strong>Moedas</strong>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px">
-        <div><label>PO</label><input id="po" data-key="po" type="number" /></div>
-        <div><label>PL</label><input id="pl" data-key="pl" type="number" /></div>
-        <div><label>PP</label><input id="pp" data-key="pp" type="number" /></div>
-        <div><label>PC</label><input id="pc" data-key="pc" type="number" /></div>
+      <span class="section-title">Atributos</span>
+      <div class="attr-grid">
+        <div class="attr-box"><label>FOR</label><input type="number" id="forca" data-key="forca" value="10"><span class="attr-mod" id="forca_mod">+0</span></div>
+        <div class="attr-box"><label>DES</label><input type="number" id="destreza" data-key="destreza" value="10"><span class="attr-mod" id="destreza_mod">+0</span></div>
+        <div class="attr-box"><label>CON</label><input type="number" id="constituicao" data-key="constituicao" value="10"><span class="attr-mod" id="constituicao_mod">+0</span></div>
+        <div class="attr-box"><label>INT</label><input type="number" id="inteligencia" data-key="inteligencia" value="10"><span class="attr-mod" id="inteligencia_mod">+0</span></div>
+        <div class="attr-box"><label>SAB</label><input type="number" id="sabedoria" data-key="sabedoria" value="10"><span class="attr-mod" id="sabedoria_mod">+0</span></div>
+        <div class="attr-box"><label>CAR</label><input type="number" id="carisma" data-key="carisma" value="10"><span class="attr-mod" id="carisma_mod">+0</span></div>
       </div>
     </div>
-    <div class="card" style="margin-top:18px">
-      <strong>Ações</strong>
-      <div style="display:flex; flex-direction:column; gap:10px; margin-top:10px">
-        <button onclick="window.print()" class="btn">Imprimir Ficha</button>
-        <button id="downloadBtn" class="btn-ghost">Baixar JSON</button>
+
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center">
+        <span class="section-title">Perícias & Proficiências</span>
+        <div class="field" style="width:100px; margin-bottom:10px">
+          <label>Bônus Prof.</label>
+          <input type="number" id="prof_bonus" data-key="prof_bonus" value="2" style="height:30px; text-align:center">
+        </div>
+      </div>
+      
+      <div class="skills-container" id="skillsContainer">
+        </div>
+    </div>
+
+    <div class="card">
+      <span class="section-title">Ataques & Conjuração</span>
+      <table id="weaponsTable">
+        <thead><tr><th>Arma</th><th>Bônus Atq</th><th>Dano/Tipo</th><th>Notas</th><th></th></tr></thead>
+        <tbody></tbody>
+      </table>
+      <div style="display:flex; gap:10px; margin-top:10px">
+        <input id="w_name" placeholder="Nome" style="flex:2">
+        <input id="w_atq" placeholder="+5" style="flex:1">
+        <input id="w_dmg" placeholder="1d8+3" style="flex:1">
+        <button class="btn" onclick="addWeapon()">Add</button>
+      </div>
+    </div>
+  </main>
+
+  <aside>
+    <div class="card" style="background:var(--accent); color:white;">
+      <span class="section-title" style="color:white; border-color:rgba(255,255,255,0.2)">Status Vitais</span>
+      <div class="field"><label style="color:white">Pontos de Vida</label>
+        <div style="display:flex; gap:5px; align-items:center">
+          <input id="hp_atual" data-key="hp_atual" type="number" style="width:100%; background:rgba(0,0,0,0.2); border:0; color:white">
+          <span>/</span>
+          <input id="hp_max" data-key="hp_max" type="number" style="width:100%; background:rgba(0,0,0,0.2); border:0; color:white">
+        </div>
+      </div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:15px">
+        <div class="field"><label style="color:white">CA</label><input id="ca" data-key="ca" type="number"></div>
+        <div class="field"><label style="color:white">Iniciativa</label><input id="iniciativa" readonly></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <span class="section-title">Sentidos</span>
+      <div class="field"><label>Percepção Passiva</label><input id="perc_passiva" readonly></div>
+      <div class="field" style="margin-top:10px"><label>Investigação Passiva</label><input id="inv_passiva" readonly></div>
+    </div>
+
+    <div class="card">
+      <span class="section-title">Moedas</span>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px">
+        <div class="field"><label>PO</label><input data-key="po" type="number"></div>
+        <div class="field"><label>PP</label><input data-key="pp" type="number"></div>
+        <div class="field"><label>PC</label><input data-key="pc" type="number"></div>
+        <div class="field"><label>PL</label><input data-key="pl" type="number"></div>
       </div>
     </div>
   </aside>
 </div>
 
 <script>
-const qs = sel => document.querySelector(sel);
-const qsa = sel => Array.from(document.querySelectorAll(sel));
-const storageKey = 'ficha_rpg_full_v3';
+const storageKey = 'rpg_sheet_data_final';
 
-/* --- Cálculos --- */
-function modFromScore(s) { return Math.floor((s - 10) / 2); }
-function formatMod(n) { return (n >= 0 ? '+' : '') + n; }
-
-function updateAttributes() {
-  const attrs = ['forca','destreza','constituicao','inteligencia','sabedoria','carisma'];
-  attrs.forEach(a => {
-    const val = parseInt(qs('#'+a).value || 10, 10);
-    qs('#'+a+'_score').textContent = val;
-    const m = modFromScore(val);
-    qs('#'+a+'_mod').textContent = formatMod(m);
-  });
-
-  const prof = parseInt(qs('#prof_bonus').value || 0, 10);
-  const dexMod = modFromScore(parseInt(qs('#destreza').value || 10, 10));
-  const sabMod = modFromScore(parseInt(qs('#sabedoria').value || 10, 10));
-
-  qs('#iniciativa').value = formatMod(dexMod);
-  
-  // Perícias
-  qsa('.skill-check').forEach(cb => {
-    const attr = cb.dataset.attr;
-    const attrVal = parseInt(qs('#'+attr).value || 10, 10);
-    const total = modFromScore(attrVal) + (cb.checked ? prof : 0);
-    qs('#' + cb.dataset.key + '_val').textContent = formatMod(total);
-  });
-
-  const percChecked = qsa('.skill-check').find(c => c.dataset.key === 'Percepcao').checked;
-  qs('#percepcao_passiva').value = 10 + sabMod + (percChecked ? prof : 0);
-}
-
-/* --- Avatar (Arraste e Solte Apenas) --- */
-const avPreview = qs('#avatarPreview');
-
-avPreview.addEventListener('dragover', e => {
-  e.preventDefault();
-  avPreview.style.borderColor = 'var(--accent)';
-  avPreview.style.background = 'rgba(124,92,255,0.05)';
-});
-
-avPreview.addEventListener('dragleave', () => {
-  avPreview.style.borderColor = 'rgba(15,23,36,0.1)';
-  avPreview.style.background = '#fff';
-});
-
-avPreview.addEventListener('drop', e => {
-  e.preventDefault();
-  avPreview.style.borderColor = 'rgba(15,23,36,0.1)';
-  avPreview.style.background = '#fff';
-  if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-    const file = e.dataTransfer.files[0];
-    if (file.type.startsWith('image/')) processAndSetAvatar(file);
-  }
-});
-
-async function processAndSetAvatar(file) {
-  const reader = new FileReader();
-  reader.onload = e => {
-    const img = new Image();
-    img.onload = () => {
-      const canvas = document.createElement('canvas');
-      const side = Math.min(img.width, img.height);
-      canvas.width = 400; canvas.height = 400;
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(img, (img.width-side)/2, (img.height-side)/2, side, side, 0, 0, 400, 400);
-      const dataURL = canvas.toDataURL('image/jpeg', 0.8);
-      avPreview.innerHTML = `<img src="${dataURL}">`;
-      avPreview.dataset.image = dataURL;
-    };
-    img.src = e.target.result;
-  };
-  reader.readAsDataURL(file);
-}
-
-qs('#toggleCircular').onchange = e => {
-  avPreview.style.borderRadius = e.target.checked ? '50%' : '12px';
-};
-
-/* --- Funções de Tabela --- */
-function addWeaponRow(obj) {
-  const tr = document.createElement('tr');
-  tr.innerHTML = `<td>${obj.name}</td><td>${obj.bonus}</td><td>${obj.dmg}</td><td>${obj.notes||''}</td><td><button class="del">X</button></td>`;
-  tr.querySelector('.del').onclick = () => tr.remove();
-  qs('#weaponsTable tbody').appendChild(tr);
-}
-
-function addSpellRow(obj) {
-  const tr = document.createElement('tr');
-  tr.innerHTML = `<td>${obj.circle}</td><td>${obj.name}</td><td>${obj.time}</td><td>${obj.range||'-'}</td><td>${obj.notes||''}</td><td><button class="del">X</button></td>`;
-  tr.querySelector('.del').onclick = () => tr.remove();
-  qs('#spellsTable tbody').appendChild(tr);
-}
-
-/* --- Dados --- */
-function gatherData() {
-  const data = { weapons: [], spells: [], skills: {} };
-  qsa('[data-key]').forEach(el => {
-    data[el.dataset.key] = el.contentEditable === 'true' ? el.innerText : el.value;
-  });
-  qsa('.skill-check').forEach(cb => data.skills[cb.dataset.key] = cb.checked);
-  qsa('#weaponsTable tbody tr').forEach(tr => {
-    const tds = tr.querySelectorAll('td');
-    data.weapons.push({name: tds[0].innerText, bonus: tds[1].innerText, dmg: tds[2].innerText, notes: tds[3].innerText});
-  });
-  qsa('#spellsTable tbody tr').forEach(tr => {
-    const tds = tr.querySelectorAll('td');
-    data.spells.push({circle: tds[0].innerText, name: tds[1].innerText, time: tds[2].innerText, range: tds[3].innerText, notes: tds[4].innerText});
-  });
-  data.avatar = avPreview.dataset.image || '';
-  data.circular = qs('#toggleCircular').checked;
-  return data;
-}
-
-function applyData(data) {
-  if(!data) return;
-  qsa('[data-key]').forEach(el => {
-    const val = data[el.dataset.key];
-    if (el.contentEditable === 'true') el.innerText = val || '';
-    else el.value = val || '';
-  });
-  qsa('.skill-check').forEach(cb => cb.checked = !!data.skills[cb.dataset.key]);
-  if(data.avatar) {
-    avPreview.innerHTML = `<img src="${data.avatar}">`;
-    avPreview.dataset.image = data.avatar;
-  }
-  qs('#toggleCircular').checked = !!data.circular;
-  avPreview.style.borderRadius = data.circular ? '50%' : '12px';
-  qs('#weaponsTable tbody').innerHTML = '';
-  (data.weapons || []).forEach(addWeaponRow);
-  qs('#spellsTable tbody').innerHTML = '';
-  (data.spells || []).forEach(addSpellRow);
-  updateAttributes();
-}
-
-/* --- Eventos --- */
-qs('#addWeapon').onclick = () => {
-  addWeaponRow({name: qs('#w_name').value, bonus: qs('#w_bonus').value, dmg: qs('#w_dmg').value});
-  qs('#w_name').value=''; qs('#w_bonus').value=''; qs('#w_dmg').value='';
-};
-qs('#addSpell').onclick = () => {
-  addSpellRow({circle: qs('#s_circle').value, name: qs('#s_name').value, time: qs('#s_time').value});
-  qs('#s_circle').value=''; qs('#s_name').value=''; qs('#s_time').value='';
-};
-
-qs('#saveBtn').onclick = () => { localStorage.setItem(storageKey, JSON.stringify(gatherData())); alert('Salvo!'); };
-qs('#loadBtn').onclick = () => applyData(JSON.parse(localStorage.getItem(storageKey)));
-qs('#exportBtn').onclick = () => {
-  const blob = new Blob([JSON.stringify(gatherData())], {type: 'application/json'});
-  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'ficha.json'; a.click();
-};
-qs('#importBtn').onclick = () => {
-  const input = document.createElement('input'); input.type='file';
-  input.onchange = e => {
-    const reader = new FileReader();
-    reader.onload = re => applyData(JSON.parse(re.target.result));
-    reader.readAsText(e.target.files[0]);
-  };
-  input.click();
-};
-qs('#clearBtn').onclick = () => { if(confirm('Limpar?')) { localStorage.removeItem(storageKey); location.reload(); } };
-
-qsa('input, .skill-check').forEach(i => i.oninput = updateAttributes);
-window.onload = () => {
-  const s = localStorage.getItem(storageKey);
-  if(s) applyData(JSON.parse(s));
-  updateAttributes();
-};
-</script>
-</body>
-</html>
+// Configuração de todas as perícias padrão D&D 5e
+const ALL_SKILLS = [
+  { name: 'Acrobacia', attr: 'destreza' },
+  { name: 'Adestrar Animais', attr: 'sabedoria' },
+  { name: 'Arcanismo', attr: 'inteligencia' },
+  { name: 'Atletismo', attr: 'forca' },
+  { name: 'Atuação', attr: 'carisma' },
+  { name: 'Enganação', attr: 'carisma
