@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Ficha RPG — Estável</title>
+<title>Ficha RPG — Atualizada</title>
 <style>
 :root{
   --bg-start:#f2f4f8; --bg-end:#e9eef6;
@@ -59,7 +59,7 @@ aside{grid-column:2/3;width:100%;box-sizing:border-box}
   <!-- Header -->
   <div class="module" data-module="header">
     <header class="card" role="banner">
-      <h1>Ficha RPG — Estável</h1>
+      <h1>Ficha RPG — Atualizada</h1>
       <div class="controls-row">
         <button id="saveBtn" class="btn">Salvar</button>
         <button id="exportBtn" class="btn-ghost">Exportar</button>
@@ -235,7 +235,14 @@ aside{grid-column:2/3;width:100%;box-sizing:border-box}
 </div>
 
 <script>
-/* ---------- Script integrado e robusto ---------- */
+/* ============================
+   Código completo e atualizado
+   - Inclui: proficiência automática por nível
+   - Mantém: perícias, atributos, conjuração, rolador, avatar, armas, persistência, painel de módulos
+   - Insira/cole este arquivo inteiro; não é necessário adicionar mais nada
+   ============================ */
+
+/* Utilitários e dados */
 const storageKey = 'ficha_rpg_estavel_v1';
 const ALL_SKILLS = [
   { name:'Acrobacia', attr:'destreza' },{ name:'Adestrar Animais', attr:'sabedoria' },
@@ -273,7 +280,7 @@ function renderSkillsUI(){
   });
 }
 
-/* Atualizações */
+/* Atualiza atributos, perícias, conjuração e campos derivados */
 function updateAll(){
   const attrs = ['forca','destreza','constituicao','inteligencia','sabedoria','carisma'];
   const mods = {};
@@ -310,6 +317,58 @@ function updateSpellcasting(){
   const dcEl = document.getElementById('spell_dc'); if(dcEl) dcEl.value = dc;
   const atkEl = document.getElementById('spell_atk'); if(atkEl) atkEl.value = (atk>=0?'+':'')+atk;
 }
+
+/* --- Cálculo automático de proficiência por nível --- */
+function profFromLevel(level){
+  level = parseInt(level || 1, 10);
+  if(isNaN(level) || level < 1) level = 1;
+  if(level <= 4) return 2;
+  if(level <= 8) return 3;
+  if(level <= 12) return 4;
+  if(level <= 16) return 5;
+  return 6;
+}
+
+/* Atualiza o campo de proficiência com base no nível quando autoProf está ativo */
+function updateProfByLevel(){
+  const auto = !!document.getElementById('autoProf')?.checked;
+  const nivelEl = document.getElementById('nivel');
+  const profEl = document.getElementById('prof_bonus');
+  if(!nivelEl || !profEl) return;
+  const nivel = parseInt(nivelEl.value || 1, 10) || 1;
+  if(auto){
+    profEl.value = profFromLevel(nivel);
+    profEl.readOnly = true;
+  } else {
+    profEl.readOnly = false;
+  }
+  if(typeof updateAll === 'function') updateAll();
+}
+
+/* Listeners para manter sincronizados Nível <-> Bônus Prof. */
+(function bindLevelProf(){
+  const nivelEl = document.getElementById('nivel');
+  const autoProfEl = document.getElementById('autoProf');
+
+  if(nivelEl){
+    nivelEl.addEventListener('input', () => {
+      let v = parseInt(nivelEl.value || 1, 10);
+      if(isNaN(v) || v < 1) v = 1;
+      if(v > 20) v = 20;
+      nivelEl.value = v;
+      updateProfByLevel();
+    });
+  }
+
+  if(autoProfEl){
+    autoProfEl.addEventListener('change', () => {
+      updateProfByLevel();
+    });
+  }
+
+  /* garante estado consistente ao inserir o script */
+  updateProfByLevel();
+})();
 
 /* Rolador e histórico */
 function rollDie(sides=20){ return Math.floor(Math.random()*sides)+1; }
