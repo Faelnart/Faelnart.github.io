@@ -336,4 +336,165 @@ if(toggleCircularEl && avZone){
   toggleCircularEl.addEventListener('change', e => { avZone.style.borderRadius = e.target.checked ? '50%' : '12px'; });
 }
 
-/
+/* Weapons */
+function addWeapon(data = null) {
+  const row = document.createElement('tr');
+  const name = data ? (data.n || data.name) : document.getElementById('w_name').value;
+  const atq = data ? (data.a || data.bonus) : document.getElementById('w_atq').value;
+  const dmg = data ? (data.d || data.dmg) : document.getElementById('w_dmg').value;
+  if(!name && !data) return;
+  row.innerHTML = `
+    <td>${name}</td><td>${atq}</td><td>${dmg}</td><td>-</td>
+    <td><button class="del-row" style="color:red; border:0; background:none; cursor:pointer">×</button></td>
+  `;
+  row.querySelector('.del-row').addEventListener('click', ()=> row.remove());
+  const tbody = document.querySelector('#weaponsTable tbody');
+  if(tbody) tbody.appendChild(row);
+  if(!data) {
+    const n = document.getElementById('w_name'); if(n) n.value = '';
+    const a = document.getElementById('w_atq'); if(a) a.value = '';
+    const d = document.getElementById('w_dmg'); if(d) d.value = '';
+  }
+}
+
+/* Persistence */
+const storageKey = 'rpg_sheet_data_final';
+function saveData() {
+  try {
+    const data = { skills: {}, weapons: [] };
+    document.querySelectorAll('[data-key]').forEach(el => {
+      const key = el.dataset.key;
+      if(!key) return;
+      if(el.contentEditable === "true") data[key] = el.innerText || '';
+      else if(el.type === 'checkbox') data[key] = el.checked;
+      else data[key] = el.value || '';
+    });
+    document.querySelectorAll('.skill-check').forEach(cb => data.skills[cb.dataset.name] = !!cb.checked);
+    document.querySelectorAll('#weaponsTable tbody tr').forEach(tr => {
+      const tds = tr.querySelectorAll('td');
+      data.weapons.push({n: tds[0].innerText, a: tds[1].innerText, d: tds[2].innerText});
+    });
+    data.avatar = (avZone && avZone.dataset.imgData) ? avZone.dataset.imgData : '';
+    data.circular = !!(toggleCircularEl && toggleCircularEl.checked);
+    localStorage.setItem(storageKey, JSON.stringify(data));
+    alert("Ficha salva no navegador!");
+  } catch(err) {
+    console.error(err);
+    alert('Erro ao salvar os dados.');
+  }
+}
+function loadData() {
+  try {
+    const raw = localStorage.getItem(storageKey);
+    if(!raw) return;
+    const data = JSON.parse(raw);
+    document.querySelectorAll('[data-key]').forEach(el => {
+      const key = el.dataset.key;
+      if(!key) return;
+      if(el.contentEditable === "true") el.innerText = data[key] || '';
+      else if(el.type === 'checkbox') el.checked = !!data[key];
+      else el.value = data[key] || '';
+    });
+    document.querySelectorAll('.skill-check').forEach(cb => {
+      cb.checked = !!(data.skills && data.skills[cb.dataset.name]);
+    });
+    const tbody = document.querySelector('#weaponsTable tbody');
+    if(tbody) tbody.innerHTML = '';
+    (data.weapons || []).forEach(w => addWeapon({n: w.n || w.name, a: w.a || w.bonus, d: w.d || w.dmg}));
+    if(data.avatar) {
+      if(avZone) {
+        avZone.innerHTML = `<img src="${data.avatar}">`;
+        avZone.dataset.imgData = data.avatar;
+      }
+    } else {
+      if(avZone) { avZone.innerHTML = '<div class="avatar-hint">Arraste uma foto para cá</div>'; delete avZone.dataset.imgData; }
+    }
+    if(toggleCircularEl) toggleCircularEl.checked = !!data.circular;
+    if(avZone) avZone.style.borderRadius = toggleCircularEl && toggleCircularEl.checked ? '50%' : '12px';
+    updateCalculations();
+  } catch(err) {
+    console.error(err);
+    alert('Erro ao carregar os dados salvos.');
+  }
+}
+function exportJSON() {
+  try {
+    const raw = localStorage.getItem(storageKey);
+    const dataStr = raw || JSON.stringify(gatherEmptyData());
+    const blob = new Blob([dataStr], {type: 'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'minha_ficha.json'; a.click();
+    URL.revokeObjectURL(url);
+  } catch(err) {
+    console.error(err);
+    alert('Erro ao exportar JSON.');
+  }
+}
+function gatherEmptyData(){
+  // fallback para export quando não há nada salvo
+  const d = {};
+  document.querySelectorAll('[data-key]').forEach(el => {
+    const key = el.dataset.key;
+    if(!key) return;
+    if(el.contentEditable === "true") d[key] = el.innerText || '';
+    else if(el.type === 'checkbox') d[key] = !!el.checked;
+    else d[key] = el.value || '';
+  });
+  d.skills = {};
+  document.querySelectorAll('.skill-check').forEach(cb => d.skills[cb.dataset.name] = !!cb.checked);
+  d.weapons = [];
+  return d;
+}
+function clearData() {
+  if(confirm("Deseja apagar tudo?")) {
+    localStorage.removeItem(storageKey);
+    location.reload();
+  }
+}
+
+/* Init: listeners e proteção para checkboxes */
+window.addEventListener('load', () => {
+  renderSkills();
+  loadData();
+
+  // input listeners (atributos, prof bonus, etc.)
+  document.querySelectorAll('input[type="number"], input[type="text"], textarea').forEach(i => i.addEventListener('input', updateCalculations));
+  // checkboxes (perícias) -> change
+  document.addEventListener('change', e => {
+    if(e.target && e.target.matches && e.target.matches('.skill-check')) updateCalculations();
+  });
+
+  // add weapon button
+  const addW = document.getElementById('w_name') && document.getElementById('w_name').closest ? document.getElementById('w_name').closest('div') : null;
+  // attach addWeapon to button (if present)
+  const addBtn = document.querySelector('[onclick="addWeapon()"]');
+  if(addBtn) addBtn.addEventListener('click', () => addWeapon());
+
+  // ensure toggleCircular applies on load
+  if(toggleCircularEl && avZone) avZone.style.borderRadius = toggleCircularEl.checked ? '50%' : '12px';
+});
+
+/* Optional: module control panel (kept hidden by default) */
+(function createModuleControl(){
+  const modules = Array.from(document.querySelectorAll('[data-module]')).map(m => m.dataset.module);
+  if(!modules.length) return;
+  const panel = document.getElementById('moduleControl');
+  const list = document.getElementById('moduleControlList');
+  modules.forEach(name=>{
+    const id = 'ctl_'+name.replace(/[^a-z0-9\-_]/gi,'_');
+    const label = document.createElement('label');
+    label.innerHTML = `<input type="checkbox" id="${id}" ${!document.querySelector('[data-module="'+name+'"]').classList.contains('hidden')?'checked':''}> ${name}`;
+    list.appendChild(label);
+    label.querySelector('input').addEventListener('change', e => {
+      const el = document.querySelector('[data-module="'+name+'"]');
+      if(el) el.classList.toggle('hidden', !e.target.checked);
+    });
+  });
+  // To show the panel for debugging, uncomment the next line:
+  // panel.style.display = 'block';
+})();
+</script>
+
+</body>
+</html>
