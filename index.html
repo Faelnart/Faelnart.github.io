@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Ficha RPG — Com Seletor de Raças D&D 5E</title>
+<title>Ficha RPG — Raças com Bônus Raciais</title>
 <style>
 :root{
   --bg-start:#f2f4f8; --bg-end:#e9eef6;
@@ -29,6 +29,7 @@ input,select,textarea,button{font-size:14px;padding:8px;border-radius:8px;border
 .attr-box{text-align:center;padding:10px;background:#fbfdff;border-radius:10px;border:1px solid #eef4ff}
 .attr-box input{width:56px;font-weight:800;font-size:18px}
 .attr-mod{font-weight:800;color:var(--accent);margin-top:6px}
+.attr-race{display:block;font-size:12px;color:#0b6b2f;margin-top:6px}
 .skills-container{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
 .skill-item{display:flex;align-items:center;gap:8px;padding:8px;border-radius:8px;background:#fff;border:1px solid #eef4ff}
 .skill-item label{flex:1}
@@ -50,6 +51,8 @@ main{grid-column:1/2;width:100%;box-sizing:border-box}
 aside{grid-column:2/3;width:100%;box-sizing:border-box}
 .small{padding:6px 8px;font-size:13px;border-radius:6px}
 .info-inline{font-size:13px;color:var(--muted);margin-left:8px}
+.variant-selects{display:flex;gap:8px;margin-top:8px}
+.variant-selects select{flex:1}
 </style>
 </head>
 <body>
@@ -59,7 +62,7 @@ aside{grid-column:2/3;width:100%;box-sizing:border-box}
   <!-- Header -->
   <div class="module" data-module="header">
     <header class="card" role="banner">
-      <h1>Ficha RPG — Raças D&D 5E</h1>
+      <h1>Ficha RPG — Raças com Bônus Raciais</h1>
       <div class="controls-row">
         <button id="saveBtn" class="btn">Salvar</button>
         <button id="exportBtn" class="btn-ghost">Exportar</button>
@@ -89,7 +92,7 @@ aside{grid-column:2/3;width:100%;box-sizing:border-box}
             <div style="display:flex;gap:8px;margin-top:8px;align-items:flex-end">
               <div style="flex:1" class="field"><label>Antecedente</label><input id="antecedente" data-key="antecedente" type="text" placeholder="Ex: Soldado"></div>
 
-              <div style="width:220px" class="field">
+              <div style="width:260px" class="field">
                 <label>Raça (D&D 5E)</label>
                 <select id="racaSelect" data-key="raca" aria-label="Raça">
                   <option value="">— selecione raça —</option>
@@ -121,6 +124,11 @@ aside{grid-column:2/3;width:100%;box-sizing:border-box}
                   </optgroup>
                 </select>
                 <input id="racaCustom" data-key="raca_custom" type="text" placeholder="Digite a raça" style="margin-top:8px;display:none">
+                <!-- Humano variante: escolha duas habilidades -->
+                <div id="humanVariantBox" class="variant-selects" style="display:none;margin-top:8px">
+                  <select id="humanVar1"><option value="">Escolha atributo +1</option></select>
+                  <select id="humanVar2"><option value="">Escolha atributo +1</option></select>
+                </div>
               </div>
             </div>
 
@@ -151,12 +159,42 @@ aside{grid-column:2/3;width:100%;box-sizing:border-box}
         <div style="display:flex;gap:12px;align-items:flex-start">
           <div style="flex:1">
             <div class="attr-grid" aria-hidden="false">
-              <div class="attr-box"><label>FOR</label><input id="forca" data-key="forca" type="number" value="10"><div class="attr-mod" id="forca_mod">+0</div></div>
-              <div class="attr-box"><label>DES</label><input id="destreza" data-key="destreza" type="number" value="10"><div class="attr-mod" id="destreza_mod">+0</div></div>
-              <div class="attr-box"><label>CON</label><input id="constituicao" data-key="constituicao" type="number" value="10"><div class="attr-mod" id="constituicao_mod">+0</div></div>
-              <div class="attr-box"><label>INT</label><input id="inteligencia" data-key="inteligencia" type="number" value="10"><div class="attr-mod" id="inteligencia_mod">+0</div></div>
-              <div class="attr-box"><label>SAB</label><input id="sabedoria" data-key="sabedoria" type="number" value="10"><div class="attr-mod" id="sabedoria_mod">+0</div></div>
-              <div class="attr-box"><label>CAR</label><input id="carisma" data-key="carisma" type="number" value="10"><div class="attr-mod" id="carisma_mod">+0</div></div>
+              <div class="attr-box">
+                <label>FOR</label>
+                <input id="forca" data-key="forca" type="number" value="10">
+                <div class="attr-mod" id="forca_mod">+0</div>
+                <div class="attr-race" id="forca_race">+0 racial</div>
+              </div>
+              <div class="attr-box">
+                <label>DES</label>
+                <input id="destreza" data-key="destreza" type="number" value="10">
+                <div class="attr-mod" id="destreza_mod">+0</div>
+                <div class="attr-race" id="destreza_race">+0 racial</div>
+              </div>
+              <div class="attr-box">
+                <label>CON</label>
+                <input id="constituicao" data-key="constituicao" type="number" value="10">
+                <div class="attr-mod" id="constituicao_mod">+0</div>
+                <div class="attr-race" id="constituicao_race">+0 racial</div>
+              </div>
+              <div class="attr-box">
+                <label>INT</label>
+                <input id="inteligencia" data-key="inteligencia" type="number" value="10">
+                <div class="attr-mod" id="inteligencia_mod">+0</div>
+                <div class="attr-race" id="inteligencia_race">+0 racial</div>
+              </div>
+              <div class="attr-box">
+                <label>SAB</label>
+                <input id="sabedoria" data-key="sabedoria" type="number" value="10">
+                <div class="attr-mod" id="sabedoria_mod">+0</div>
+                <div class="attr-race" id="sabedoria_race">+0 racial</div>
+              </div>
+              <div class="attr-box">
+                <label>CAR</label>
+                <input id="carisma" data-key="carisma" type="number" value="10">
+                <div class="attr-mod" id="carisma_mod">+0</div>
+                <div class="attr-race" id="carisma_race">+0 racial</div>
+              </div>
             </div>
 
             <div style="display:flex;gap:10px;align-items:center;margin-top:10px">
@@ -275,15 +313,15 @@ aside{grid-column:2/3;width:100%;box-sizing:border-box}
 
 <script>
 /* ============================
-   Código atualizado com seletor de raças D&D 5E
-   - Seletor: #racaSelect (optgroups com subraças)
-   - Campo custom: #racaCustom (aparece quando "Outra" é selecionado)
-   - Persistência: gatherData/applyData tratam seleção e custom
-   - Mantém todas as funcionalidades anteriores
+   Implementação de bônus raciais
+   - Seleção de raça aplica bônus raciais visuais e nos cálculos
+   - Humano (Variante) permite escolher 2 atributos +1
+   - Persistência salva raça escolhida (ou custom)
+   - Mantém funcionalidades anteriores
    ============================ */
 
 /* Utilitários e dados */
-const storageKey = 'ficha_rpg_estavel_v1';
+const storageKey = 'ficha_rpg_racas_v1';
 const ALL_SKILLS = [
   { name:'Acrobacia', attr:'destreza' },{ name:'Adestrar Animais', attr:'sabedoria' },
   { name:'Arcanismo', attr:'inteligencia' },{ name:'Atletismo', attr:'forca' },
@@ -300,7 +338,29 @@ function modFrom(score){ return Math.floor((score - 10) / 2); }
 function formatMod(n){ return (n>=0?'+':'') + n; }
 function now(){ return new Date().toLocaleString(); }
 
-/* Render perícias */
+/* Mapa de bônus raciais (atributos: forca,destreza,constituicao,inteligencia,sabedoria,carisma) */
+const RACE_BONUSES = {
+  'Humano (Padrão)': { forca:1, destreza:1, constituicao:1, inteligencia:1, sabedoria:1, carisma:1 },
+  // Humano Variante handled separately (+1 to two chosen)
+  'Anão (Colina)': { forca:0, destreza:0, constituicao:2, inteligencia:0, sabedoria:1, carisma:0 },
+  'Anão (Montanha)': { forca:2, destreza:0, constituicao:2, inteligencia:0, sabedoria:0, carisma:0 },
+  'Elfo (Alto)': { forca:0, destreza:2, constituicao:0, inteligencia:1, sabedoria:0, carisma:0 },
+  'Elfo (da Floresta)': { forca:0, destreza:2, constituicao:0, inteligencia:0, sabedoria:1, carisma:0 },
+  'Elfo (Drow)': { forca:0, destreza:2, constituicao:0, inteligencia:0, sabedoria:0, carisma:1 },
+  'Halfling (Pés-leves)': { forca:0, destreza:2, constituicao:0, inteligencia:0, sabedoria:0, carisma:1 },
+  'Halfling (Robusto)': { forca:0, destreza:2, constituicao:1, inteligencia:0, sabedoria:0, carisma:0 },
+  'Draconato': { forca:2, destreza:0, constituicao:0, inteligencia:0, sabedoria:0, carisma:1 },
+  'Gnomo (Floresta)': { forca:0, destreza:0, constituicao:0, inteligencia:2, sabedoria:0, carisma:0 },
+  'Gnomo (Rocha)': { forca:0, destreza:0, constituicao:1, inteligencia:2, sabedoria:0, carisma:0 },
+  'Meio-Elfo': { forca:0, destreza:0, constituicao:0, inteligencia:0, sabedoria:0, carisma:2 }, // +1 to two others not auto-applied
+  'Meio-Orc': { forca:2, destreza:0, constituicao:1, inteligencia:0, sabedoria:0, carisma:0 },
+  'Tiefling': { forca:0, destreza:0, constituicao:0, inteligencia:0, sabedoria:0, carisma:2 }
+};
+
+/* Estado atual dos bônus raciais aplicados */
+let currentRaceBonuses = { forca:0, destreza:0, constituicao:0, inteligencia:0, sabedoria:0, carisma:0 };
+
+/* Render perícias e quick select */
 function renderSkillsUI(){
   const container = document.getElementById('skillsContainer');
   const quick = document.getElementById('quickSkillSelect');
@@ -308,7 +368,9 @@ function renderSkillsUI(){
   container.innerHTML = ''; quick.innerHTML = '<option value="">— selecione —</option>';
   ALL_SKILLS.forEach(s=>{
     const key = idSafe(s.name);
-    const div = document.createElement('div'); div.className='skill-item'; div.title = s.attr;
+    const div = document.createElement('div');
+    div.className = 'skill-item';
+    div.title = s.attr;
     div.innerHTML = `
       <input type="checkbox" class="skill-check" data-attr="${s.attr}" data-name="${s.name}" data-key="${key}" id="chk_${key}">
       <label for="chk_${key}">${s.name} <small style="color:#94a3b8">(${s.attr.substring(0,3).toUpperCase()})</small></label>
@@ -320,16 +382,63 @@ function renderSkillsUI(){
   });
 }
 
-/* Atualiza atributos, perícias, conjuração e campos derivados */
+/* Aplica os bônus raciais ao estado e atualiza a UI */
+function applyRaceBonusesFromSelection(){
+  // reset
+  currentRaceBonuses = { forca:0, destreza:0, constituicao:0, inteligencia:0, sabedoria:0, carisma:0 };
+  const sel = document.getElementById('racaSelect');
+  if(!sel) return;
+  const val = sel.value;
+  if(!val) { updateRaceUI(); updateAll(); return; }
+
+  if(val === 'Humano (Variante)'){
+    // pegar escolhas dos selects
+    const v1 = document.getElementById('humanVar1')?.value;
+    const v2 = document.getElementById('humanVar2')?.value;
+    if(v1) currentRaceBonuses[v1] = (currentRaceBonuses[v1] || 0) + 1;
+    if(v2 && v2 !== v1) currentRaceBonuses[v2] = (currentRaceBonuses[v2] || 0) + 1;
+  } else if(val === 'Meio-Elfo'){
+    // Meio-elfo: +2 Carisma já aplicado; escolha +1 em duas outras (não aplicamos escolhas automaticamente)
+    const base = RACE_BONUSES[val] || {};
+    Object.assign(currentRaceBonuses, base);
+    // For simplicity: do not auto-assign the two +1s; user can manually increase base attributes or we could add UI later.
+  } else if(val === 'Outra'){
+    // nenhuma alteração automática
+  } else {
+    const bonuses = RACE_BONUSES[val];
+    if(bonuses){
+      Object.keys(currentRaceBonuses).forEach(k=> currentRaceBonuses[k] = bonuses[k] || 0);
+    }
+  }
+  updateRaceUI();
+  updateAll();
+}
+
+/* Atualiza a UI para mostrar os bônus raciais ao lado dos atributos */
+function updateRaceUI(){
+  const attrs = ['forca','destreza','constituicao','inteligencia','sabedoria','carisma'];
+  attrs.forEach(a=>{
+    const el = document.getElementById(a + '_race');
+    const bonus = currentRaceBonuses[a] || 0;
+    if(el) el.textContent = (bonus>=0?'+':'') + bonus + ' racial';
+  });
+}
+
+/* Atualiza atributos, perícias, conjuração e campos derivados usando bônus raciais */
 function updateAll(){
   const attrs = ['forca','destreza','constituicao','inteligencia','sabedoria','carisma'];
   const mods = {};
   attrs.forEach(a=>{
-    const el = document.getElementById(a);
-    const score = el ? (parseInt(el.value) || 10) : 10;
-    const m = modFrom(score); mods[a]=m;
-    const modEl = document.getElementById(a + '_mod'); if(modEl) modEl.textContent = formatMod(m);
+    const baseEl = document.getElementById(a);
+    const baseScore = baseEl ? (parseInt(baseEl.value) || 10) : 10;
+    const raceBonus = currentRaceBonuses[a] || 0;
+    const effective = baseScore + raceBonus;
+    const m = modFrom(effective);
+    mods[a] = m;
+    const modEl = document.getElementById(a + '_mod');
+    if(modEl) modEl.textContent = formatMod(m);
   });
+
   const prof = parseInt(document.getElementById('prof_bonus')?.value || 0);
   document.querySelectorAll('.skill-check').forEach(cb=>{
     const attrMod = mods[cb.dataset.attr] || 0;
@@ -337,23 +446,33 @@ function updateAll(){
     const el = document.getElementById('val_' + (cb.dataset.key || idSafe(cb.dataset.name || '')));
     if(el) el.textContent = formatMod(total);
   });
-  const iniEl = document.getElementById('iniciativa'); if(iniEl) iniEl.value = formatMod(mods.destreza || 0);
+
+  // iniciativa
+  const iniEl = document.getElementById('iniciativa');
+  if(iniEl) iniEl.value = formatMod(mods.destreza || 0);
+
+  // passive perception / investigation
   const percCb = Array.from(document.querySelectorAll('.skill-check')).find(c=>c.dataset.name==='Percepção');
   const invCb = Array.from(document.querySelectorAll('.skill-check')).find(c=>c.dataset.name==='Investigação');
   const percVal = 10 + (mods.sabedoria || 0) + ((percCb && percCb.checked) ? prof : 0);
   const invVal = 10 + (mods.inteligencia || 0) + ((invCb && invCb.checked) ? prof : 0);
   const percEl = document.getElementById('perc_passiva'); if(percEl) percEl.value = percVal;
   const invEl = document.getElementById('inv_passiva'); if(invEl) invEl.value = invVal;
+
   updateSpellcasting();
 }
 
-/* Spellcasting */
+/* Spellcasting usa mods efetivos (já calculados em updateAll) */
 function updateSpellcasting(){
   const attr = document.getElementById('spell_attr')?.value || 'inteligencia';
-  const score = parseInt(document.getElementById(attr)?.value || 10);
-  const mod = modFrom(score);
+  // compute effective score
+  const baseScore = parseInt(document.getElementById(attr)?.value || 10);
+  const raceBonus = currentRaceBonuses[attr] || 0;
+  const effective = baseScore + raceBonus;
+  const mod = modFrom(effective);
   const prof = parseInt(document.getElementById('prof_bonus')?.value || 0);
-  const dc = 8 + mod + prof; const atk = mod + prof;
+  const dc = 8 + mod + prof;
+  const atk = mod + prof;
   const dcEl = document.getElementById('spell_dc'); if(dcEl) dcEl.value = dc;
   const atkEl = document.getElementById('spell_atk'); if(atkEl) atkEl.value = (atk>=0?'+':'')+atk;
 }
@@ -404,18 +523,50 @@ function addRollLog(text){ const log = document.getElementById('rollLog'); if(!l
 /* Roll skill */
 function rollSkillByKey(key, options={type:'normal'}){
   const cb = document.querySelector(`.skill-check[data-key="${key}"]`); if(!cb) return;
-  const attr = cb.dataset.attr; const mod = modFrom(parseInt(document.getElementById(attr)?.value || 10));
-  const prof = cb.checked ? parseInt(document.getElementById('prof_bonus')?.value || 0) : 0; const totalMod = mod + prof;
-  if(options.type==='adv' || options.type==='dis'){ const res = rollAdvDis(options.type,totalMod); addRollLog(`${cb.dataset.name}: ${options.type==='adv'?'Vantagem':'Desvantagem'} — ${res.a}, ${res.b} → ${res.chosen} = ${res.total}`); return res; }
-  else { const r = rollWithMod(totalMod); addRollLog(`${cb.dataset.name}: ${r.roll} + ${totalMod} = ${r.total}`); return r; }
+  const attr = cb.dataset.attr;
+  // compute effective mod for attribute
+  const baseScore = parseInt(document.getElementById(attr)?.value || 10);
+  const raceBonus = currentRaceBonuses[attr] || 0;
+  const mod = modFrom(baseScore + raceBonus);
+  const prof = cb.checked ? parseInt(document.getElementById('prof_bonus')?.value || 0) : 0;
+  const totalMod = mod + prof;
+  if(options.type==='adv' || options.type==='dis'){
+    const res = rollAdvDis(options.type, totalMod);
+    addRollLog(`${cb.dataset.name}: ${options.type==='adv'?'Vantagem':'Desvantagem'} — ${res.a}, ${res.b} → ${res.chosen} = ${res.total}`);
+    return res;
+  } else {
+    const r = rollWithMod(totalMod);
+    addRollLog(`${cb.dataset.name}: ${r.roll} + ${totalMod} = ${r.total}`);
+    return r;
+  }
 }
 
 /* Quick roll handlers */
-document.getElementById('rollSkillBtn')?.addEventListener('click', ()=>{ const sel=document.getElementById('quickSkillSelect'); if(!sel) return; const key=sel.value; if(!key){ alert('Selecione uma perícia.'); return; } rollSkillByKey(key,{type:'normal'}); });
-document.addEventListener('click', e=>{ if(e.target && e.target.matches && e.target.matches('.roll-skill')){ const key=e.target.dataset.key; rollSkillByKey(key,{type:'normal'}); } });
-document.getElementById('rollBtn')?.addEventListener('click', ()=>{ const mod=parseInt(document.getElementById('rollMod')?.value||0); const r=rollWithMod(mod); addRollLog(`1d20: ${r.roll} + ${mod} = ${r.total}`); });
-document.getElementById('advBtn')?.addEventListener('click', ()=>{ const mod=parseInt(document.getElementById('rollMod')?.value||0); const res=rollAdvDis('adv',mod); addRollLog(`1d20 (vantagem): ${res.a}, ${res.b} → ${res.chosen} + ${mod} = ${res.total}`); });
-document.getElementById('disBtn')?.addEventListener('click', ()=>{ const mod=parseInt(document.getElementById('rollMod')?.value||0); const res=rollAdvDis('dis',mod); addRollLog(`1d20 (desvantagem): ${res.a}, ${res.b} → ${res.chosen} + ${mod} = ${res.total}`); });
+document.getElementById('rollSkillBtn')?.addEventListener('click', ()=>{
+  const sel = document.getElementById('quickSkillSelect'); if(!sel) return;
+  const key = sel.value; if(!key){ alert('Selecione uma perícia.'); return; }
+  rollSkillByKey(key,{type:'normal'});
+});
+document.addEventListener('click', e=>{
+  if(e.target && e.target.matches && e.target.matches('.roll-skill')){
+    const key = e.target.dataset.key; rollSkillByKey(key,{type:'normal'});
+  }
+});
+document.getElementById('rollBtn')?.addEventListener('click', ()=>{
+  const mod = parseInt(document.getElementById('rollMod')?.value || 0);
+  const r = rollWithMod(mod);
+  addRollLog(`1d20: ${r.roll} + ${mod} = ${r.total}`);
+});
+document.getElementById('advBtn')?.addEventListener('click', ()=>{
+  const mod = parseInt(document.getElementById('rollMod')?.value || 0);
+  const res = rollAdvDis('adv',mod);
+  addRollLog(`1d20 (vantagem): ${res.a}, ${res.b} → ${res.chosen} + ${mod} = ${res.total}`);
+});
+document.getElementById('disBtn')?.addEventListener('click', ()=>{
+  const mod = parseInt(document.getElementById('rollMod')?.value || 0);
+  const res = rollAdvDis('dis',mod);
+  addRollLog(`1d20 (desvantagem): ${res.a}, ${res.b} → ${res.chosen} + ${mod} = ${res.total}`);
+});
 
 /* When user selects a skill in quickSkillSelect, pull its modifier and show info */
 function onQuickSkillChange(){
@@ -428,8 +579,9 @@ function onQuickSkillChange(){
   const cb = document.querySelector(`.skill-check[data-key="${key}"]`);
   if(!cb){ info.textContent = ''; return; }
   const attr = cb.dataset.attr;
-  const attrScore = parseInt(document.getElementById(attr)?.value || 10);
-  const attrMod = modFrom(attrScore);
+  const baseScore = parseInt(document.getElementById(attr)?.value || 10);
+  const raceBonus = currentRaceBonuses[attr] || 0;
+  const attrMod = modFrom(baseScore + raceBonus);
   const prof = cb.checked ? parseInt(document.getElementById('prof_bonus')?.value || 0) : 0;
   const total = attrMod + prof;
   rollMod.value = total;
@@ -437,47 +589,107 @@ function onQuickSkillChange(){
   info.textContent = `${formatMod(total)} = ${formatMod(attrMod)} (${attrLabel})${prof ? ` ${formatMod(prof)} (Prof)` : ''}`;
 }
 document.getElementById('quickSkillSelect')?.addEventListener('change', onQuickSkillChange);
-document.addEventListener('change', e=>{ if(e.target && e.target.matches && (e.target.matches('.skill-check') || e.target.matches('#prof_bonus'))){ onQuickSkillChange(); updateAll(); } });
+document.addEventListener('change', e=>{
+  if(e.target && e.target.matches && (e.target.matches('.skill-check') || e.target.matches('#prof_bonus'))){
+    onQuickSkillChange(); updateAll();
+  }
+});
 document.getElementById('prof_bonus')?.addEventListener('input', ()=>{ onQuickSkillChange(); updateAll(); });
 
 /* Weapons */
-function addWeaponRow(obj){ const tbody=document.querySelector('#weaponsTable tbody'); if(!tbody) return; const tr=document.createElement('tr'); tr.innerHTML=`<td>${obj.name||''}</td><td>${obj.bonus||''}</td><td>${obj.dmg||''}</td><td>${obj.notes||''}</td><td><button class="del-weap" style="color:red;border:0;background:none;cursor:pointer">×</button> <button class="roll-weap btn-ghost small">Rolar</button></td>`; tbody.appendChild(tr); tr.querySelector('.del-weap')?.addEventListener('click', ()=>tr.remove()); tr.querySelector('.roll-weap')?.addEventListener('click', ()=>{ const bonus=parseInt(tr.children[1].innerText.replace(/\D/g,''))||0; const r=rollWithMod(bonus); addRollLog(`Ataque ${tr.children[0].innerText}: ${r.roll} + ${bonus} = ${r.total}`); }); }
-document.getElementById('addWeaponBtn')?.addEventListener('click', ()=>{ const name=document.getElementById('w_name')?.value||''; const bonus=document.getElementById('w_bonus')?.value||''; const dmg=document.getElementById('w_dmg')?.value||''; if(!name) return alert('Informe o nome da arma.'); addWeaponRow({name,bonus,dmg,notes:''}); document.getElementById('w_name').value=''; document.getElementById('w_bonus').value=''; document.getElementById('w_dmg').value=''; });
+function addWeaponRow(obj){
+  const tbody = document.querySelector('#weaponsTable tbody');
+  if(!tbody) return;
+  const tr = document.createElement('tr');
+  tr.innerHTML = `<td>${obj.name||''}</td><td>${obj.bonus||''}</td><td>${obj.dmg||''}</td><td>${obj.notes||''}</td><td><button class="del-weap" style="color:red;border:0;background:none;cursor:pointer">×</button> <button class="roll-weap btn-ghost small">Rolar</button></td>`;
+  tbody.appendChild(tr);
+  tr.querySelector('.del-weap')?.addEventListener('click', ()=>tr.remove());
+  tr.querySelector('.roll-weap')?.addEventListener('click', ()=>{ const bonus = parseInt(tr.children[1].innerText.replace(/\D/g,''))||0; const r = rollWithMod(bonus); addRollLog(`Ataque ${tr.children[0].innerText}: ${r.roll} + ${bonus} = ${r.total}`); });
+}
+document.getElementById('addWeaponBtn')?.addEventListener('click', ()=>{
+  const name = document.getElementById('w_name')?.value || '';
+  const bonus = document.getElementById('w_bonus')?.value || '';
+  const dmg = document.getElementById('w_dmg')?.value || '';
+  if(!name) return alert('Informe o nome da arma.');
+  addWeaponRow({ name, bonus, dmg, notes:'' });
+  document.getElementById('w_name').value=''; document.getElementById('w_bonus').value=''; document.getElementById('w_dmg').value='';
+});
 
-/* Avatar */
-const avatarInput = document.getElementById('avatarInput'); const avatarPreview = document.getElementById('avatarPreview');
+/* Avatar handling (unchanged) */
+const avatarInput = document.getElementById('avatarInput');
+const avatarPreview = document.getElementById('avatarPreview');
 document.getElementById('uploadAvatarBtn')?.addEventListener('click', ()=>avatarInput.click());
 document.getElementById('removeAvatarBtn')?.addEventListener('click', ()=>{ avatarPreview.innerHTML = '<div class="avatar-hint">Arraste ou clique para carregar</div>'; delete avatarPreview.dataset.imgData; });
-avatarInput?.addEventListener('change', e=>{ const f=e.target.files && e.target.files[0]; if(f) processAvatarFile(f); });
-if(avatarPreview){ ['dragenter','dragover'].forEach(ev=>avatarPreview.addEventListener(ev,e=>{ e.preventDefault(); avatarPreview.style.borderColor='var(--accent)'; avatarPreview.style.background='#f7f3ff'; })); ['dragleave','drop'].forEach(ev=>avatarPreview.addEventListener(ev,e=>{ e.preventDefault(); avatarPreview.style.borderColor='#dbe7ff'; avatarPreview.style.background='#fbfdff'; })); avatarPreview.addEventListener('drop', e=>{ e.preventDefault(); const f=e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]; if(f) processAvatarFile(f); }); }
-function processAvatarFile(file){ if(!file.type.startsWith('image/')) return alert('Arquivo não é imagem.'); const reader=new FileReader(); reader.onload=ev=>{ const img=new Image(); img.onload=()=>{ const canvas=document.createElement('canvas'); const size=400; canvas.width=size; canvas.height=size; const ctx=canvas.getContext('2d'); const side=Math.min(img.width,img.height); ctx.drawImage(img,(img.width-side)/2,(img.height-side)/2,side,side,0,0,size,size); const dataURL=canvas.toDataURL('image/jpeg',0.85); avatarPreview.innerHTML=`<img src="${dataURL}">`; avatarPreview.dataset.imgData=dataURL; }; img.src=ev.target.result; }; reader.readAsDataURL(file); }
+avatarInput?.addEventListener('change', e=>{ const f = e.target.files && e.target.files[0]; if(f) processAvatarFile(f); });
+if(avatarPreview){
+  ['dragenter','dragover'].forEach(ev=>avatarPreview.addEventListener(ev, e=>{ e.preventDefault(); avatarPreview.style.borderColor='var(--accent)'; avatarPreview.style.background='#f7f3ff'; }));
+  ['dragleave','drop'].forEach(ev=>avatarPreview.addEventListener(ev, e=>{ e.preventDefault(); avatarPreview.style.borderColor='#dbe7ff'; avatarPreview.style.background='#fbfdff'; }));
+  avatarPreview.addEventListener('drop', e=>{ e.preventDefault(); const f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]; if(f) processAvatarFile(f); });
+}
+function processAvatarFile(file){
+  if(!file.type.startsWith('image/')) return alert('Arquivo não é imagem.');
+  const reader = new FileReader();
+  reader.onload = ev=>{
+    const img = new Image();
+    img.onload = ()=>{
+      const canvas = document.createElement('canvas'); const size = 400;
+      canvas.width = size; canvas.height = size;
+      const ctx = canvas.getContext('2d');
+      const side = Math.min(img.width,img.height);
+      ctx.drawImage(img,(img.width-side)/2,(img.height-side)/2,side,side,0,0,size,size);
+      const dataURL = canvas.toDataURL('image/jpeg',0.85);
+      avatarPreview.innerHTML = `<img src="${dataURL}">`;
+      avatarPreview.dataset.imgData = dataURL;
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
 document.getElementById('toggleCircular')?.addEventListener('change', e=>{ avatarPreview.style.borderRadius = e.target.checked ? '50%' : '12px'; });
 
-/* Raça select: mostrar campo custom quando "Outra" selecionada */
+/* Raça select handling */
 const racaSelect = document.getElementById('racaSelect');
 const racaCustom = document.getElementById('racaCustom');
+const humanVariantBox = document.getElementById('humanVariantBox');
+const humanVar1 = document.getElementById('humanVar1');
+const humanVar2 = document.getElementById('humanVar2');
+
+function populateAttributeOptions(selectEl){
+  const attrs = [
+    {v:'forca', t:'FOR'}, {v:'destreza', t:'DES'}, {v:'constituicao', t:'CON'},
+    {v:'inteligencia', t:'INT'}, {v:'sabedoria', t:'SAB'}, {v:'carisma', t:'CAR'}
+  ];
+  if(!selectEl) return;
+  selectEl.innerHTML = '<option value="">— escolha —</option>';
+  attrs.forEach(a=>{ const o = document.createElement('option'); o.value = a.v; o.textContent = a.t; selectEl.appendChild(o); });
+}
+populateAttributeOptions(humanVar1);
+populateAttributeOptions(humanVar2);
+
 if(racaSelect && racaCustom){
   racaSelect.addEventListener('change', ()=>{
-    if(racaSelect.value === 'Outra'){
+    const v = racaSelect.value;
+    if(v === 'Outra'){
       racaCustom.style.display = 'block';
       racaCustom.focus();
+      humanVariantBox.style.display = 'none';
+    } else if(v === 'Humano (Variante)'){
+      racaCustom.style.display = 'none';
+      humanVariantBox.style.display = 'flex';
     } else {
       racaCustom.style.display = 'none';
-      racaCustom.value = '';
+      humanVariantBox.style.display = 'none';
     }
+    applyRaceBonusesFromSelection();
   });
 }
 
-/* Persistence: gather/apply/save/load/export/import/clear
-   - gatherData: se racaSelect.value === 'Outra' usa racaCustom.value; caso contrário usa racaSelect.value
-   - applyData: preenche select; se valor não estiver nas opções, seleciona "Outra" e preenche racaCustom
-*/
+/* Persistence: gather/apply/save/load/export/import/clear */
 function gatherData(){
-  const data={skills:{},weapons:[],avatar:'',circular:false,meta:{ts:new Date().toISOString()}};
+  const data = { skills:{}, weapons:[], avatar:'', circular:false, meta:{ts:new Date().toISOString()} };
   document.querySelectorAll('[data-key]').forEach(el=>{
-    const key = el.dataset.key;
-    if(!key) return;
-    // ignore raca_custom here; we'll handle racaSelect specially
+    const key = el.dataset.key; if(!key) return;
+    // raca handled separately
     if(key === 'raca') return;
     if(el.type === 'checkbox') data[key] = el.checked;
     else data[key] = el.value || '';
@@ -487,19 +699,22 @@ function gatherData(){
   const rSel = document.getElementById('racaSelect');
   const rCustom = document.getElementById('racaCustom');
   if(rSel){
-    if(rSel.value === 'Outra'){
-      data.raca = rCustom?.value || '';
-    } else {
-      data.raca = rSel.value || '';
-    }
+    if(rSel.value === 'Outra') data.raca = rCustom?.value || '';
+    else data.raca = rSel.value || '';
+  } else data.raca = '';
+
+  // human variant choices
+  if(rSel && rSel.value === 'Humano (Variante)'){
+    data.humanVar1 = humanVar1?.value || '';
+    data.humanVar2 = humanVar2?.value || '';
   } else {
-    data.raca = '';
+    data.humanVar1 = ''; data.humanVar2 = '';
   }
 
   document.querySelectorAll('.skill-check').forEach(cb=> data.skills[cb.dataset.name] = !!cb.checked);
   document.querySelectorAll('#weaponsTable tbody tr').forEach(tr=>{
     const tds = tr.querySelectorAll('td');
-    data.weapons.push({name:tds[0].innerText, bonus:tds[1].innerText, dmg:tds[2].innerText, notes:tds[3].innerText});
+    data.weapons.push({ name:tds[0].innerText, bonus:tds[1].innerText, dmg:tds[2].innerText, notes:tds[3].innerText });
   });
   data.avatar = avatarPreview?.dataset.imgData || '';
   data.circular = !!document.getElementById('toggleCircular')?.checked;
@@ -509,45 +724,48 @@ function gatherData(){
 function applyData(data){
   if(!data) return;
   document.querySelectorAll('[data-key]').forEach(el=>{
-    const key = el.dataset.key;
-    if(!key) return;
-    if(key === 'raca') return; // handled below
+    const key = el.dataset.key; if(!key) return;
+    if(key === 'raca') return;
     if(el.type === 'checkbox') el.checked = !!data[key];
     else el.value = data[key] || '';
   });
 
-  // raça apply
+  // apply race
   const rSel = document.getElementById('racaSelect');
   const rCustom = document.getElementById('racaCustom');
   if(rSel){
     const val = data.raca || '';
-    // try to find option with this value
     let found = false;
     for(const opt of Array.from(rSel.options)){
       if(opt.value === val){
-        rSel.value = val;
-        found = true;
-        break;
+        rSel.value = val; found = true; break;
       }
     }
     if(!found){
       if(val){
         rSel.value = 'Outra';
-        if(rCustom) { rCustom.style.display = 'block'; rCustom.value = val; }
+        if(rCustom){ rCustom.style.display = 'block'; rCustom.value = val; }
       } else {
         rSel.value = '';
-        if(rCustom) { rCustom.style.display = 'none'; rCustom.value = ''; }
+        if(rCustom){ rCustom.style.display = 'none'; rCustom.value = ''; }
       }
     } else {
-      if(rCustom) { rCustom.style.display = 'none'; rCustom.value = ''; }
+      if(rCustom){ rCustom.style.display = 'none'; rCustom.value = ''; }
     }
   }
 
+  // human variant choices
+  if(data.humanVar1) humanVar1.value = data.humanVar1;
+  if(data.humanVar2) humanVar2.value = data.humanVar2;
+  if(racaSelect.value === 'Humano (Variante)') humanVariantBox.style.display = 'flex';
+  else humanVariantBox.style.display = 'none';
+
   document.querySelectorAll('.skill-check').forEach(cb=> cb.checked = !!(data.skills && data.skills[cb.dataset.name]));
   const tbody = document.querySelector('#weaponsTable tbody'); if(tbody) tbody.innerHTML = '';
-  (data.weapons || []).forEach(w=> addWeaponRow({name:w.name, bonus:w.bonus, dmg:w.dmg, notes:w.notes}));
+  (data.weapons || []).forEach(w=> addWeaponRow({ name:w.name, bonus:w.bonus, dmg:w.dmg, notes:w.notes }));
   if(data.avatar && avatarPreview){ avatarPreview.innerHTML = `<img src="${data.avatar}">`; avatarPreview.dataset.imgData = data.avatar; }
   if(document.getElementById('toggleCircular')) document.getElementById('toggleCircular').checked = !!data.circular;
+  applyRaceBonusesFromSelection();
   updateAll();
 }
 
@@ -558,21 +776,28 @@ document.getElementById('exportBtn')?.addEventListener('click', ()=>{ try{ const
 document.getElementById('importBtn')?.addEventListener('click', ()=>{ const inp = document.createElement('input'); inp.type='file'; inp.accept='application/json'; inp.onchange = e=>{ const f = e.target.files[0]; if(!f) return; const reader = new FileReader(); reader.onload = ev=>{ try{ const data = JSON.parse(ev.target.result); applyData(data); addRollLog('JSON importado.'); }catch(err){ alert('Arquivo inválido.'); } }; reader.readAsText(f); }; inp.click(); });
 document.getElementById('clearBtn')?.addEventListener('click', ()=>{ if(confirm('Limpar todos os campos?')){ localStorage.removeItem(storageKey); location.reload(); } });
 
-/* Module control */
+/* Module control (unchanged) */
 (function initModuleControl(){ const list=document.getElementById('moduleControlList'); document.querySelectorAll('[data-module]').forEach(m=>{ const name=m.dataset.module; const id='ctl_'+name.replace(/[^a-z0-9\-_]/gi,'_'); const label=document.createElement('label'); label.style.display='flex'; label.style.alignItems='center'; label.style.gap='8px'; label.innerHTML=`<input type="checkbox" id="${id}" ${!m.classList.contains('hidden')?'checked':''}> ${name}`; list.appendChild(label); label.querySelector('input').addEventListener('change', e=> m.classList.toggle('hidden', !e.target.checked)); }); document.getElementById('toggleAll')?.addEventListener('click', ()=>{ const checks=Array.from(list.querySelectorAll('input[type="checkbox"]')); const anyUnchecked=checks.some(c=>!c.checked); checks.forEach(c=>{ c.checked = anyUnchecked; c.dispatchEvent(new Event('change')); }); }); })();
 
-/* Init */
+/* Inicialização */
 window.addEventListener('load', ()=>{
   renderSkillsUI();
   loadFromLocal();
   updateAll();
   addRollLog('Ficha pronta.');
+  // listeners
   document.querySelectorAll('input,select,textarea').forEach(i=> i.addEventListener('input', ()=>{ updateAll(); }));
   document.addEventListener('change', e=>{ if(e.target && e.target.matches && e.target.matches('.skill-check')) updateAll(); });
-  // ensure quick select info updates if a skill is selected after load
+  // quick select
   document.getElementById('quickSkillSelect')?.addEventListener('change', onQuickSkillChange);
   document.getElementById('prof_bonus')?.addEventListener('input', onQuickSkillChange);
   ['forca','destreza','constituicao','inteligencia','sabedoria','carisma'].forEach(id=>{ const el=document.getElementById(id); if(el) el.addEventListener('input', onQuickSkillChange); });
+  // race change triggers
+  document.getElementById('racaSelect')?.addEventListener('change', applyRaceBonusesFromSelection);
+  document.getElementById('racaCustom')?.addEventListener('input', ()=>{ applyRaceBonusesFromSelection(); });
+  // human variant selects
+  humanVar1?.addEventListener('change', ()=>{ applyRaceBonusesFromSelection(); });
+  humanVar2?.addEventListener('change', ()=>{ applyRaceBonusesFromSelection(); });
   // save button
   document.getElementById('saveBtn')?.addEventListener('click', ()=>{ saveToLocal(); alert('Ficha salva.'); });
 });
