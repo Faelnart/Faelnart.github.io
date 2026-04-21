@@ -3,67 +3,104 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Ficha RPG — Estrutura com Containers (corrigido)</title>
+<title>Ficha RPG — Corrigida e Modular</title>
 <style>
 :root{
-  --bg-start: #121212;
-  --bg-end: #2d2d2d;
-  --card-start: #ffffff;
-  --card-end: #f3f4f6;
-  --accent: #7c5cff;
-  --muted: #64748b;
-  --text: #1e293b;
-  --radius: 12px;
-  --shadow: 0 10px 25px rgba(0,0,0,0.1);
-  --gap: 20px;
+  --bg-start:#121212;
+  --bg-end:#2d2d2d;
+  --card-start:#ffffff;
+  --card-end:#f3f4f6;
+  --accent:#7c5cff;
+  --muted:#64748b;
+  --text:#1e293b;
+  --radius:12px;
+  --shadow:0 10px 25px rgba(0,0,0,0.1);
+  --gap:20px;
 }
 
-/* base original */
-*{box-sizing:border-box; font-family: 'Inter', system-ui, sans-serif;}
-body{margin:0; padding:25px; background: linear-gradient(180deg, #121212 0%, #2d2d2d 100%); color:var(--text); min-height:100vh;}
-.container{max-width:1300px; margin:0 auto; display:grid; grid-template-columns: 1fr 350px; gap:var(--gap);}
-header{grid-column:1/-1; display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;}
-header h1{color:var(--accent); font-size:24px; margin:0; text-transform: uppercase; letter-spacing: 1px;}
-.btn-group{display:flex; gap:10px;}
-.btn{background: var(--accent); color:white; border:0; padding:10px 20px; border-radius:8px; font-weight:700; cursor:pointer; transition: 0.2s;}
-.btn:hover{filter: brightness(1.1); transform: translateY(-1px);}
-.btn-secondary{background: #334155; color: white;}
-.card{background: white; padding:20px; border-radius:var(--radius); box-shadow:var(--shadow); margin-bottom:var(--gap);}
-.section-title{display:block; font-size:13px; font-weight:800; color:var(--muted); text-transform:uppercase; margin-bottom:15px; border-bottom:1px solid #f1f5f9; padding-bottom:5px;}
-.field-group{display:grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap:15px;}
-.field{display:flex; flex-direction:column; gap:5px;}
-label{font-size:11px; font-weight:700; color:var(--muted); text-transform: uppercase;}
-input, select, textarea{padding:10px; border-radius:6px; border:1px solid #e2e8f0; font-size:14px; outline:none; background: #fcfcfc;}
-input:focus{border-color:var(--accent); background: #fff;}
-.big-input{font-size:22px; font-weight:800; border:0; background:transparent; padding:0; width:100%; color:var(--accent);}
+/* Base e tipografia */
+*{box-sizing:border-box; font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;}
+html,body{height:100%}
+body{margin:0;padding:25px;background:linear-gradient(180deg,var(--bg-start),var(--bg-end));color:var(--text);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;}
 
-/* Atributos/perícias originais */
-.attr-grid{display:grid; grid-template-columns: repeat(6, 1fr); gap:10px;}
-.attr-box{text-align:center; padding:10px; background:#f8fafc; border-radius:10px; border:1px solid #e2e8f0;}
-.attr-box input{width:50px; text-align:center; font-size:18px; font-weight:800; padding:5px; margin-bottom:5px;}
-.attr-mod{display:block; font-size:16px; font-weight:700; color:var(--accent);}
+/* Layout principal: grid estável */
+.container{
+  max-width:1300px;
+  margin:0 auto;
+  display:grid;
+  grid-template-columns: 1fr 350px;
+  gap:var(--gap);
+  align-items:start;
+}
 
-/* skills */
-.skills-container{display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin-top:10px;}
-.skill-item{display:flex; align-items:center; gap:8px; font-size:13px; padding:6px 10px; background:#fff; border:1px solid #f1f5f9; border-radius:6px;}
-.skill-item input[type="checkbox"]{width:16px; height:16px; cursor:pointer;}
-.skill-val{margin-left:auto; font-weight:800; color:var(--accent); min-width:25px; text-align:right;}
+/* Header full width */
+header{grid-column:1/-1;display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+header h1{color:var(--accent);font-size:24px;margin:0;text-transform:uppercase;letter-spacing:1px}
 
-/* avatar */
-.avatar-zone{width:100%; aspect-ratio:1/1; border-radius:12px; border:2px dashed #cbd5e1; display:flex; align-items:center; justify-content:center; overflow:hidden; background:#f8fafc; transition:0.3s; position:relative; cursor: default;}
-.avatar-zone img{width:100%; height:100%; object-fit:cover;}
-.avatar-hint{font-size:11px; color:var(--muted); text-align:center; padding:20px;}
-table{width:100%; border-collapse:collapse; margin-top:10px;}
-th{text-align:left; font-size:11px; color:var(--muted); padding:8px;}
-td{padding:5px; border-bottom:1px solid #f1f5f9;}
-@media (max-width: 1000px) { .container{grid-template-columns: 1fr;} }
+/* Buttons */
+.btn-group{display:flex;gap:10px}
+.btn{background:var(--accent);color:#fff;border:0;padding:10px 20px;border-radius:8px;font-weight:700;cursor:pointer;transition:0.18s}
+.btn:hover{transform:translateY(-2px)}
+.btn-secondary{background:#334155;color:#fff}
 
-/* modules wrapper */
-.module { margin-bottom: var(--gap); }
-.module.hidden { display: none !important; }
+/* Cards e módulos */
+.module{display:block;width:100%;box-sizing:border-box;margin-bottom:var(--gap)}
+.card{background:linear-gradient(180deg,var(--card-start),var(--card-end));padding:20px;border-radius:var(--radius);box-shadow:var(--shadow);width:100%;box-sizing:border-box}
+.section-title{display:block;font-size:13px;font-weight:800;color:var(--muted);text-transform:uppercase;margin-bottom:15px;border-bottom:1px solid #f1f5f9;padding-bottom:5px}
 
-/* module control (optional) */
-.module-control { position: fixed; right: 18px; top: 80px; background: #fff; border: 1px solid #e6e6e6; padding:10px; border-radius:8px; box-shadow: 0 8px 24px rgba(0,0,0,0.08); font-size:13px; z-index:9999; display:none; }
+/* Forms */
+.field-group{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:15px}
+.field{display:flex;flex-direction:column;gap:6px}
+label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase}
+input,select,textarea{padding:10px;border-radius:6px;border:1px solid #e2e8f0;background:#fcfcfc;font-size:14px;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 8px 20px rgba(124,92,255,0.06)}
+.big-input{font-size:22px;font-weight:800;border:0;background:transparent;padding:0;width:100%;color:var(--accent)}
+
+/* Atributos */
+.attr-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
+.attr-box{text-align:center;padding:10px;background:#f8fafc;border-radius:10px;border:1px solid #e2e8f0}
+.attr-box input{width:50px;text-align:center;font-size:18px;font-weight:800;padding:5px;margin-bottom:5px}
+.attr-mod{display:block;font-size:16px;font-weight:700;color:var(--accent)}
+
+/* Perícias */
+.skills-container{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.skill-item{display:flex;align-items:center;gap:8px;font-size:13px;padding:6px 10px;background:#fff;border:1px solid #f1f5f9;border-radius:6px}
+.skill-item input[type="checkbox"]{width:16px;height:16px;cursor:pointer}
+.skill-val{margin-left:auto;font-weight:800;color:var(--accent);min-width:25px;text-align:right}
+
+/* Avatar */
+.avatar-zone{width:100%;aspect-ratio:1/1;border-radius:12px;border:2px dashed #cbd5e1;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#f8fafc;transition:0.18s;position:relative}
+.avatar-zone img{width:100%;height:100%;object-fit:cover}
+.avatar-hint{font-size:11px;color:var(--muted);text-align:center;padding:20px}
+
+/* Tables */
+table{width:100%;border-collapse:collapse;margin-top:10px}
+th{text-align:left;font-size:11px;color:var(--muted);padding:8px}
+td{padding:5px;border-bottom:1px solid #f1f5f9}
+
+/* Aside and main placement */
+main{grid-column:1/2;width:100%;box-sizing:border-box}
+aside{grid-column:2/3;width:100%;box-sizing:border-box}
+
+/* Responsive */
+@media (max-width:1000px){
+  .container{grid-template-columns:1fr}
+  main{grid-column:1/-1}
+  aside{grid-column:1/-1}
+  .attr-grid{grid-template-columns:repeat(3,1fr)}
+  .skills-container{grid-template-columns:1fr}
+}
+
+/* Prevent overflow from internal elements */
+.card, .field-group, .attr-grid, .skills-container, table{max-width:100%;box-sizing:border-box}
+input,select,textarea,button{max-width:100%;box-sizing:border-box}
+label, .skill-item, td{overflow-wrap:break-word}
+
+/* Hidden module helper */
+.module.hidden{display:none !important}
+
+/* Optional module control (hidden by default) */
+.module-control{position:fixed;right:18px;top:80px;background:#fff;border:1px solid #e6e6e6;padding:10px;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,0.08);font-size:13px;z-index:9999;display:none}
 .module-control label{display:flex;align-items:center;gap:8px;margin-bottom:6px}
 </style>
 </head>
@@ -83,15 +120,16 @@ td{padding:5px; border-bottom:1px solid #f1f5f9;}
     </header>
   </div>
 
-  <!-- Main left column: estrutura original, cada card envolvido por module -->
+  <!-- Main column (left) -->
   <main>
 
+    <!-- Informações Básicas -->
     <div class="module" data-module="informacoes-basicas">
       <div class="card">
         <span class="section-title">Informações Básicas</span>
-        <div style="display:grid; grid-template-columns: 1fr 200px; gap:20px;">
+        <div style="display:grid;grid-template-columns:1fr 200px;gap:20px">
           <div class="field-group">
-            <div class="field" style="grid-column: span 2;">
+            <div class="field" style="grid-column:span 2">
               <label>Nome do Personagem</label>
               <input id="nome" data-key="nome" class="big-input" type="text" placeholder="Ex: Valerius">
             </div>
@@ -107,7 +145,7 @@ td{padding:5px; border-bottom:1px solid #f1f5f9;}
               <div class="avatar-hint">Arraste uma foto para cá</div>
             </div>
 
-            <label style="margin-top:10px; display:flex; align-items:center; gap:5px; cursor:pointer">
+            <label style="margin-top:10px;display:flex;align-items:center;gap:8px;cursor:pointer">
               <input type="checkbox" id="toggleCircular"> Estilo Circular
             </label>
           </div>
@@ -115,6 +153,7 @@ td{padding:5px; border-bottom:1px solid #f1f5f9;}
       </div>
     </div>
 
+    <!-- Atributos -->
     <div class="module" data-module="atributos">
       <div class="card">
         <span class="section-title">Atributos</span>
@@ -129,19 +168,21 @@ td{padding:5px; border-bottom:1px solid #f1f5f9;}
       </div>
     </div>
 
+    <!-- Perícias -->
     <div class="module" data-module="pericias">
       <div class="card">
-        <div style="display:flex; justify-content:space-between; align-items:center">
+        <div style="display:flex;justify-content:space-between;align-items:center">
           <span class="section-title">Perícias & Proficiências</span>
-          <div class="field" style="width:100px; margin-bottom:10px">
+          <div class="field" style="width:120px">
             <label>Bônus Prof.</label>
-            <input type="number" id="prof_bonus" data-key="prof_bonus" value="2" style="height:30px; text-align:center">
+            <input type="number" id="prof_bonus" data-key="prof_bonus" value="2" style="height:34px;text-align:center">
           </div>
         </div>
         <div class="skills-container" id="skillsContainer"></div>
       </div>
     </div>
 
+    <!-- Ataques & Conjuração -->
     <div class="module" data-module="ataques">
       <div class="card">
         <span class="section-title">Ataques & Conjuração</span>
@@ -149,7 +190,7 @@ td{padding:5px; border-bottom:1px solid #f1f5f9;}
           <thead><tr><th>Arma</th><th>Bônus Atq</th><th>Dano/Tipo</th><th>Notas</th><th></th></tr></thead>
           <tbody></tbody>
         </table>
-        <div style="display:flex; gap:10px; margin-top:10px">
+        <div style="display:flex;gap:10px;margin-top:10px">
           <input id="w_name" placeholder="Nome" style="flex:2">
           <input id="w_atq" placeholder="+5" style="flex:1">
           <input id="w_dmg" placeholder="1d8+3" style="flex:1">
@@ -160,20 +201,20 @@ td{padding:5px; border-bottom:1px solid #f1f5f9;}
 
   </main>
 
-  <!-- Right column (aside) -->
+  <!-- Aside (right column) -->
   <aside>
 
     <div class="module" data-module="status-vitais">
-      <div class="card" style="background:var(--accent); color:white;">
-        <span class="section-title" style="color:white; border-color:rgba(255,255,255,0.2)">Status Vitais</span>
+      <div class="card" style="background:var(--accent);color:white">
+        <span class="section-title" style="color:white;border-color:rgba(255,255,255,0.2)">Status Vitais</span>
         <div class="field"><label style="color:white">Pontos de Vida</label>
-          <div style="display:flex; gap:5px; align-items:center">
-            <input id="hp_atual" data-key="hp_atual" type="number" style="width:100%; background:rgba(0,0,0,0.2); border:0; color:white">
-            <span>/</span>
-            <input id="hp_max" data-key="hp_max" type="number" style="width:100%; background:rgba(0,0,0,0.2); border:0; color:white">
+          <div style="display:flex;gap:8px;align-items:center">
+            <input id="hp_atual" data-key="hp_atual" type="number" style="width:100%;background:rgba(0,0,0,0.18);border:0;color:white">
+            <span style="color:white">/</span>
+            <input id="hp_max" data-key="hp_max" type="number" style="width:100%;background:rgba(0,0,0,0.18);border:0;color:white">
           </div>
         </div>
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:15px">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px">
           <div class="field"><label style="color:white">CA</label><input id="ca" data-key="ca" type="number"></div>
           <div class="field"><label style="color:white">Iniciativa</label><input id="iniciativa" readonly></div>
         </div>
@@ -191,7 +232,7 @@ td{padding:5px; border-bottom:1px solid #f1f5f9;}
     <div class="module" data-module="moedas">
       <div class="card">
         <span class="section-title">Moedas</span>
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px">
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px">
           <div class="field"><label>PO</label><input data-key="po" type="number"></div>
           <div class="field"><label>PP</label><input data-key="pp" type="number"></div>
           <div class="field"><label>PC</label><input data-key="pc" type="number"></div>
@@ -204,16 +245,16 @@ td{padding:5px; border-bottom:1px solid #f1f5f9;}
 
 </div>
 
-<!-- painel de controle opcional para ativar/desativar módulos (mantido oculto por padrão) -->
+<!-- Optional module control (hidden by default) -->
 <div class="module-control" id="moduleControl" aria-hidden="true">
   <strong>Módulos</strong>
   <div id="moduleControlList"></div>
 </div>
 
 <script>
-/* ---------- Correções e robustez no JS ---------- */
+/* ---------- Utilitários e dados ---------- */
+const storageKey = 'rpg_sheet_data_final';
 
-/* Lista de perícias padrão D&D 5e */
 const ALL_SKILLS = [
   { name: 'Acrobacia', attr: 'destreza' },
   { name: 'Adestrar Animais', attr: 'sabedoria' },
@@ -235,52 +276,54 @@ const ALL_SKILLS = [
   { name: 'Sobrevivência', attr: 'sabedoria' }
 ];
 
-/* Normaliza string para id seguro */
-function idSafe(name){ return name.replace(/\s+/g,'_').replace(/[^\w_]/g,''); }
+function idSafe(name){ return String(name).replace(/\s+/g,'_').replace(/[^\w_]/g,''); }
 
-/* Render perícias (IDs normalizados) */
-function renderSkills() {
+/* ---------- Render perícias ---------- */
+function renderSkills(){
   const container = document.getElementById('skillsContainer');
   if(!container) return;
-  container.innerHTML = ALL_SKILLS.map(s => {
+  container.innerHTML = ALL_SKILLS.map(s=>{
     const key = idSafe(s.name);
-    return `
-      <div class="skill-item">
-        <input type="checkbox" class="skill-check" data-attr="${s.attr}" data-name="${s.name}" data-key="${key}" id="chk_${key}">
-        <label for="chk_${key}">${s.name} <small style="color:#94a3b8">(${s.attr.substring(0,3).toUpperCase()})</small></label>
-        <span class="skill-val" id="val_${key}">+0</span>
-      </div>
-    `;
+    return `<div class="skill-item">
+      <input type="checkbox" class="skill-check" data-attr="${s.attr}" data-name="${s.name}" data-key="${key}" id="chk_${key}">
+      <label for="chk_${key}">${s.name} <small style="color:#94a3b8">(${s.attr.substring(0,3).toUpperCase()})</small></label>
+      <span class="skill-val" id="val_${key}">+0</span>
+    </div>`;
   }).join('');
 }
 
-/* Cálculos automáticos (com proteções) */
-function updateCalculations() {
+/* ---------- Cálculos ---------- */
+function modFrom(score){ return Math.floor((score - 10) / 2); }
+function formatMod(n){ return (n >= 0 ? '+' : '') + n; }
+
+function updateCalculations(){
   const profEl = document.getElementById('prof_bonus');
   const prof = profEl ? (parseInt(profEl.value) || 0) : 0;
-  const attrs = ['forca', 'destreza', 'constituicao', 'inteligencia', 'sabedoria', 'carisma'];
+  const attrs = ['forca','destreza','constituicao','inteligencia','sabedoria','carisma'];
   const mods = {};
-  attrs.forEach(a => {
+  attrs.forEach(a=>{
     const el = document.getElementById(a);
     const score = el ? (parseInt(el.value) || 10) : 10;
-    const mod = Math.floor((score - 10) / 2);
-    mods[a] = mod;
+    const m = modFrom(score);
+    mods[a] = m;
     const modEl = document.getElementById(a + '_mod');
-    if(modEl) modEl.textContent = (mod >= 0 ? '+' : '') + mod;
+    if(modEl) modEl.textContent = formatMod(m);
   });
 
-  document.querySelectorAll('.skill-check').forEach(cb => {
-    const attrMod = mods[cb.dataset.attr] || 0;
+  document.querySelectorAll('.skill-check').forEach(cb=>{
+    const attr = cb.dataset.attr;
+    const key = cb.dataset.key || idSafe(cb.dataset.name || '');
+    const attrMod = mods[attr] || 0;
     const total = attrMod + (cb.checked ? prof : 0);
-    const id = 'val_' + (cb.dataset.key || idSafe(cb.dataset.name || ''));
-    const el = document.getElementById(id);
-    if(el) el.textContent = (total >= 0 ? '+' : '') + total;
+    const el = document.getElementById('val_' + key);
+    if(el) el.textContent = formatMod(total);
   });
 
   const iniEl = document.getElementById('iniciativa');
-  if(iniEl) iniEl.value = (mods.destreza >= 0 ? '+' : '') + mods.destreza;
+  if(iniEl) iniEl.value = formatMod(mods.destreza || 0);
+  const iniQuick = document.getElementById('iniciativa_quick');
+  if(iniQuick) iniQuick.value = iniEl ? iniEl.value : '';
 
-  // Percepção passiva e investigação passiva (IDs padronizados: perc_passiva, inv_passiva)
   const percCheckbox = Array.from(document.querySelectorAll('.skill-check')).find(cb => cb.dataset.name === 'Percepção');
   const invCheckbox = Array.from(document.querySelectorAll('.skill-check')).find(cb => cb.dataset.name === 'Investigação');
   const percProf = (percCheckbox && percCheckbox.checked) ? prof : 0;
@@ -289,9 +332,18 @@ function updateCalculations() {
   if(percEl) percEl.value = 10 + (mods.sabedoria || 0) + percProf;
   const invEl = document.getElementById('inv_passiva');
   if(invEl) invEl.value = 10 + (mods.inteligencia || 0) + invProf;
+
+  // resumo HP/CA quick
+  const atual = parseInt(document.getElementById('hp_atual')?.value || 0);
+  const max = parseInt(document.getElementById('hp_max')?.value || 0);
+  const temp = parseInt(document.getElementById('hp_temp')?.value || 0);
+  const hpQuick = document.getElementById('hp_quick');
+  if(hpQuick) hpQuick.value = `${atual}/${max} (+${temp})`;
+  const caQuick = document.getElementById('ca_quick');
+  if(caQuick) caQuick.value = document.getElementById('ca')?.value || '';
 }
 
-/* Avatar drag & drop (com checagens) */
+/* ---------- Avatar: drop, crop e preview ---------- */
 const avZone = document.getElementById('avatarPreview');
 if(avZone){
   avZone.addEventListener('dragover', e => { e.preventDefault(); avZone.style.borderColor = 'var(--accent)'; avZone.style.background = '#f1edff'; });
@@ -301,192 +353,139 @@ if(avZone){
     avZone.style.borderColor = '#cbd5e1';
     avZone.style.background = '#f8fafc';
     const file = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
-    if (file && file.type && file.type.startsWith('image/')) {
-      const reader = new FileReader();
-      reader.onload = event => {
-        const img = new Image();
-        img.onload = () => {
-          try {
-            const canvas = document.createElement('canvas');
-            const size = 400;
-            canvas.width = size; canvas.height = size;
-            const ctx = canvas.getContext('2d');
-            const side = Math.min(img.width, img.height);
-            ctx.drawImage(img, (img.width-side)/2, (img.height-side)/2, side, side, 0, 0, size, size);
-            const dataURL = canvas.toDataURL('image/jpeg', 0.8);
-            avZone.innerHTML = `<img src="${dataURL}">`;
-            avZone.dataset.imgData = dataURL;
-          } catch(err) {
-            console.error(err);
-            alert('Erro ao processar a imagem.');
-          }
-        };
-        img.src = event.target.result;
+    if(!file || !file.type || !file.type.startsWith('image/')) { alert('Arraste um arquivo de imagem válido.'); return; }
+    const reader = new FileReader();
+    reader.onload = ev => {
+      const img = new Image();
+      img.onload = () => {
+        try {
+          const canvas = document.createElement('canvas');
+          const size = 400;
+          canvas.width = size; canvas.height = size;
+          const ctx = canvas.getContext('2d');
+          const side = Math.min(img.width, img.height);
+          ctx.drawImage(img, (img.width-side)/2, (img.height-side)/2, side, side, 0, 0, size, size);
+          const dataURL = canvas.toDataURL('image/jpeg', 0.85);
+          avZone.innerHTML = `<img src="${dataURL}">`;
+          avZone.dataset.imgData = dataURL;
+        } catch(err) {
+          console.error(err);
+          alert('Erro ao processar a imagem.');
+        }
       };
-      reader.readAsDataURL(file);
-    } else {
-      alert('Arraste um arquivo de imagem válido.');
-    }
+      img.src = ev.target.result;
+    };
+    reader.readAsDataURL(file);
   });
 }
 
 /* toggle circular */
-const toggleCircularEl = document.getElementById('toggleCircular');
-if(toggleCircularEl && avZone){
-  toggleCircularEl.addEventListener('change', e => { avZone.style.borderRadius = e.target.checked ? '50%' : '12px'; });
+const toggleCircular = document.getElementById('toggleCircular');
+if(toggleCircular && avZone){
+  toggleCircular.addEventListener('change', e => { avZone.style.borderRadius = e.target.checked ? '50%' : '12px'; });
 }
 
-/* Weapons */
-function addWeapon(data = null) {
-  const row = document.createElement('tr');
-  const name = data ? (data.n || data.name) : document.getElementById('w_name').value;
-  const atq = data ? (data.a || data.bonus) : document.getElementById('w_atq').value;
-  const dmg = data ? (data.d || data.dmg) : document.getElementById('w_dmg').value;
-  if(!name && !data) return;
-  row.innerHTML = `
-    <td>${name}</td><td>${atq}</td><td>${dmg}</td><td>-</td>
-    <td><button class="del-row" style="color:red; border:0; background:none; cursor:pointer">×</button></td>
-  `;
-  row.querySelector('.del-row').addEventListener('click', ()=> row.remove());
+/* ---------- Weapons helpers ---------- */
+function addWeapon(data = null){
   const tbody = document.querySelector('#weaponsTable tbody');
-  if(tbody) tbody.appendChild(row);
-  if(!data) {
-    const n = document.getElementById('w_name'); if(n) n.value = '';
-    const a = document.getElementById('w_atq'); if(a) a.value = '';
-    const d = document.getElementById('w_dmg'); if(d) d.value = '';
+  if(!tbody) return;
+  const tr = document.createElement('tr');
+  const name = data ? (data.n || data.name) : (document.getElementById('w_name')?.value || '');
+  const atq = data ? (data.a || data.bonus) : (document.getElementById('w_atq')?.value || '');
+  const dmg = data ? (data.d || data.dmg) : (document.getElementById('w_dmg')?.value || '');
+  if(!name) return;
+  tr.innerHTML = `<td>${name}</td><td>${atq}</td><td>${dmg}</td><td>-</td><td><button class="del-row" style="color:red;border:0;background:none;cursor:pointer">×</button></td>`;
+  tr.querySelector('.del-row').addEventListener('click', ()=>tr.remove());
+  tbody.appendChild(tr);
+  if(!data){
+    if(document.getElementById('w_name')) document.getElementById('w_name').value = '';
+    if(document.getElementById('w_atq')) document.getElementById('w_atq').value = '';
+    if(document.getElementById('w_dmg')) document.getElementById('w_dmg').value = '';
   }
 }
 
-/* Persistence */
-const storageKey = 'rpg_sheet_data_final';
-function saveData() {
-  try {
-    const data = { skills: {}, weapons: [] };
-    document.querySelectorAll('[data-key]').forEach(el => {
-      const key = el.dataset.key;
-      if(!key) return;
-      if(el.contentEditable === "true") data[key] = el.innerText || '';
-      else if(el.type === 'checkbox') data[key] = el.checked;
-      else data[key] = el.value || '';
-    });
-    document.querySelectorAll('.skill-check').forEach(cb => data.skills[cb.dataset.name] = !!cb.checked);
-    document.querySelectorAll('#weaponsTable tbody tr').forEach(tr => {
-      const tds = tr.querySelectorAll('td');
-      data.weapons.push({n: tds[0].innerText, a: tds[1].innerText, d: tds[2].innerText});
-    });
-    data.avatar = (avZone && avZone.dataset.imgData) ? avZone.dataset.imgData : '';
-    data.circular = !!(toggleCircularEl && toggleCircularEl.checked);
-    localStorage.setItem(storageKey, JSON.stringify(data));
-    alert("Ficha salva no navegador!");
-  } catch(err) {
-    console.error(err);
-    alert('Erro ao salvar os dados.');
-  }
+/* ---------- Persistence ---------- */
+function gatherData(){
+  const data = { skills: {}, weapons: [], avatar: '', circular: false };
+  document.querySelectorAll('[data-key]').forEach(el=>{
+    const key = el.dataset.key;
+    if(!key) return;
+    if(el.contentEditable === "true") data[key] = el.innerText || '';
+    else if(el.type === 'checkbox') data[key] = !!el.checked;
+    else data[key] = el.value || '';
+  });
+  document.querySelectorAll('.skill-check').forEach(cb => data.skills[cb.dataset.name] = !!cb.checked);
+  document.querySelectorAll('#weaponsTable tbody tr').forEach(tr=>{
+    const tds = tr.querySelectorAll('td');
+    data.weapons.push({ n: tds[0].innerText, a: tds[1].innerText, d: tds[2].innerText });
+  });
+  data.avatar = avZone?.dataset.imgData || '';
+  data.circular = !!(toggleCircular && toggleCircular.checked);
+  return data;
 }
-function loadData() {
-  try {
+
+function saveData(){
+  try{
+    const data = gatherData();
+    localStorage.setItem(storageKey, JSON.stringify(data));
+    alert('Ficha salva no navegador!');
+  }catch(err){ console.error(err); alert('Erro ao salvar.'); }
+}
+
+function loadData(){
+  try{
     const raw = localStorage.getItem(storageKey);
     if(!raw) return;
     const data = JSON.parse(raw);
-    document.querySelectorAll('[data-key]').forEach(el => {
+    document.querySelectorAll('[data-key]').forEach(el=>{
       const key = el.dataset.key;
       if(!key) return;
       if(el.contentEditable === "true") el.innerText = data[key] || '';
       else if(el.type === 'checkbox') el.checked = !!data[key];
       else el.value = data[key] || '';
     });
-    document.querySelectorAll('.skill-check').forEach(cb => {
-      cb.checked = !!(data.skills && data.skills[cb.dataset.name]);
-    });
+    document.querySelectorAll('.skill-check').forEach(cb => cb.checked = !!(data.skills && data.skills[cb.dataset.name]));
     const tbody = document.querySelector('#weaponsTable tbody');
     if(tbody) tbody.innerHTML = '';
-    (data.weapons || []).forEach(w => addWeapon({n: w.n || w.name, a: w.a || w.bonus, d: w.d || w.dmg}));
-    if(data.avatar) {
-      if(avZone) {
-        avZone.innerHTML = `<img src="${data.avatar}">`;
-        avZone.dataset.imgData = data.avatar;
-      }
-    } else {
-      if(avZone) { avZone.innerHTML = '<div class="avatar-hint">Arraste uma foto para cá</div>'; delete avZone.dataset.imgData; }
-    }
-    if(toggleCircularEl) toggleCircularEl.checked = !!data.circular;
-    if(avZone) avZone.style.borderRadius = toggleCircularEl && toggleCircularEl.checked ? '50%' : '12px';
+    (data.weapons || []).forEach(w => addWeapon({ n: w.n || w.name, a: w.a || w.bonus, d: w.d || w.dmg }));
+    if(data.avatar && avZone){ avZone.innerHTML = `<img src="${data.avatar}">`; avZone.dataset.imgData = data.avatar; }
+    if(toggleCircular) toggleCircular.checked = !!data.circular;
+    if(avZone) avZone.style.borderRadius = toggleCircular && toggleCircular.checked ? '50%' : '12px';
     updateCalculations();
-  } catch(err) {
-    console.error(err);
-    alert('Erro ao carregar os dados salvos.');
-  }
+  }catch(err){ console.error(err); alert('Erro ao carregar dados.'); }
 }
-function exportJSON() {
-  try {
+
+function exportJSON(){
+  try{
     const raw = localStorage.getItem(storageKey);
-    const dataStr = raw || JSON.stringify(gatherEmptyData());
-    const blob = new Blob([dataStr], {type: 'application/json'});
+    const dataStr = raw || JSON.stringify(gatherData(), null, 2);
+    const blob = new Blob([dataStr], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url; a.download = 'minha_ficha.json'; a.click();
     URL.revokeObjectURL(url);
-  } catch(err) {
-    console.error(err);
-    alert('Erro ao exportar JSON.');
-  }
+  }catch(err){ console.error(err); alert('Erro ao exportar.'); }
 }
-function gatherEmptyData(){
-  // fallback para export quando não há nada salvo
-  const d = {};
-  document.querySelectorAll('[data-key]').forEach(el => {
-    const key = el.dataset.key;
-    if(!key) return;
-    if(el.contentEditable === "true") d[key] = el.innerText || '';
-    else if(el.type === 'checkbox') d[key] = !!el.checked;
-    else d[key] = el.value || '';
-  });
-  d.skills = {};
-  document.querySelectorAll('.skill-check').forEach(cb => d.skills[cb.dataset.name] = !!cb.checked);
-  d.weapons = [];
-  return d;
-}
-function clearData() {
-  if(confirm("Deseja apagar tudo?")) {
+
+function clearData(){
+  if(confirm('Deseja apagar tudo?')){
     localStorage.removeItem(storageKey);
     location.reload();
   }
 }
 
-/* Init: listeners e proteção para checkboxes */
-window.addEventListener('load', () => {
-  renderSkills();
-  loadData();
-
-  // input listeners (atributos, prof bonus, etc.)
-  document.querySelectorAll('input[type="number"], input[type="text"], textarea').forEach(i => i.addEventListener('input', updateCalculations));
-  // checkboxes (perícias) -> change
-  document.addEventListener('change', e => {
-    if(e.target && e.target.matches && e.target.matches('.skill-check')) updateCalculations();
-  });
-
-  // add weapon button
-  const addW = document.getElementById('w_name') && document.getElementById('w_name').closest ? document.getElementById('w_name').closest('div') : null;
-  // attach addWeapon to button (if present)
-  const addBtn = document.querySelector('[onclick="addWeapon()"]');
-  if(addBtn) addBtn.addEventListener('click', () => addWeapon());
-
-  // ensure toggleCircular applies on load
-  if(toggleCircularEl && avZone) avZone.style.borderRadius = toggleCircularEl.checked ? '50%' : '12px';
-});
-
-/* Optional: module control panel (kept hidden by default) */
-(function createModuleControl(){
+/* ---------- Module control (optional) ---------- */
+(function moduleControlInit(){
   const modules = Array.from(document.querySelectorAll('[data-module]')).map(m => m.dataset.module);
   if(!modules.length) return;
   const panel = document.getElementById('moduleControl');
   const list = document.getElementById('moduleControlList');
   modules.forEach(name=>{
-    const id = 'ctl_'+name.replace(/[^a-z0-9\-_]/gi,'_');
+    const id = 'ctl_' + name.replace(/[^a-z0-9\-_]/gi,'_');
     const label = document.createElement('label');
     label.innerHTML = `<input type="checkbox" id="${id}" ${!document.querySelector('[data-module="'+name+'"]').classList.contains('hidden')?'checked':''}> ${name}`;
     list.appendChild(label);
-    label.querySelector('input').addEventListener('change', e => {
+    label.querySelector('input').addEventListener('change', e=>{
       const el = document.querySelector('[data-module="'+name+'"]');
       if(el) el.classList.toggle('hidden', !e.target.checked);
     });
@@ -494,6 +493,22 @@ window.addEventListener('load', () => {
   // To show the panel for debugging, uncomment the next line:
   // panel.style.display = 'block';
 })();
+
+/* ---------- Init ---------- */
+window.addEventListener('load', ()=>{
+  renderSkills();
+  loadData();
+  // inputs
+  document.querySelectorAll('input[type="number"], input[type="text"], textarea, select').forEach(i => i.addEventListener('input', updateCalculations));
+  // checkboxes for skills
+  document.addEventListener('change', e => { if(e.target && e.target.matches && e.target.matches('.skill-check')) updateCalculations(); });
+  // add weapon button fallback
+  const addBtn = document.querySelector('[onclick="addWeapon()"]');
+  if(addBtn) addBtn.addEventListener('click', ()=> addWeapon());
+  // ensure avatar radius on load
+  if(toggleCircular && avZone) avZone.style.borderRadius = toggleCircular.checked ? '50%' : '12px';
+  updateCalculations();
+});
 </script>
 
 </body>
