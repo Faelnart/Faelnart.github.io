@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Ficha RPG — Com Tooltips</title>
+<title>Ficha RPG — Perícias com Tooltips</title>
 <style>
 :root{
   --bg-start:#f6f8fb; --bg-end:#eef4fb;
@@ -104,7 +104,7 @@ input:focus, select:focus, button:focus, textarea:focus{outline:3px solid rgba(9
   <!-- Header -->
   <div class="header">
     <div class="card" role="banner">
-      <h1>Ficha RPG — Com Tooltips</h1>
+      <h1>Ficha RPG — Perícias com Tooltips</h1>
       <div style="display:flex;gap:12px;align-items:center">
         <div class="palette-row" title="Paleta e seletor de cor">
           <label style="font-size:13px;color:var(--muted)">Cor</label>
@@ -375,10 +375,10 @@ input:focus, select:focus, button:focus, textarea:focus{outline:3px solid rgba(9
 </div>
 
 <script>
-/* JS completo com tooltips (CSS-only). Mantive todas as funcionalidades anteriores. */
+/* JS com tooltips nas perícias (descrições por perícia) — funcionalidade inalterada */
 
 /* Dados */
-const storageKey = 'ficha_rpg_revisada_v1';
+const storageKey = 'ficha_rpg_pericias_tooltips_v1';
 const ALL_SKILLS = [
   { name:'Acrobacia', attr:'destreza' },{ name:'Adestrar Animais', attr:'sabedoria' },
   { name:'Arcanismo', attr:'inteligencia' },{ name:'Atletismo', attr:'forca' },
@@ -390,6 +390,29 @@ const ALL_SKILLS = [
   { name:'Persuasão', attr:'carisma' },{ name:'Prestidigitação', attr:'destreza' },
   { name:'Religião', attr:'inteligencia' },{ name:'Sobrevivência', attr:'sabedoria' }
 ];
+
+/* Descrições curtas para tooltips de perícias */
+const SKILL_DESCRIPTIONS = {
+  'Acrobacia': 'Equilíbrio, saltos e manobras ágeis; evita quedas e realiza acrobacias.',
+  'Adestrar Animais': 'Treinar, acalmar ou controlar animais; interpretar comportamento animal.',
+  'Arcanismo': 'Conhecimento sobre magia, rituais, itens mágicos e tradições arcanas.',
+  'Atletismo': 'Força física aplicada a escaladas, saltos longos, natação e arremessos.',
+  'Atuação': 'Performances, encenação, fingimento e entretenimento em público.',
+  'Enganação': 'Mentir, dissimular intenções e enganar outras pessoas.',
+  'Furtividade': 'Mover-se silenciosamente, esconder-se e evitar detecção.',
+  'História': 'Conhecimento de eventos, reinos, lendas e genealogias do passado.',
+  'Intimidação': 'Ameaçar, coagir ou forçar alguém a agir por medo.',
+  'Intuição': 'Percepção instintiva sobre intenções e sentimentos de outros.',
+  'Investigação': 'Analisar pistas, procurar detalhes e resolver mistérios.',
+  'Medicina': 'Tratar ferimentos, diagnosticar doenças e estabilizar feridos.',
+  'Natureza': 'Conhecimento sobre plantas, animais, clima e ecossistemas.',
+  'Percepção': 'Notar detalhes, ouvir sons sutis e detectar armadilhas ou emboscadas.',
+  'Persuasão': 'Convencer, negociar e influenciar pessoas de forma social.',
+  'Prestidigitação': 'Truques manuais, manipulação de objetos e pequenas ilusões físicas.',
+  'Religião': 'Conhecimento sobre deuses, rituais, dogmas e tradições religiosas.',
+  'Sobrevivência': 'Orientação, encontrar comida/água, rastrear e resistir em ambientes hostis'
+};
+
 const RACE_BONUSES = {
   'Humano (Padrão)': { forca:1, destreza:1, constituicao:1, inteligencia:1, sabedoria:1, carisma:1 },
   'Anão (Colina)': { constituicao:2, sabedoria:1 },
@@ -413,19 +436,23 @@ function modFrom(score){ return Math.floor((score - 10) / 2); }
 function formatMod(n){ return (n>=0?'+':'') + n; }
 function now(){ return new Date().toLocaleString(); }
 
-/* Render skills */
+/* Render skills UI com tooltips individuais (não altera lógica) */
 function renderSkillsUI(){
   const container = document.getElementById('skillsContainer');
   const quick = document.getElementById('quickSkillSelect');
+  if(!container || !quick) return;
   container.innerHTML = ''; quick.innerHTML = '<option value="">— selecione —</option>';
   ALL_SKILLS.forEach(s=>{
     const key = idSafe(s.name);
     const div = document.createElement('div');
     div.className = 'skill-item';
     const svg = `<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3 7 7 3-7 3-3 7-3-7-7-3 7-3 3-7z"/></svg>`;
+    // pega descrição do mapa; se não existir, usa texto genérico
+    const desc = SKILL_DESCRIPTIONS[s.name] || 'Perícia relacionada a ' + s.attr;
+    // label recebe data-tooltip com a descrição; data-tooltip-multiline true para permitir quebras
     div.innerHTML = `
       <input type="checkbox" class="skill-check" data-attr="${s.attr}" data-name="${s.name}" data-key="${key}" id="chk_${key}">
-      <label for="chk_${key}" data-tooltip="Marque se o personagem for proficiente nesta perícia">${svg}<span>${s.name} <small style="color:var(--muted)">(${s.attr.substring(0,3).toUpperCase()})</small></span></label>
+      <label for="chk_${key}" data-tooltip="${desc}" data-tooltip-multiline="true">${svg}<span>${s.name} <small style="color:var(--muted)">(${s.attr.substring(0,3).toUpperCase()})</small></span></label>
       <span class="skill-val" id="val_${key}">+0</span>
     `;
     container.appendChild(div);
@@ -433,7 +460,7 @@ function renderSkillsUI(){
   });
 }
 
-/* Populate attribute selects for variants */
+/* Popula selects de atributos para variantes */
 function populateAttributeOptions(selectEl){
   if(!selectEl) return;
   const attrs = [
@@ -978,7 +1005,7 @@ window.addEventListener('load', ()=>{
   enforceChoiceLimits([document.getElementById('halfElfVar1'), document.getElementById('halfElfVar2')], 2);
   applyRaceBonusesFromSelection();
   updateAll();
-  addRollLog('Ficha pronta e revisada com tooltips.');
+  addRollLog('Ficha pronta — tooltips de perícias adicionados.');
 });
 
 /* Mobile tooltip helper: long-press to show (optional) */
