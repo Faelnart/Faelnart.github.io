@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Ficha RPG — Atualizada (Seleção de Perícia)</title>
+<title>Ficha RPG — Com Seletor de Raças D&D 5E</title>
 <style>
 :root{
   --bg-start:#f2f4f8; --bg-end:#e9eef6;
@@ -59,7 +59,7 @@ aside{grid-column:2/3;width:100%;box-sizing:border-box}
   <!-- Header -->
   <div class="module" data-module="header">
     <header class="card" role="banner">
-      <h1>Ficha RPG — Atualizada</h1>
+      <h1>Ficha RPG — Raças D&D 5E</h1>
       <div class="controls-row">
         <button id="saveBtn" class="btn">Salvar</button>
         <button id="exportBtn" class="btn-ghost">Exportar</button>
@@ -84,10 +84,46 @@ aside{grid-column:2/3;width:100%;box-sizing:border-box}
               <div style="width:120px" class="field"><label>Nível</label><input id="nivel" data-key="nivel" type="number" min="1" max="20" value="1"></div>
               <div style="width:120px" class="field"><label>XP</label><input id="xp" data-key="xp" type="number" min="0"></div>
             </div>
-            <div style="display:flex;gap:8px;margin-top:8px">
-              <div style="flex:1" class="field"><label>Antecedente / Raça</label><input id="antecedente" data-key="antecedente" type="text"></div>
-              <div style="width:140px" class="field"><label>CA</label><input id="ca" data-key="ca" type="number"></div>
+
+            <!-- Antecedente e Raça (seletor de raças D&D 5E) -->
+            <div style="display:flex;gap:8px;margin-top:8px;align-items:flex-end">
+              <div style="flex:1" class="field"><label>Antecedente</label><input id="antecedente" data-key="antecedente" type="text" placeholder="Ex: Soldado"></div>
+
+              <div style="width:220px" class="field">
+                <label>Raça (D&D 5E)</label>
+                <select id="racaSelect" data-key="raca" aria-label="Raça">
+                  <option value="">— selecione raça —</option>
+                  <optgroup label="Humanos">
+                    <option value="Humano (Padrão)">Humano (Padrão)</option>
+                    <option value="Humano (Variante)">Humano (Variante)</option>
+                  </optgroup>
+                  <optgroup label="Anões">
+                    <option value="Anão (Colina)">Anão (Colina)</option>
+                    <option value="Anão (Montanha)">Anão (Montanha)</option>
+                  </optgroup>
+                  <optgroup label="Elfos">
+                    <option value="Elfo (Alto)">Elfo (Alto)</option>
+                    <option value="Elfo (da Floresta)">Elfo (da Floresta)</option>
+                    <option value="Elfo (Drow)">Elfo (Drow)</option>
+                  </optgroup>
+                  <optgroup label="Halflings">
+                    <option value="Halfling (Pés-leves)">Halfling (Pés-leves)</option>
+                    <option value="Halfling (Robusto)">Halfling (Robusto)</option>
+                  </optgroup>
+                  <optgroup label="Outros">
+                    <option value="Draconato">Draconato</option>
+                    <option value="Gnomo (Floresta)">Gnomo (Floresta)</option>
+                    <option value="Gnomo (Rocha)">Gnomo (Rocha)</option>
+                    <option value="Meio-Elfo">Meio-Elfo</option>
+                    <option value="Meio-Orc">Meio-Orc</option>
+                    <option value="Tiefling">Tiefling</option>
+                    <option value="Outra">Outra...</option>
+                  </optgroup>
+                </select>
+                <input id="racaCustom" data-key="raca_custom" type="text" placeholder="Digite a raça" style="margin-top:8px;display:none">
+              </div>
             </div>
+
           </div>
 
           <div>
@@ -239,8 +275,10 @@ aside{grid-column:2/3;width:100%;box-sizing:border-box}
 
 <script>
 /* ============================
-   Código completo e atualizado
-   - Ao selecionar perícia no quick select, preenche #rollMod com o modificador equivalente
+   Código atualizado com seletor de raças D&D 5E
+   - Seletor: #racaSelect (optgroups com subraças)
+   - Campo custom: #racaCustom (aparece quando "Outra" é selecionado)
+   - Persistência: gatherData/applyData tratam seleção e custom
    - Mantém todas as funcionalidades anteriores
    ============================ */
 
@@ -387,7 +425,6 @@ function onQuickSkillChange(){
   if(!sel || !info || !rollMod) return;
   const key = sel.value;
   if(!key){ info.textContent = ''; return; }
-  // find the skill checkbox element to know if it's proficient
   const cb = document.querySelector(`.skill-check[data-key="${key}"]`);
   if(!cb){ info.textContent = ''; return; }
   const attr = cb.dataset.attr;
@@ -395,25 +432,12 @@ function onQuickSkillChange(){
   const attrMod = modFrom(attrScore);
   const prof = cb.checked ? parseInt(document.getElementById('prof_bonus')?.value || 0) : 0;
   const total = attrMod + prof;
-  // set rollMod to total
   rollMod.value = total;
-  // show info: e.g. "+5 = +3 (DES) +2 (Prof)"
   const attrLabel = attr.substring(0,3).toUpperCase();
-  const profText = prof ? ` +${prof} (Prof)` : '';
   info.textContent = `${formatMod(total)} = ${formatMod(attrMod)} (${attrLabel})${prof ? ` ${formatMod(prof)} (Prof)` : ''}`;
 }
-
-/* Attach change listener to quickSkillSelect */
 document.getElementById('quickSkillSelect')?.addEventListener('change', onQuickSkillChange);
-
-/* Also update quickSkillInfo when proficiency checkbox or prof_bonus changes */
-document.addEventListener('change', e=>{
-  if(e.target && e.target.matches && (e.target.matches('.skill-check') || e.target.matches('#prof_bonus'))){
-    // if a skill is selected in quick select, refresh info
-    onQuickSkillChange();
-    updateAll();
-  }
-});
+document.addEventListener('change', e=>{ if(e.target && e.target.matches && (e.target.matches('.skill-check') || e.target.matches('#prof_bonus'))){ onQuickSkillChange(); updateAll(); } });
 document.getElementById('prof_bonus')?.addEventListener('input', ()=>{ onQuickSkillChange(); updateAll(); });
 
 /* Weapons */
@@ -429,24 +453,128 @@ if(avatarPreview){ ['dragenter','dragover'].forEach(ev=>avatarPreview.addEventLi
 function processAvatarFile(file){ if(!file.type.startsWith('image/')) return alert('Arquivo não é imagem.'); const reader=new FileReader(); reader.onload=ev=>{ const img=new Image(); img.onload=()=>{ const canvas=document.createElement('canvas'); const size=400; canvas.width=size; canvas.height=size; const ctx=canvas.getContext('2d'); const side=Math.min(img.width,img.height); ctx.drawImage(img,(img.width-side)/2,(img.height-side)/2,side,side,0,0,size,size); const dataURL=canvas.toDataURL('image/jpeg',0.85); avatarPreview.innerHTML=`<img src="${dataURL}">`; avatarPreview.dataset.imgData=dataURL; }; img.src=ev.target.result; }; reader.readAsDataURL(file); }
 document.getElementById('toggleCircular')?.addEventListener('change', e=>{ avatarPreview.style.borderRadius = e.target.checked ? '50%' : '12px'; });
 
-/* Persistence */
-function gatherData(){ const data={skills:{},weapons:[],avatar:'',circular:false,meta:{ts:new Date().toISOString()}}; document.querySelectorAll('[data-key]').forEach(el=>{ const key=el.dataset.key; if(!key) return; if(el.type==='checkbox') data[key]=el.checked; else data[key]=el.value||''; }); document.querySelectorAll('.skill-check').forEach(cb=> data.skills[cb.dataset.name]=!!cb.checked); document.querySelectorAll('#weaponsTable tbody tr').forEach(tr=>{ const tds=tr.querySelectorAll('td'); data.weapons.push({name:tds[0].innerText,bonus:tds[1].innerText,dmg:tds[2].innerText,notes:tds[3].innerText}); }); data.avatar = avatarPreview?.dataset.imgData || ''; data.circular = !!document.getElementById('toggleCircular')?.checked; return data; }
-function applyData(data){ if(!data) return; document.querySelectorAll('[data-key]').forEach(el=>{ const key=el.dataset.key; if(!key) return; if(el.type==='checkbox') el.checked = !!data[key]; else el.value = data[key] || ''; }); document.querySelectorAll('.skill-check').forEach(cb=> cb.checked = !!(data.skills && data.skills[cb.dataset.name])); const tbody=document.querySelector('#weaponsTable tbody'); if(tbody) tbody.innerHTML=''; (data.weapons||[]).forEach(w=> addWeaponRow({name:w.name,bonus:w.bonus,dmg:w.dmg,notes:w.notes})); if(data.avatar && avatarPreview){ avatarPreview.innerHTML=`<img src="${data.avatar}">`; avatarPreview.dataset.imgData = data.avatar; } if(document.getElementById('toggleCircular')) document.getElementById('toggleCircular').checked = !!data.circular; updateAll(); }
-function saveToLocal(silent=false){ try{ const data=gatherData(); localStorage.setItem(storageKey, JSON.stringify(data)); if(!silent) addRollLog('Ficha salva localmente.'); }catch(e){ console.error(e); if(!silent) alert('Erro ao salvar.'); } }
-function loadFromLocal(){ try{ const raw=localStorage.getItem(storageKey); if(!raw) return; const data=JSON.parse(raw); applyData(data); addRollLog('Ficha carregada.'); }catch(e){ console.error(e); alert('Erro ao carregar.'); } }
-document.getElementById('exportBtn')?.addEventListener('click', ()=>{ try{ const data=gatherData(); const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='ficha_rpg.json'; a.click(); URL.revokeObjectURL(url); }catch(e){ console.error(e); alert('Erro ao exportar.'); } });
-document.getElementById('importBtn')?.addEventListener('click', ()=>{ const inp=document.createElement('input'); inp.type='file'; inp.accept='application/json'; inp.onchange=e=>{ const f=e.target.files[0]; if(!f) return; const reader=new FileReader(); reader.onload=ev=>{ try{ const data=JSON.parse(ev.target.result); applyData(data); addRollLog('JSON importado.'); }catch(err){ alert('Arquivo inválido.'); } }; reader.readAsText(f); }; inp.click(); });
+/* Raça select: mostrar campo custom quando "Outra" selecionada */
+const racaSelect = document.getElementById('racaSelect');
+const racaCustom = document.getElementById('racaCustom');
+if(racaSelect && racaCustom){
+  racaSelect.addEventListener('change', ()=>{
+    if(racaSelect.value === 'Outra'){
+      racaCustom.style.display = 'block';
+      racaCustom.focus();
+    } else {
+      racaCustom.style.display = 'none';
+      racaCustom.value = '';
+    }
+  });
+}
+
+/* Persistence: gather/apply/save/load/export/import/clear
+   - gatherData: se racaSelect.value === 'Outra' usa racaCustom.value; caso contrário usa racaSelect.value
+   - applyData: preenche select; se valor não estiver nas opções, seleciona "Outra" e preenche racaCustom
+*/
+function gatherData(){
+  const data={skills:{},weapons:[],avatar:'',circular:false,meta:{ts:new Date().toISOString()}};
+  document.querySelectorAll('[data-key]').forEach(el=>{
+    const key = el.dataset.key;
+    if(!key) return;
+    // ignore raca_custom here; we'll handle racaSelect specially
+    if(key === 'raca') return;
+    if(el.type === 'checkbox') data[key] = el.checked;
+    else data[key] = el.value || '';
+  });
+
+  // raça handling
+  const rSel = document.getElementById('racaSelect');
+  const rCustom = document.getElementById('racaCustom');
+  if(rSel){
+    if(rSel.value === 'Outra'){
+      data.raca = rCustom?.value || '';
+    } else {
+      data.raca = rSel.value || '';
+    }
+  } else {
+    data.raca = '';
+  }
+
+  document.querySelectorAll('.skill-check').forEach(cb=> data.skills[cb.dataset.name] = !!cb.checked);
+  document.querySelectorAll('#weaponsTable tbody tr').forEach(tr=>{
+    const tds = tr.querySelectorAll('td');
+    data.weapons.push({name:tds[0].innerText, bonus:tds[1].innerText, dmg:tds[2].innerText, notes:tds[3].innerText});
+  });
+  data.avatar = avatarPreview?.dataset.imgData || '';
+  data.circular = !!document.getElementById('toggleCircular')?.checked;
+  return data;
+}
+
+function applyData(data){
+  if(!data) return;
+  document.querySelectorAll('[data-key]').forEach(el=>{
+    const key = el.dataset.key;
+    if(!key) return;
+    if(key === 'raca') return; // handled below
+    if(el.type === 'checkbox') el.checked = !!data[key];
+    else el.value = data[key] || '';
+  });
+
+  // raça apply
+  const rSel = document.getElementById('racaSelect');
+  const rCustom = document.getElementById('racaCustom');
+  if(rSel){
+    const val = data.raca || '';
+    // try to find option with this value
+    let found = false;
+    for(const opt of Array.from(rSel.options)){
+      if(opt.value === val){
+        rSel.value = val;
+        found = true;
+        break;
+      }
+    }
+    if(!found){
+      if(val){
+        rSel.value = 'Outra';
+        if(rCustom) { rCustom.style.display = 'block'; rCustom.value = val; }
+      } else {
+        rSel.value = '';
+        if(rCustom) { rCustom.style.display = 'none'; rCustom.value = ''; }
+      }
+    } else {
+      if(rCustom) { rCustom.style.display = 'none'; rCustom.value = ''; }
+    }
+  }
+
+  document.querySelectorAll('.skill-check').forEach(cb=> cb.checked = !!(data.skills && data.skills[cb.dataset.name]));
+  const tbody = document.querySelector('#weaponsTable tbody'); if(tbody) tbody.innerHTML = '';
+  (data.weapons || []).forEach(w=> addWeaponRow({name:w.name, bonus:w.bonus, dmg:w.dmg, notes:w.notes}));
+  if(data.avatar && avatarPreview){ avatarPreview.innerHTML = `<img src="${data.avatar}">`; avatarPreview.dataset.imgData = data.avatar; }
+  if(document.getElementById('toggleCircular')) document.getElementById('toggleCircular').checked = !!data.circular;
+  updateAll();
+}
+
+function saveToLocal(silent=false){ try{ const data = gatherData(); localStorage.setItem(storageKey, JSON.stringify(data)); if(!silent) addRollLog('Ficha salva localmente.'); }catch(e){ console.error(e); if(!silent) alert('Erro ao salvar.'); } }
+function loadFromLocal(){ try{ const raw = localStorage.getItem(storageKey); if(!raw) return; const data = JSON.parse(raw); applyData(data); addRollLog('Ficha carregada.'); }catch(e){ console.error(e); alert('Erro ao carregar.'); } }
+
+document.getElementById('exportBtn')?.addEventListener('click', ()=>{ try{ const data = gatherData(); const blob = new Blob([JSON.stringify(data,null,2)],{type:'application/json'}); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'ficha_rpg.json'; a.click(); URL.revokeObjectURL(url); }catch(e){ console.error(e); alert('Erro ao exportar.'); } });
+document.getElementById('importBtn')?.addEventListener('click', ()=>{ const inp = document.createElement('input'); inp.type='file'; inp.accept='application/json'; inp.onchange = e=>{ const f = e.target.files[0]; if(!f) return; const reader = new FileReader(); reader.onload = ev=>{ try{ const data = JSON.parse(ev.target.result); applyData(data); addRollLog('JSON importado.'); }catch(err){ alert('Arquivo inválido.'); } }; reader.readAsText(f); }; inp.click(); });
 document.getElementById('clearBtn')?.addEventListener('click', ()=>{ if(confirm('Limpar todos os campos?')){ localStorage.removeItem(storageKey); location.reload(); } });
 
 /* Module control */
 (function initModuleControl(){ const list=document.getElementById('moduleControlList'); document.querySelectorAll('[data-module]').forEach(m=>{ const name=m.dataset.module; const id='ctl_'+name.replace(/[^a-z0-9\-_]/gi,'_'); const label=document.createElement('label'); label.style.display='flex'; label.style.alignItems='center'; label.style.gap='8px'; label.innerHTML=`<input type="checkbox" id="${id}" ${!m.classList.contains('hidden')?'checked':''}> ${name}`; list.appendChild(label); label.querySelector('input').addEventListener('change', e=> m.classList.toggle('hidden', !e.target.checked)); }); document.getElementById('toggleAll')?.addEventListener('click', ()=>{ const checks=Array.from(list.querySelectorAll('input[type="checkbox"]')); const anyUnchecked=checks.some(c=>!c.checked); checks.forEach(c=>{ c.checked = anyUnchecked; c.dispatchEvent(new Event('change')); }); }); })();
 
 /* Init */
-window.addEventListener('load', ()=>{ renderSkillsUI(); loadFromLocal(); updateAll(); addRollLog('Ficha pronta.'); document.querySelectorAll('input,select,textarea').forEach(i=> i.addEventListener('input', ()=>{ updateAll(); })); document.addEventListener('change', e=>{ if(e.target && e.target.matches && e.target.matches('.skill-check')) updateAll(); }); // ensure quick select info updates if a skill is selected after load
+window.addEventListener('load', ()=>{
+  renderSkillsUI();
+  loadFromLocal();
+  updateAll();
+  addRollLog('Ficha pronta.');
+  document.querySelectorAll('input,select,textarea').forEach(i=> i.addEventListener('input', ()=>{ updateAll(); }));
+  document.addEventListener('change', e=>{ if(e.target && e.target.matches && e.target.matches('.skill-check')) updateAll(); });
+  // ensure quick select info updates if a skill is selected after load
   document.getElementById('quickSkillSelect')?.addEventListener('change', onQuickSkillChange);
-  // also update quick info when prof_bonus or attributes change
   document.getElementById('prof_bonus')?.addEventListener('input', onQuickSkillChange);
   ['forca','destreza','constituicao','inteligencia','sabedoria','carisma'].forEach(id=>{ const el=document.getElementById(id); if(el) el.addEventListener('input', onQuickSkillChange); });
+  // save button
+  document.getElementById('saveBtn')?.addEventListener('click', ()=>{ saveToLocal(); alert('Ficha salva.'); });
 });
 </script>
 </body>
