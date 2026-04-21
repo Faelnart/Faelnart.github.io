@@ -3,14 +3,20 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Ficha RPG — Lapidada (Zoom por Roda + Paleta)</title>
+<title>Ficha RPG — Completa, Lapidada, com Ícones e Paleta</title>
 <style>
 :root{
-  --bg-start:#f6f8fb; --bg-end:#eef4fb;
-  --card:#ffffff; --accent:#5b4ef7; --muted:#556070; --text:#071226;
-  --radius:16px; --soft-radius:20px; --shadow:0 6px 18px rgba(7,18,38,0.06); --gap:18px;
+  --bg-start:#f6f8fb;
+  --bg-end:#eef4fb;
+  --card:#ffffff;
+  --accent:#5b4ef7;
+  --muted:#556070;
+  --text:#071226;
+  --radius:16px;
+  --soft-radius:20px;
+  --shadow:0 6px 18px rgba(7,18,38,0.06);
+  --gap:18px;
   --glass: rgba(255,255,255,0.75);
-  --accent-2:#ff6b6b; /* alternative accent */
 }
 /* Reset */
 *{box-sizing:border-box;font-family:Inter,system-ui,Segoe UI,Roboto,Arial}
@@ -31,7 +37,7 @@ h1{margin:0;color:var(--accent);font-size:18px;font-weight:700}
 .form-grid{display:grid;grid-template-columns:1fr 320px;gap:18px;align-items:start}
 .attr-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-top:8px}
 .attr-box{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:12px;background:linear-gradient(180deg,#ffffff,#fbfdff);border-radius:14px;border:1px solid #eef4ff}
-.attr-box label{font-size:12px;color:var(--muted);font-weight:700}
+.attr-box label{font-size:12px;color:var(--muted);font-weight:700;display:flex;align-items:center;gap:8px}
 .attr-box input{width:56px;font-weight:800;font-size:18px;border-radius:8px;padding:6px;border:1px solid #eef4ff;margin-top:8px}
 .attr-mod{font-weight:800;color:var(--accent);margin-top:8px}
 .attr-race{display:block;font-size:12px;color:#0b6b2f;margin-top:6px}
@@ -39,7 +45,7 @@ h1{margin:0;color:var(--accent);font-size:18px;font-weight:700}
 /* Skills */
 .skills-container{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
 .skill-item{display:flex;align-items:center;gap:10px;padding:10px;border-radius:12px;background:#fff;border:1px solid #eef4ff}
-.skill-item label{flex:1;font-size:14px}
+.skill-item label{flex:1;font-size:14px;display:flex;align-items:center;gap:8px}
 .skill-val{font-weight:800;color:var(--accent);min-width:44px;text-align:right;border-radius:10px;padding:6px 8px;background:linear-gradient(90deg,#f6f7ff,#fff)}
 
 /* Avatar circular */
@@ -56,8 +62,12 @@ h1{margin:0;color:var(--accent);font-size:18px;font-weight:700}
 /* Roll log */
 .roll-log{max-height:220px;overflow:auto;border-radius:12px;padding:8px;background:#fff;border:1px solid #eef4ff}
 
-/* Palette toggle */
-.palette-toggle{display:flex;gap:8px;align-items:center}
+/* Palette controls */
+.palette-row{display:flex;gap:10px;align-items:center}
+.color-input{width:36px;height:36px;border-radius:8px;border:1px solid #e6e9ef;padding:0}
+
+/* Icons small style */
+.icon{width:18px;height:18px;display:inline-block;vertical-align:middle;fill:currentColor}
 
 /* Responsive */
 @media (max-width:980px){
@@ -76,9 +86,12 @@ h1{margin:0;color:var(--accent);font-size:18px;font-weight:700}
     <div class="card" role="banner">
       <h1>Ficha RPG — Lapidada</h1>
       <div style="display:flex;gap:12px;align-items:center">
-        <div class="palette-toggle">
-          <label style="font-size:13px;color:var(--muted)">Paleta</label>
-          <button id="togglePalette" class="btn-ghost small" title="Alternar paleta">Alternar</button>
+        <div class="palette-row" title="Paleta e seletor de cor">
+          <label style="font-size:13px;color:var(--muted)">Cor principal</label>
+          <input id="accentPicker" class="color-input" type="color" value="#5b4ef7" aria-label="Selecionar cor principal">
+          <label style="font-size:13px;color:var(--muted)">Fundo</label>
+          <input id="bgStartPicker" class="color-input" type="color" value="#f6f8fb" aria-label="Selecionar cor de fundo inicial">
+          <input id="bgEndPicker" class="color-input" type="color" value="#eef4fb" aria-label="Selecionar cor de fundo final">
         </div>
         <div class="controls-row">
           <button id="saveBtn" class="btn">Salvar</button>
@@ -91,7 +104,7 @@ h1{margin:0;color:var(--accent);font-size:18px;font-weight:700}
   </div>
 
   <!-- Main -->
-  <main class="main">
+  <main class="main" style="grid-area:main">
     <div class="card" aria-labelledby="ident-title">
       <div id="ident-title" class="section-title">Identidade</div>
 
@@ -125,12 +138,71 @@ h1{margin:0;color:var(--accent);font-size:18px;font-weight:700}
           <div style="margin-top:16px">
             <div class="section-title">Atributos</div>
             <div class="attr-grid">
-              <div class="attr-box"><label>FOR</label><input id="forca" type="number" value="10" data-base="10"><div class="attr-mod" id="forca_mod">+0</div><div class="attr-race" id="forca_race">+0 racial</div></div>
-              <div class="attr-box"><label>DES</label><input id="destreza" type="number" value="10" data-base="10"><div class="attr-mod" id="destreza_mod">+0</div><div class="attr-race" id="destreza_race">+0 racial</div></div>
-              <div class="attr-box"><label>CON</label><input id="constituicao" type="number" value="10" data-base="10"><div class="attr-mod" id="constituicao_mod">+0</div><div class="attr-race" id="constituicao_race">+0 racial</div></div>
-              <div class="attr-box"><label>INT</label><input id="inteligencia" type="number" value="10" data-base="10"><div class="attr-mod" id="inteligencia_mod">+0</div><div class="attr-race" id="inteligencia_race">+0 racial</div></div>
-              <div class="attr-box"><label>SAB</label><input id="sabedoria" type="number" value="10" data-base="10"><div class="attr-mod" id="sabedoria_mod">+0</div><div class="attr-race" id="sabedoria_race">+0 racial</div></div>
-              <div class="attr-box"><label>CAR</label><input id="carisma" type="number" value="10" data-base="10"><div class="attr-mod" id="carisma_mod">+0</div><div class="attr-race" id="carisma_race">+0 racial</div></div>
+              <div class="attr-box">
+                <label for="forca">
+                  <!-- SVG icon FOR -->
+                  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a2 2 0 0 0-2 2v6H6a2 2 0 0 0-2 2v6h16v-6a2 2 0 0 0-2-2h-4V4a2 2 0 0 0-2-2z"/></svg>
+                  FOR
+                </label>
+                <input id="forca" type="number" value="10" data-base="10">
+                <div class="attr-mod" id="forca_mod">+0</div>
+                <div class="attr-race" id="forca_race">+0 racial</div>
+              </div>
+
+              <div class="attr-box">
+                <label for="destreza">
+                  <!-- SVG icon DES -->
+                  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l4 8h-8l4-8zm0 10a6 6 0 1 0 0 12 6 6 0 0 0 0-12z"/></svg>
+                  DES
+                </label>
+                <input id="destreza" type="number" value="10" data-base="10">
+                <div class="attr-mod" id="destreza_mod">+0</div>
+                <div class="attr-race" id="destreza_race">+0 racial</div>
+              </div>
+
+              <div class="attr-box">
+                <label for="constituicao">
+                  <!-- SVG icon CON -->
+                  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l9 4v6c0 5-4 9-9 10-5-1-9-5-9-10V6l9-4z"/></svg>
+                  CON
+                </label>
+                <input id="constituicao" type="number" value="10" data-base="10">
+                <div class="attr-mod" id="constituicao_mod">+0</div>
+                <div class="attr-race" id="constituicao_race">+0 racial</div>
+              </div>
+
+              <div class="attr-box">
+                <label for="inteligencia">
+                  <!-- SVG icon INT -->
+                  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1 14h-2v-2h2v2zm0-4h-2V6h2v6z"/></svg>
+                  INT
+                </label>
+                <input id="inteligencia" type="number" value="10" data-base="10">
+                <div class="attr-mod" id="inteligencia_mod">+0</div>
+                <div class="attr-race" id="inteligencia_race">+0 racial</div>
+              </div>
+
+              <div class="attr-box">
+                <label for="sabedoria">
+                  <!-- SVG icon SAB -->
+                  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C8 6 4 8 4 12c0 4 4 8 8 10 4-2 8-6 8-10 0-4-4-6-8-10z"/></svg>
+                  SAB
+                </label>
+                <input id="sabedoria" type="number" value="10" data-base="10">
+                <div class="attr-mod" id="sabedoria_mod">+0</div>
+                <div class="attr-race" id="sabedoria_race">+0 racial</div>
+              </div>
+
+              <div class="attr-box">
+                <label for="carisma">
+                  <!-- SVG icon CAR -->
+                  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm0 2c-5 0-9 2.5-9 5v1h18v-1c0-2.5-4-5-9-5z"/></svg>
+                  CAR
+                </label>
+                <input id="carisma" type="number" value="10" data-base="10">
+                <div class="attr-mod" id="carisma_mod">+0</div>
+                <div class="attr-race" id="carisma_race">+0 racial</div>
+              </div>
             </div>
 
             <div style="display:flex;gap:12px;align-items:center;margin-top:12px">
@@ -196,7 +268,7 @@ h1{margin:0;color:var(--accent);font-size:18px;font-weight:700}
   </main>
 
   <!-- Aside -->
-  <aside class="aside">
+  <aside class="aside" style="grid-area:aside">
 
     <div class="card">
       <div class="section-title">Status Rápido</div>
@@ -243,10 +315,17 @@ h1{margin:0;color:var(--accent);font-size:18px;font-weight:700}
 </div>
 
 <script>
-/* JS: zoom by wheel (centered), pan, palette toggle, stable behaviors */
+/* Final stable JS with:
+   - SVG icons already inline in HTML
+   - color pickers to customize palette (accent and background gradient)
+   - avatar pan/zoom (wheel-centered) with limits and slider
+   - skills rendered (no roll buttons)
+   - fixed aside column and corrected grid areas
+   - persistence (localStorage), import/export, weapons
+*/
 
 /* Data */
-const storageKey = 'ficha_rpg_lapidada_v2';
+const storageKey = 'ficha_rpg_final_v1';
 const ALL_SKILLS = [
   { name:'Acrobacia', attr:'destreza' },
   { name:'Adestrar Animais', attr:'sabedoria' },
@@ -290,7 +369,7 @@ function modFrom(score){ return Math.floor((score - 10) / 2); }
 function formatMod(n){ return (n>=0?'+':'') + n; }
 function now(){ return new Date().toLocaleString(); }
 
-/* Render skills */
+/* Render skills (no roll buttons) */
 function renderSkillsUI(){
   const container = document.getElementById('skillsContainer');
   const quick = document.getElementById('quickSkillSelect');
@@ -299,9 +378,11 @@ function renderSkillsUI(){
     const key = idSafe(s.name);
     const div = document.createElement('div');
     div.className = 'skill-item';
+    // small SVG for skill (generic compass icon)
+    const svg = `<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3 7 7 3-7 3-3 7-3-7-7-3 7-3 3-7z"/></svg>`;
     div.innerHTML = `
       <input type="checkbox" class="skill-check" data-attr="${s.attr}" data-name="${s.name}" data-key="${key}" id="chk_${key}">
-      <label for="chk_${key}">${s.name} <small style="color:var(--muted)">(${s.attr.substring(0,3).toUpperCase()})</small></label>
+      <label for="chk_${key}">${svg}<span>${s.name} <small style="color:var(--muted)">(${s.attr.substring(0,3).toUpperCase()})</small></span></label>
       <span class="skill-val" id="val_${key}">+0</span>
     `;
     container.appendChild(div);
@@ -309,7 +390,7 @@ function renderSkillsUI(){
   });
 }
 
-/* Attributes & race handling (kept concise) */
+/* Attributes & race handling */
 function applyRaceBonusesFromSelection(){
   currentRaceBonuses = { forca:0, destreza:0, constituicao:0, inteligencia:0, sabedoria:0, carisma:0 };
   const sel = document.getElementById('racaSelect');
@@ -338,6 +419,8 @@ function applyRacialToVisibleAttributes(){
     input.value = base + raceBonus;
   });
 }
+
+/* Bind attribute inputs */
 function bindAttributeInputs(){
   ['forca','destreza','constituicao','inteligencia','sabedoria','carisma'].forEach(a=>{
     const input = document.getElementById(a);
@@ -588,7 +671,6 @@ avatarPreview.addEventListener('wheel', (e)=>{
   const zoomFactor = delta > 0 ? 1.08 : 0.92;
   let newScale = imgState.scale * zoomFactor;
   newScale = Math.max(MIN_SCALE, Math.min(MAX_SCALE, newScale));
-  // adjust offsets so zoom centers on cursor position
   const ratio = newScale / imgState.scale;
   imgState.offsetX = (imgState.offsetX - cx) * ratio + cx;
   imgState.offsetY = (imgState.offsetY - cy) * ratio + cy;
@@ -644,20 +726,24 @@ function processAvatarFile(file){
   reader.readAsDataURL(file);
 }
 
-/* Palette toggle: switch accent color and subtle background */
-let paletteAlt = false;
-document.getElementById('togglePalette')?.addEventListener('click', ()=>{
-  paletteAlt = !paletteAlt;
-  if(paletteAlt){
-    document.documentElement.style.setProperty('--accent', 'var(--accent-2)');
-    document.documentElement.style.setProperty('--bg-start', '#fff6f6');
-    document.documentElement.style.setProperty('--bg-end', '#fff0f0');
-  } else {
-    document.documentElement.style.setProperty('--accent', '#5b4ef7');
-    document.documentElement.style.setProperty('--bg-start', '#f6f8fb');
-    document.documentElement.style.setProperty('--bg-end', '#eef4fb');
-  }
-});
+/* Palette controls: accent and background gradient */
+const accentPicker = document.getElementById('accentPicker');
+const bgStartPicker = document.getElementById('bgStartPicker');
+const bgEndPicker = document.getElementById('bgEndPicker');
+
+function applyPaletteFromPickers(){
+  const accent = accentPicker.value || '#5b4ef7';
+  const bgStart = bgStartPicker.value || '#f6f8fb';
+  const bgEnd = bgEndPicker.value || '#eef4fb';
+  document.documentElement.style.setProperty('--accent', accent);
+  document.documentElement.style.setProperty('--bg-start', bgStart);
+  document.documentElement.style.setProperty('--bg-end', bgEnd);
+  // adjust muted color for readability (simple desaturate)
+  document.documentElement.style.setProperty('--muted', '#556070');
+}
+accentPicker.addEventListener('input', applyPaletteFromPickers);
+bgStartPicker.addEventListener('input', applyPaletteFromPickers);
+bgEndPicker.addEventListener('input', applyPaletteFromPickers);
 
 /* Persistence */
 function gatherData(){
@@ -684,7 +770,7 @@ function gatherData(){
   data.avatar_offsetY = imgState.offsetY || 0;
   data.hp_atual = document.getElementById('hp_atual')?.value || 10;
   data.hp_max = document.getElementById('hp_max')?.value || 10;
-  data.paletteAlt = paletteAlt;
+  data.palette = { accent: accentPicker.value, bgStart: bgStartPicker.value, bgEnd: bgEndPicker.value };
   return data;
 }
 function applyData(data){
@@ -711,7 +797,12 @@ function applyData(data){
   }
   document.getElementById('hp_atual').value = data.hp_atual || 10;
   document.getElementById('hp_max').value = data.hp_max || 10;
-  if(data.paletteAlt){ paletteAlt = true; document.getElementById('togglePalette').click(); }
+  if(data.palette){
+    accentPicker.value = data.palette.accent || accentPicker.value;
+    bgStartPicker.value = data.palette.bgStart || bgStartPicker.value;
+    bgEndPicker.value = data.palette.bgEnd || bgEndPicker.value;
+    applyPaletteFromPickers();
+  }
   updateAll();
 }
 
@@ -734,7 +825,9 @@ window.addEventListener('load', ()=>{
   document.getElementById('saveBtn')?.addEventListener('click', ()=>{ saveToLocal(); alert('Ficha salva.'); });
   document.getElementById('uploadAvatarBtn')?.addEventListener('click', ()=> avatarInput.click());
   avatarInput?.addEventListener('change', e=>{ const f = e.target.files && e.target.files[0]; if(f) processAvatarFile(f); });
-  document.getElementById('togglePalette')?.addEventListener('click', ()=>{}); // handler already wired earlier
+  // palette pickers
+  applyPaletteFromPickers();
+  // load saved
   loadFromLocal();
   applyRacialToVisibleAttributes();
   updateAll();
