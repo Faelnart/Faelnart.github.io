@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Ficha RPG — Estrutura com Containers</title>
+<title>Ficha RPG — Estrutura com Containers (corrigido)</title>
 <style>
 :root{
   --bg-start: #121212;
@@ -18,7 +18,7 @@
   --gap: 20px;
 }
 
-/* base original (mantive seu estilo principal) */
+/* base original */
 *{box-sizing:border-box; font-family: 'Inter', system-ui, sans-serif;}
 body{margin:0; padding:25px; background: linear-gradient(180deg, #121212 0%, #2d2d2d 100%); color:var(--text); min-height:100vh;}
 .container{max-width:1300px; margin:0 auto; display:grid; grid-template-columns: 1fr 350px; gap:var(--gap);}
@@ -58,13 +58,12 @@ th{text-align:left; font-size:11px; color:var(--muted); padding:8px;}
 td{padding:5px; border-bottom:1px solid #f1f5f9;}
 @media (max-width: 1000px) { .container{grid-template-columns: 1fr;} }
 
-/* --- módulos (wrappers) --- */
+/* modules wrapper */
 .module { margin-bottom: var(--gap); }
-.module[data-module] > .card { /* mantém aparência do card dentro do módulo */ }
 .module.hidden { display: none !important; }
 
-/* painel de controle opcional (pequeno) */
-.module-control { position: fixed; right: 18px; top: 80px; background: #fff; border: 1px solid #e6e6e6; padding:10px; border-radius:8px; box-shadow: 0 8px 24px rgba(0,0,0,0.08); font-size:13px; z-index:9999; }
+/* module control (optional) */
+.module-control { position: fixed; right: 18px; top: 80px; background: #fff; border: 1px solid #e6e6e6; padding:10px; border-radius:8px; box-shadow: 0 8px 24px rgba(0,0,0,0.08); font-size:13px; z-index:9999; display:none; }
 .module-control label{display:flex;align-items:center;gap:8px;margin-bottom:6px}
 </style>
 </head>
@@ -84,7 +83,7 @@ td{padding:5px; border-bottom:1px solid #f1f5f9;}
     </header>
   </div>
 
-  <!-- Main left column: manter estrutura original, cada card envolvido por module -->
+  <!-- Main left column: estrutura original, cada card envolvido por module -->
   <main>
 
     <div class="module" data-module="informacoes-basicas">
@@ -205,14 +204,15 @@ td{padding:5px; border-bottom:1px solid #f1f5f9;}
 
 </div>
 
-<!-- painel de controle opcional para ativar/desativar módulos -->
-<div class="module-control" id="moduleControl" aria-hidden="false" style="display:none">
+<!-- painel de controle opcional para ativar/desativar módulos (mantido oculto por padrão) -->
+<div class="module-control" id="moduleControl" aria-hidden="true">
   <strong>Módulos</strong>
   <div id="moduleControlList"></div>
 </div>
 
 <script>
-/* ---------- Mantive toda a lógica original (IDs e funções) ---------- */
+/* ---------- Correções e robustez no JS ---------- */
+
 /* Lista de perícias padrão D&D 5e */
 const ALL_SKILLS = [
   { name: 'Acrobacia', attr: 'destreza' },
@@ -235,25 +235,34 @@ const ALL_SKILLS = [
   { name: 'Sobrevivência', attr: 'sabedoria' }
 ];
 
-/* Render perícias (mantive ids compatíveis) */
+/* Normaliza string para id seguro */
+function idSafe(name){ return name.replace(/\s+/g,'_').replace(/[^\w_]/g,''); }
+
+/* Render perícias (IDs normalizados) */
 function renderSkills() {
   const container = document.getElementById('skillsContainer');
-  container.innerHTML = ALL_SKILLS.map(s => `
-    <div class="skill-item">
-      <input type="checkbox" class="skill-check" data-attr="${s.attr}" data-name="${s.name}" onchange="updateCalculations()">
-      <span>${s.name} <small style="color:#94a3b8">(${s.attr.substring(0,3).toUpperCase()})</small></span>
-      <span class="skill-val" id="val_${s.name.replace(/\s+/g,'_')}">+0</span>
-    </div>
-  `).join('');
+  if(!container) return;
+  container.innerHTML = ALL_SKILLS.map(s => {
+    const key = idSafe(s.name);
+    return `
+      <div class="skill-item">
+        <input type="checkbox" class="skill-check" data-attr="${s.attr}" data-name="${s.name}" data-key="${key}" id="chk_${key}">
+        <label for="chk_${key}">${s.name} <small style="color:#94a3b8">(${s.attr.substring(0,3).toUpperCase()})</small></label>
+        <span class="skill-val" id="val_${key}">+0</span>
+      </div>
+    `;
+  }).join('');
 }
 
-/* Cálculos automáticos (mantive suas funções) */
+/* Cálculos automáticos (com proteções) */
 function updateCalculations() {
-  const prof = parseInt(document.getElementById('prof_bonus').value) || 0;
+  const profEl = document.getElementById('prof_bonus');
+  const prof = profEl ? (parseInt(profEl.value) || 0) : 0;
   const attrs = ['forca', 'destreza', 'constituicao', 'inteligencia', 'sabedoria', 'carisma'];
   const mods = {};
   attrs.forEach(a => {
-    const score = parseInt(document.getElementById(a).value) || 10;
+    const el = document.getElementById(a);
+    const score = el ? (parseInt(el.value) || 10) : 10;
     const mod = Math.floor((score - 10) / 2);
     mods[a] = mod;
     const modEl = document.getElementById(a + '_mod');
@@ -261,21 +270,28 @@ function updateCalculations() {
   });
 
   document.querySelectorAll('.skill-check').forEach(cb => {
-    const attrMod = mods[cb.dataset.attr];
+    const attrMod = mods[cb.dataset.attr] || 0;
     const total = attrMod + (cb.checked ? prof : 0);
-    const id = 'val_' + cb.dataset.name.replace(/\s+/g,'_');
+    const id = 'val_' + (cb.dataset.key || idSafe(cb.dataset.name || ''));
     const el = document.getElementById(id);
     if(el) el.textContent = (total >= 0 ? '+' : '') + total;
   });
 
-  document.getElementById('iniciativa').value = (mods.destreza >= 0 ? '+' : '') + mods.destreza;
-  const percProf = document.querySelector('[data-name="Percepção"]') && document.querySelector('[data-name="Percepção"]').checked ? prof : 0;
-  if(document.getElementById('perc_passiva')) document.getElementById('perc_passiva').value = 10 + mods.sabedoria + percProf;
-  const invProf = document.querySelector('[data-name="Investigação"]') && document.querySelector('[data-name="Investigação"]').checked ? prof : 0;
-  if(document.getElementById('inv_passiva')) document.getElementById('inv_passiva').value = 10 + mods.inteligencia + invProf;
+  const iniEl = document.getElementById('iniciativa');
+  if(iniEl) iniEl.value = (mods.destreza >= 0 ? '+' : '') + mods.destreza;
+
+  // Percepção passiva e investigação passiva (IDs padronizados: perc_passiva, inv_passiva)
+  const percCheckbox = Array.from(document.querySelectorAll('.skill-check')).find(cb => cb.dataset.name === 'Percepção');
+  const invCheckbox = Array.from(document.querySelectorAll('.skill-check')).find(cb => cb.dataset.name === 'Investigação');
+  const percProf = (percCheckbox && percCheckbox.checked) ? prof : 0;
+  const invProf = (invCheckbox && invCheckbox.checked) ? prof : 0;
+  const percEl = document.getElementById('perc_passiva');
+  if(percEl) percEl.value = 10 + (mods.sabedoria || 0) + percProf;
+  const invEl = document.getElementById('inv_passiva');
+  if(invEl) invEl.value = 10 + (mods.inteligencia || 0) + invProf;
 }
 
-/* Avatar drag & drop (mantive comportamento: crop central e preview) */
+/* Avatar drag & drop (com checagens) */
 const avZone = document.getElementById('avatarPreview');
 if(avZone){
   avZone.addEventListener('dragover', e => { e.preventDefault(); avZone.style.borderColor = 'var(--accent)'; avZone.style.background = '#f1edff'; });
@@ -284,119 +300,40 @@ if(avZone){
     e.preventDefault();
     avZone.style.borderColor = '#cbd5e1';
     avZone.style.background = '#f8fafc';
-    const file = e.dataTransfer.files[0];
-    if (file && file.type.startsWith('image/')) {
+    const file = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+    if (file && file.type && file.type.startsWith('image/')) {
       const reader = new FileReader();
       reader.onload = event => {
         const img = new Image();
         img.onload = () => {
-          const canvas = document.createElement('canvas');
-          const size = 400;
-          canvas.width = size; canvas.height = size;
-          const ctx = canvas.getContext('2d');
-          const side = Math.min(img.width, img.height);
-          ctx.drawImage(img, (img.width-side)/2, (img.height-side)/2, side, side, 0, 0, size, size);
-          const dataURL = canvas.toDataURL('image/jpeg', 0.8);
-          avZone.innerHTML = `<img src="${dataURL}">`;
-          avZone.dataset.imgData = dataURL;
+          try {
+            const canvas = document.createElement('canvas');
+            const size = 400;
+            canvas.width = size; canvas.height = size;
+            const ctx = canvas.getContext('2d');
+            const side = Math.min(img.width, img.height);
+            ctx.drawImage(img, (img.width-side)/2, (img.height-side)/2, side, side, 0, 0, size, size);
+            const dataURL = canvas.toDataURL('image/jpeg', 0.8);
+            avZone.innerHTML = `<img src="${dataURL}">`;
+            avZone.dataset.imgData = dataURL;
+          } catch(err) {
+            console.error(err);
+            alert('Erro ao processar a imagem.');
+          }
         };
         img.src = event.target.result;
       };
       reader.readAsDataURL(file);
+    } else {
+      alert('Arraste um arquivo de imagem válido.');
     }
   });
 }
-document.getElementById('toggleCircular').onchange = e => { avZone.style.borderRadius = e.target.checked ? '50%' : '12px'; };
 
-/* Weapons */
-function addWeapon(data = null) {
-  const row = document.createElement('tr');
-  const name = data ? data.n : document.getElementById('w_name').value;
-  const atq = data ? data.a : document.getElementById('w_atq').value;
-  const dmg = data ? data.d : document.getElementById('w_dmg').value;
-  if(!name && !data) return;
-  row.innerHTML = `
-    <td>${name}</td><td>${atq}</td><td>${dmg}</td><td>-</td>
-    <td><button onclick="this.parentElement.parentElement.remove()" style="color:red; border:0; background:none; cursor:pointer">×</button></td>
-  `;
-  document.querySelector('#weaponsTable tbody').appendChild(row);
-  if(!data) { document.getElementById('w_name').value = ''; document.getElementById('w_atq').value = ''; document.getElementById('w_dmg').value = ''; }
+/* toggle circular */
+const toggleCircularEl = document.getElementById('toggleCircular');
+if(toggleCircularEl && avZone){
+  toggleCircularEl.addEventListener('change', e => { avZone.style.borderRadius = e.target.checked ? '50%' : '12px'; });
 }
 
-/* Persistence (mantive suas funções) */
-const storageKey = 'rpg_sheet_data_final';
-function saveData() {
-  const data = { skills: {}, weapons: [] };
-  document.querySelectorAll('[data-key]').forEach(el => data[el.dataset.key] = el.value);
-  document.querySelectorAll('.skill-check').forEach(cb => data.skills[cb.dataset.name] = cb.checked);
-  document.querySelectorAll('#weaponsTable tbody tr').forEach(tr => {
-    const tds = tr.querySelectorAll('td');
-    data.weapons.push({n: tds[0].innerText, a: tds[1].innerText, d: tds[2].innerText});
-  });
-  data.avatar = avZone && avZone.dataset.imgData ? avZone.dataset.imgData : '';
-  data.circular = document.getElementById('toggleCircular').checked;
-  localStorage.setItem(storageKey, JSON.stringify(data));
-  alert("Ficha salva no navegador!");
-}
-function loadData() {
-  const raw = localStorage.getItem(storageKey);
-  if(!raw) return;
-  const data = JSON.parse(raw);
-  document.querySelectorAll('[data-key]').forEach(el => el.value = data[el.dataset.key] || '');
-  document.querySelectorAll('.skill-check').forEach(cb => cb.checked = data.skills[cb.dataset.name] || false);
-  if(data.avatar) { avZone.innerHTML = `<img src="${data.avatar}">`; avZone.dataset.imgData = data.avatar; }
-  document.getElementById('toggleCircular').checked = data.circular;
-  avZone.style.borderRadius = data.circular ? '50%' : '12px';
-  document.querySelector('#weaponsTable tbody').innerHTML = '';
-  data.weapons.forEach(w => addWeapon(w));
-  updateCalculations();
-}
-function exportJSON() {
-  const data = localStorage.getItem(storageKey);
-  const blob = new Blob([data], {type: 'application/json'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = 'minha_ficha.json'; a.click();
-}
-function clearData() {
-  if(confirm("Deseja apagar tudo?")) { localStorage.removeItem(storageKey); location.reload(); }
-}
-
-/* Init */
-window.onload = () => {
-  renderSkills();
-  loadData();
-  document.querySelectorAll('input').forEach(i => i.addEventListener('input', updateCalculations));
-};
-</script>
-
-<script>
-/* ---------- Funções para controlar módulos (não altera lógica) ---------- */
-/* toggleModule(name, show) — mostra/oculta módulos por data-module */
-function toggleModule(name, show) {
-  const el = document.querySelector('[data-module="'+name+'"]');
-  if(!el) return false;
-  if(show === undefined) el.classList.toggle('hidden');
-  else el.classList.toggle('hidden', !show);
-  return true;
-}
-
-/* opcional: criar painel de controle para módulos (descomente para usar) */
-(function createModuleControl(){
-  const modules = Array.from(document.querySelectorAll('[data-module]')).map(m => m.dataset.module);
-  if(!modules.length) return;
-  const panel = document.getElementById('moduleControl');
-  const list = document.getElementById('moduleControlList');
-  modules.forEach(name=>{
-    const id = 'ctl_'+name.replace(/[^a-z0-9\-_]/gi,'_');
-    const label = document.createElement('label');
-    label.innerHTML = `<input type="checkbox" id="${id}" ${!document.querySelector('[data-module="'+name+'"]').classList.contains('hidden')?'checked':''}> ${name}`;
-    list.appendChild(label);
-    label.querySelector('input').addEventListener('change', e => toggleModule(name, e.target.checked));
-  });
-  // mostrar painel se quiser: panel.style.display = 'block';
-})();
-</script>
-
-</body>
-</html>
+/
