@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Ficha RPG — Racial aplicado aos Atributos (acessibilidade WCAG)</title>
+<title>Ficha RPG — Completa com Avatar Posicionável</title>
 <style>
 :root{
   --bg-start:#f2f4f8; --bg-end:#e9eef6;
@@ -12,12 +12,12 @@
 }
 *{box-sizing:border-box;font-family:Inter,system-ui,Segoe UI,Roboto,Arial}
 html,body{height:100%}
-body{margin:0;padding:22px;background:linear-gradient(180deg,var(--bg-start),var(--bg-end));color:var(--text);-webkit-font-smoothing:antialiased;transition:background 450ms ease,color 350ms ease}
+body{margin:0;padding:22px;background:linear-gradient(180deg,var(--bg-start),var(--bg-end));color:var(--text);-webkit-font-smoothing:antialiased;transition:background 350ms ease,color 300ms ease}
 .container{max-width:1280px;margin:0 auto;display:grid;grid-template-columns:1fr 360px;gap:var(--gap);align-items:start}
 header{grid-column:1/-1;display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
-h1{margin:0;color:var(--accent);font-size:18px;transition:color 350ms ease}
-.controls{display:flex;gap:8px;align-items:center}
-.btn{background:linear-gradient(90deg,var(--accent),#5f3df5);color:#fff;border:0;padding:8px 12px;border-radius:10px;cursor:pointer;transition:background 300ms ease}
+h1{margin:0;color:var(--accent);font-size:18px}
+.controls-row{display:flex;gap:8px;align-items:center}
+.btn{background:linear-gradient(90deg,var(--accent),#5f3df5);color:#fff;border:0;padding:8px 12px;border-radius:10px;cursor:pointer}
 .btn-ghost{background:#fff;border:1px solid rgba(15,23,36,0.06);padding:8px 12px;border-radius:10px;color:var(--muted);cursor:pointer}
 .card{background:var(--card);padding:14px;border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid rgba(15,23,36,0.04);transition:background 350ms ease,box-shadow 350ms ease}
 .section-title{font-size:12px;color:var(--muted);font-weight:700;text-transform:uppercase;margin-bottom:10px;border-bottom:1px solid rgba(15,23,36,0.03);padding-bottom:8px}
@@ -34,8 +34,11 @@ input,select,textarea,button{font-size:14px;padding:8px;border-radius:8px;border
 .skill-item{display:flex;align-items:center;gap:8px;padding:8px;border-radius:8px;background:#fff;border:1px solid #eef4ff}
 .skill-item label{flex:1}
 .skill-val{font-weight:800;color:var(--accent);min-width:36px;text-align:right}
-.avatar-zone{width:100%;aspect-ratio:1/1;border-radius:12px;border:2px dashed #dbe7ff;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#fbfdff;cursor:pointer;transition:border-color 200ms ease,background 300ms ease}
-.avatar-zone img{width:100%;height:100%;object-fit:cover}
+.avatar-zone{width:100%;aspect-ratio:1/1;border-radius:12px;border:2px dashed #dbe7ff;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#fbfdff;cursor:pointer;position:relative}
+.avatar-zone .img-wrap{position:absolute;left:50%;top:50%;transform-origin:center center;touch-action:none;will-change:transform}
+.avatar-zone img{display:block;max-width:none;user-select:none;pointer-events:none}
+.avatar-controls{display:flex;gap:8px;align-items:center;margin-top:8px}
+.slider{width:160px}
 .table{width:100%;border-collapse:collapse;margin-top:10px}
 .table th{font-size:12px;color:var(--muted);text-align:left;padding:8px}
 .table td{padding:6px;border-bottom:1px solid #eef4ff}
@@ -46,15 +49,13 @@ input,select,textarea,button{font-size:14px;padding:8px;border-radius:8px;border
 .roll-log{max-height:220px;overflow:auto;border:1px solid #eef4ff;padding:8px;border-radius:8px;background:#fff}
 .roll-entry{font-size:13px;padding:6px;border-bottom:1px dashed #f1f5f9}
 .controls-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-@media (max-width:980px){.container{grid-template-columns:1fr}.aside-col{order:2}}
-main{grid-column:1/2;width:100%;box-sizing:border-box}
-aside{grid-column:2/3;width:100%;box-sizing:border-box}
 .small{padding:6px 8px;font-size:13px;border-radius:6px}
 .info-inline{font-size:13px;color:var(--muted);margin-left:8px}
 .variant-selects{display:flex;gap:8px;margin-top:8px}
 .variant-selects select{flex:1}
 .disabled-option{color:#999}
 .note{font-size:12px;color:var(--muted);margin-top:6px}
+@media (max-width:980px){.container{grid-template-columns:1fr}.aside-col{order:2}}
 </style>
 </head>
 <body>
@@ -64,7 +65,7 @@ aside{grid-column:2/3;width:100%;box-sizing:border-box}
   <!-- Header -->
   <div class="module" data-module="header">
     <header class="card" role="banner">
-      <h1>Ficha RPG — Racial aplicado aos Atributos</h1>
+      <h1>Ficha RPG — Completa</h1>
       <div class="controls-row">
         <button id="saveBtn" class="btn">Salvar</button>
         <button id="exportBtn" class="btn-ghost">Exportar</button>
@@ -81,7 +82,7 @@ aside{grid-column:2/3;width:100%;box-sizing:border-box}
     <div class="module" data-module="identidade">
       <section class="card" aria-labelledby="ident-title">
         <div id="ident-title" class="section-title">Identidade</div>
-        <div style="display:grid;grid-template-columns:1fr 260px;gap:14px">
+        <div style="display:grid;grid-template-columns:1fr 320px;gap:14px">
           <div>
             <div class="field"><label>Nome do personagem</label><input id="nome" data-key="nome" class="big" type="text" value="Seu Nome"></div>
             <div style="display:flex;gap:8px">
@@ -90,7 +91,6 @@ aside{grid-column:2/3;width:100%;box-sizing:border-box}
               <div style="width:120px" class="field"><label>XP</label><input id="xp" data-key="xp" type="number" min="0"></div>
             </div>
 
-            <!-- Antecedente e Raça (seletor de raças D&D 5E) -->
             <div style="display:flex;gap:8px;margin-top:8px;align-items:flex-end">
               <div style="flex:1" class="field"><label>Antecedente</label><input id="antecedente" data-key="antecedente" type="text" placeholder="Ex: Soldado"></div>
 
@@ -141,15 +141,27 @@ aside{grid-column:2/3;width:100%;box-sizing:border-box}
 
           <div>
             <div class="field"><label>Avatar</label>
-              <div id="avatarPreview" class="avatar-zone" title="Arraste uma imagem aqui">
+              <div id="avatarPreview" class="avatar-zone" title="Arraste ou clique para carregar">
                 <div class="avatar-hint">Arraste ou clique para carregar</div>
               </div>
             </div>
-            <div style="display:flex;gap:8px;align-items:center;margin-top:8px">
+
+            <div class="avatar-controls">
               <input id="avatarInput" type="file" accept="image/*" style="display:none">
-              <button id="uploadAvatarBtn" class="btn-ghost">Carregar</button>
-              <button id="removeAvatarBtn" class="btn-ghost">Remover</button>
-              <label style="margin-left:auto"><input id="toggleCircular" type="checkbox"> Circular</label>
+              <button id="uploadAvatarBtn" class="btn-ghost small">Carregar</button>
+              <button id="removeAvatarBtn" class="btn-ghost small">Remover</button>
+              <button id="centerAvatarBtn" class="btn-ghost small">Centralizar</button>
+              <button id="resetAvatarBtn" class="btn-ghost small">Resetar</button>
+            </div>
+
+            <div style="display:flex;gap:8px;align-items:center;margin-top:8px">
+              <label style="font-size:13px;color:var(--muted)">Zoom</label>
+              <input id="zoomSlider" class="slider" type="range" min="1" max="3" step="0.01" value="1">
+              <span id="zoomVal" style="min-width:36px;text-align:right">100%</span>
+            </div>
+
+            <div style="margin-top:8px">
+              <div class="note">Arraste a imagem dentro do quadro para reposicionar. Use o slider para aproximar/afastar.</div>
             </div>
           </div>
         </div>
@@ -207,6 +219,11 @@ aside{grid-column:2/3;width:100%;box-sizing:border-box}
               <label style="display:flex;align-items:center;gap:8px;color:var(--muted)"><input id="autoProf" type="checkbox"> Calcular por nível</label>
               <div style="margin-left:auto;color:var(--muted);font-size:13px">Níveis 1–4:+2 • 5–8:+3 • 9–12:+4 • 13–16:+5 • 17–20:+6</div>
             </div>
+
+            <div style="margin-top:12px">
+              <div class="section-title" style="margin-top:0">Perícias</div>
+              <div id="skillsContainer" class="skills-container" aria-live="polite"></div>
+            </div>
           </div>
 
           <div style="width:360px">
@@ -229,29 +246,22 @@ aside{grid-column:2/3;width:100%;box-sizing:border-box}
                 <div id="rollLog" class="roll-log" aria-live="polite"></div>
               </div>
             </div>
+
+            <div class="card" style="padding:12px;margin-top:12px">
+              <div class="section-title">Ataques & Magias</div>
+              <table class="table" id="weaponsTable" aria-describedby="atk-title">
+                <thead><tr><th>Nome</th><th>Bônus</th><th>Dano</th><th>Notas</th><th></th></tr></thead>
+                <tbody></tbody>
+              </table>
+              <div style="display:flex;gap:8px;margin-top:10px">
+                <input id="w_name" placeholder="Nome" style="flex:2">
+                <input id="w_bonus" placeholder="+Atq" style="width:100px">
+                <input id="w_dmg" placeholder="1d8 + STR" style="flex:1">
+                <button id="addWeaponBtn" class="btn">Adicionar</button>
+              </div>
+            </div>
+
           </div>
-        </div>
-
-        <div style="margin-top:12px">
-          <div class="section-title" style="margin-top:0">Perícias</div>
-          <div id="skillsContainer" class="skills-container" aria-live="polite"></div>
-        </div>
-      </section>
-    </div>
-
-    <!-- Ataques -->
-    <div class="module" data-module="ataques">
-      <section class="card" aria-labelledby="atk-title">
-        <div id="atk-title" class="section-title">Ataques & Magias</div>
-        <table class="table" id="weaponsTable" aria-describedby="atk-title">
-          <thead><tr><th>Nome</th><th>Bônus</th><th>Dano</th><th>Notas</th><th></th></tr></thead>
-          <tbody></tbody>
-        </table>
-        <div style="display:flex;gap:8px;margin-top:10px">
-          <input id="w_name" placeholder="Nome" style="flex:2">
-          <input id="w_bonus" placeholder="+Atq" style="width:100px">
-          <input id="w_dmg" placeholder="1d8 + STR" style="flex:1">
-          <button id="addWeaponBtn" class="btn">Adicionar</button>
         </div>
       </section>
     </div>
@@ -318,13 +328,15 @@ aside{grid-column:2/3;width:100%;box-sizing:border-box}
 
 <script>
 /* ============================
-   Código com contraste agressivo para WCAG
-   - Ajusta escolha de cor do texto e cores auxiliares para priorizar contraste >= 4.5:1
-   - Mantém funcionalidades anteriores (atributos, racial, perícias, avatar, persistência)
+   Código completo funcional
+   - Avatar posicionado (pan + zoom) com extração de paleta e contraste agressivo
+   - Raças, variantes, limites de escolha, aplicação de bônus raciais
+   - Atributos: base + racial; edição atualiza base
+   - Perícias, rolador, armas, persistência (localStorage), import/export
    ============================ */
 
 /* Utilitários e dados */
-const storageKey = 'ficha_rpg_racial_aplicado_v1';
+const storageKey = 'ficha_rpg_complete_v1';
 const ALL_SKILLS = [
   { name:'Acrobacia', attr:'destreza' },{ name:'Adestrar Animais', attr:'sabedoria' },
   { name:'Arcanismo', attr:'inteligencia' },{ name:'Atletismo', attr:'forca' },
@@ -358,64 +370,35 @@ const RACE_BONUSES = {
   'Meio-Orc': { forca:2, destreza:0, constituicao:1, inteligencia:0, sabedoria:0, carisma:0 },
   'Tiefling': { forca:0, destreza:0, constituicao:0, inteligencia:0, sabedoria:0, carisma:2 }
 };
-
-/* Estado atual dos bônus raciais aplicados */
 let currentRaceBonuses = { forca:0, destreza:0, constituicao:0, inteligencia:0, sabedoria:0, carisma:0 };
 
-/* ---------- Acessibilidade: contraste agressivo ---------- */
-
-/* cor utilitárias */
+/* ---------- Paleta / contraste agressivo ---------- */
 function clamp(v,min,max){ return Math.max(min,Math.min(max,v)); }
 function rgbToHex(r,g,b){ return '#'+[r,g,b].map(x=>x.toString(16).padStart(2,'0')).join(''); }
 function hexToRgb(hex){ const m = hex.replace('#',''); return {r:parseInt(m.slice(0,2),16), g:parseInt(m.slice(2,4),16), b:parseInt(m.slice(4,6),16)}; }
-function luminance(r,g,b){
-  const srgb = [r,g,b].map(v=>v/255).map(c=> c<=0.03928 ? c/12.92 : Math.pow((c+0.055)/1.055,2.4));
-  return 0.2126*srgb[0] + 0.7152*srgb[1] + 0.0722*srgb[2];
-}
-function contrastRatio(rgb1, rgb2){
-  const L1 = luminance(rgb1.r,rgb1.g,rgb1.b);
-  const L2 = luminance(rgb2.r,rgb2.g,rgb2.b);
-  const lighter = Math.max(L1,L2), darker = Math.min(L1,L2);
-  return (lighter + 0.05) / (darker + 0.05);
-}
-function lightenColor(c, amt){ return {r:clamp(Math.round(c.r + amt),0,255), g:clamp(Math.round(c.g + amt),0,255), b:clamp(Math.round(c.b + amt),0,255)}; }
-function darkenColor(c, amt){ return {r:clamp(Math.round(c.r - amt),0,255), g:clamp(Math.round(c.g - amt),0,255), b:clamp(Math.round(c.b - amt),0,255)}; }
-function desaturate(c, amt){ // amt 0..1
-  const gray = Math.round(0.299*c.r + 0.587*c.g + 0.114*c.b);
-  return { r: Math.round(c.r + (gray - c.r) * amt), g: Math.round(c.g + (gray - c.g) * amt), b: Math.round(c.b + (gray - c.b) * amt) };
-}
+function luminance(r,g,b){ const srgb=[r,g,b].map(v=>v/255).map(c=> c<=0.03928 ? c/12.92 : Math.pow((c+0.055)/1.055,2.4)); return 0.2126*srgb[0]+0.7152*srgb[1]+0.0722*srgb[2]; }
+function contrastRatio(a,b){ const L1=luminance(a.r,a.g,a.b), L2=luminance(b.r,b.g,b.b); const lighter=Math.max(L1,L2), darker=Math.min(L1,L2); return (lighter+0.05)/(darker+0.05); }
+function desaturate(c,amt){ const gray=Math.round(0.299*c.r+0.587*c.g+0.114*c.b); return { r: Math.round(c.r + (gray - c.r) * amt), g: Math.round(c.g + (gray - c.g) * amt), b: Math.round(c.b + (gray - c.b) * amt) }; }
+function lightenColor(c,amt){ return {r:clamp(Math.round(c.r+amt),0,255), g:clamp(Math.round(c.g+amt),0,255), b:clamp(Math.round(c.b+amt),0,255)}; }
+function darkenColor(c,amt){ return {r:clamp(Math.round(c.r-amt),0,255), g:clamp(Math.round(c.g-amt),0,255), b:clamp(Math.round(c.b-amt),0,255)}; }
 
-/* Escolhe cor de texto com objetivo WCAG 4.5:1; se não possível, força contraste ajustando background */
 function chooseAccessibleTextAndMuted(accentRgb, bgStartRgb, bgEndRgb){
-  const white = {r:255,g:255,b:255}, black = {r:0,g:0,b:0};
-  // compute average background for contrast checks
-  const bgAvg = { r: Math.round((bgStartRgb.r + bgEndRgb.r)/2), g: Math.round((bgStartRgb.g + bgEndRgb.g)/2), b: Math.round((bgStartRgb.b + bgEndRgb.b)/2) };
-  const contrastWhite = contrastRatio(white, bgAvg);
-  const contrastBlack = contrastRatio(black, bgAvg);
-  // prefer white or black that meets 4.5:1
-  if(contrastWhite >= 4.5) return { textHex: '#ffffff', mutedHex: rgbToHex(...Object.values(desaturate(black,0.6))) };
-  if(contrastBlack >= 4.5) return { textHex: '#0f1724', mutedHex: rgbToHex(...Object.values(desaturate(white,0.6))) };
-  // else try to pick text color based on accent contrast with bgAvg
-  const contrastAccentWhite = contrastRatio(white, accentRgb);
-  const contrastAccentBlack = contrastRatio(black, accentRgb);
-  let textHex = (contrastAccentWhite > contrastAccentBlack) ? '#ffffff' : '#0f1724';
-  // if still below 4.5, adjust bg to ensure contrast: darken or lighten bgAvg until contrast achieved
-  let bgCandidate = {...bgAvg};
-  let attempts = 0;
-  while(attempts < 12){
+  const white={r:255,g:255,b:255}, black={r:0,g:0,b:0};
+  const bgAvg={ r: Math.round((bgStartRgb.r+bgEndRgb.r)/2), g: Math.round((bgStartRgb.g+bgEndRgb.g)/2), b: Math.round((bgStartRgb.b+bgEndRgb.b)/2) };
+  if(contrastRatio(white,bgAvg) >= 4.5) return { textHex:'#ffffff', mutedHex: rgbToHex(...Object.values(desaturate(black,0.6))) };
+  if(contrastRatio(black,bgAvg) >= 4.5) return { textHex:'#0f1724', mutedHex: rgbToHex(...Object.values(desaturate(white,0.6))) };
+  let textHex = (contrastRatio(white,accentRgb) > contrastRatio(black,accentRgb)) ? '#ffffff' : '#0f1724';
+  let bgCandidate = {...bgAvg}; let attempts=0;
+  while(attempts<12){
     const contrast = contrastRatio(textHex === '#ffffff' ? white : black, bgCandidate);
     if(contrast >= 4.5) break;
-    // move bg away from text: if text is white, darken bg; if text is black, lighten bg
-    if(textHex === '#ffffff'){ bgCandidate = darkenColor(bgCandidate, 18); }
-    else { bgCandidate = lightenColor(bgCandidate, 18); }
+    if(textHex === '#ffffff') bgCandidate = darkenColor(bgCandidate,18); else bgCandidate = lightenColor(bgCandidate,18);
     attempts++;
   }
-  // produce muted color as desaturated version of text (ensures readable but subdued)
   const muted = textHex === '#ffffff' ? desaturate(black,0.6) : desaturate(white,0.6);
   return { textHex, mutedHex: rgbToHex(...Object.values(muted)), bgAdjusted: rgbToHex(bgCandidate.r,bgCandidate.g,bgCandidate.b) };
 }
 
-/* Extrai paleta simples da imagem */
 function extractPaletteFromImage(img, options = {bucket:32, top:3}){
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d');
@@ -427,8 +410,7 @@ function extractPaletteFromImage(img, options = {bucket:32, top:3}){
   const counts = new Map();
   const bucket = options.bucket || 32;
   for(let i=0;i<data.length;i+=4){
-    const a = data[i+3];
-    if(a < 125) continue;
+    const a = data[i+3]; if(a < 125) continue;
     const r = Math.round(data[i] / bucket) * bucket;
     const g = Math.round(data[i+1] / bucket) * bucket;
     const b = Math.round(data[i+2] / bucket) * bucket;
@@ -445,47 +427,40 @@ function extractPaletteFromImage(img, options = {bucket:32, top:3}){
   return palette;
 }
 
-/* Aplica paleta ao CSS com foco em contraste WCAG */
 function applyPaletteToCSS(palette){
   if(!palette || !palette.length) return;
   const primary = palette[0];
   const secondary = palette[1] || primary;
   const accent = palette[2] || primary;
-  // create bg variations
   const bgStartRgb = lightenColor(primary, 36);
   const bgEndRgb = lightenColor(secondary, 56);
   const bgStartHex = rgbToHex(bgStartRgb.r,bgStartRgb.g,bgStartRgb.b);
   const bgEndHex = rgbToHex(bgEndRgb.r,bgEndRgb.g,bgEndRgb.b);
   const accentHex = accent.hex;
-  // choose accessible text and muted colors
   const accentRgb = {r:accent.r,g:accent.g,b:accent.b};
   const choice = chooseAccessibleTextAndMuted(accentRgb, bgStartRgb, bgEndRgb);
   const textHex = choice.textHex || '#0f1724';
   const mutedHex = choice.mutedHex || '#6b7280';
-  // if choose returned bgAdjusted, use it to bias backgrounds for stronger contrast
   const root = document.documentElement;
   root.style.setProperty('--bg-start', choice.bgAdjusted ? choice.bgAdjusted : bgStartHex);
   root.style.setProperty('--bg-end', bgEndHex);
   root.style.setProperty('--accent', accentHex);
   root.style.setProperty('--text', textHex);
   root.style.setProperty('--muted', mutedHex);
-  // card background: ensure contrast with text
   const cardBg = (textHex === '#ffffff') ? 'rgba(0,0,0,0.06)' : '#ffffff';
   root.style.setProperty('--card', cardBg);
 }
-
-/* Restaura tema padrão */
 function restoreDefaultTheme(){
   const root = document.documentElement;
-  root.style.setProperty('--bg-start', '#f2f4f8');
-  root.style.setProperty('--bg-end', '#e9eef6');
-  root.style.setProperty('--accent', '#6b5df5');
-  root.style.setProperty('--text', '#0f1724');
-  root.style.setProperty('--muted', '#6b7280');
-  root.style.setProperty('--card', '#ffffff');
+  root.style.setProperty('--bg-start','#f2f4f8');
+  root.style.setProperty('--bg-end','#e9eef6');
+  root.style.setProperty('--accent','#6b5df5');
+  root.style.setProperty('--text','#0f1724');
+  root.style.setProperty('--muted','#6b7280');
+  root.style.setProperty('--card','#ffffff');
 }
 
-/* ---------- UI e lógica da ficha (mantida) ---------- */
+/* ---------- UI: skills, variants, attributes ---------- */
 function renderSkillsUI(){
   const container = document.getElementById('skillsContainer');
   const quick = document.getElementById('quickSkillSelect');
@@ -818,49 +793,132 @@ document.getElementById('addWeaponBtn')?.addEventListener('click', ()=>{
   document.getElementById('w_name').value=''; document.getElementById('w_bonus').value=''; document.getElementById('w_dmg').value='';
 });
 
-/* Avatar handling (com extração de paleta e contraste agressivo) */
-const avatarInput = document.getElementById('avatarInput');
+/* ---------- Avatar posicionado (pan + zoom) ---------- */
 const avatarPreview = document.getElementById('avatarPreview');
-document.getElementById('uploadAvatarBtn')?.addEventListener('click', ()=>avatarInput.click());
-document.getElementById('removeAvatarBtn')?.addEventListener('click', ()=>{
+const avatarInput = document.getElementById('avatarInput');
+const uploadAvatarBtn = document.getElementById('uploadAvatarBtn');
+const removeAvatarBtn = document.getElementById('removeAvatarBtn');
+const zoomSlider = document.getElementById('zoomSlider');
+const zoomVal = document.getElementById('zoomVal');
+const centerAvatarBtn = document.getElementById('centerAvatarBtn');
+const resetAvatarBtn = document.getElementById('resetAvatarBtn');
+
+let imgState = { src:'', scale:1, offsetX:0, offsetY:0, naturalW:0, naturalH:0 };
+
+function ensureImageElement(dataURL){
+  let wrap = avatarPreview.querySelector('.img-wrap');
+  if(!wrap){
+    wrap = document.createElement('div');
+    wrap.className = 'img-wrap';
+    avatarPreview.innerHTML = '';
+    avatarPreview.appendChild(wrap);
+  }
+  let img = wrap.querySelector('img');
+  if(!img){
+    img = document.createElement('img');
+    img.draggable = false;
+    wrap.appendChild(img);
+  }
+  img.src = dataURL;
+  img.onload = ()=>{
+    imgState.naturalW = img.naturalWidth;
+    imgState.naturalH = img.naturalHeight;
+    applyTransform();
+  };
+}
+
+function applyTransform(){
+  const wrap = avatarPreview.querySelector('.img-wrap');
+  if(!wrap) return;
+  wrap.style.transform = `translate(-50%,-50%) translate(${imgState.offsetX}px, ${imgState.offsetY}px) scale(${imgState.scale})`;
+  zoomSlider.value = imgState.scale;
+  zoomVal.textContent = Math.round(imgState.scale * 100) + '%';
+}
+
+let dragging = false;
+let dragStart = {x:0,y:0};
+let startOffset = {x:0,y:0};
+
+avatarPreview.addEventListener('pointerdown', (e)=>{
+  const wrap = avatarPreview.querySelector('.img-wrap');
+  if(!wrap) return;
+  e.preventDefault();
+  avatarPreview.setPointerCapture(e.pointerId);
+  dragging = true;
+  dragStart = { x: e.clientX, y: e.clientY };
+  startOffset = { x: imgState.offsetX, y: imgState.offsetY };
+});
+
+window.addEventListener('pointermove', (e)=>{
+  if(!dragging) return;
+  e.preventDefault();
+  const dx = e.clientX - dragStart.x;
+  const dy = e.clientY - dragStart.y;
+  imgState.offsetX = startOffset.x + dx;
+  imgState.offsetY = startOffset.y + dy;
+  applyTransform();
+});
+
+window.addEventListener('pointerup', (e)=>{
+  if(!dragging) return;
+  dragging = false;
+  saveToLocal(true);
+});
+
+zoomSlider.addEventListener('input', (e)=>{
+  const newScale = parseFloat(e.target.value);
+  imgState.scale = newScale;
+  applyTransform();
+  saveToLocal(true);
+});
+
+uploadAvatarBtn.addEventListener('click', ()=> avatarInput.click());
+avatarInput.addEventListener('change', e=>{
+  const f = e.target.files && e.target.files[0];
+  if(f) processAvatarFile(f);
+});
+removeAvatarBtn.addEventListener('click', ()=>{
   avatarPreview.innerHTML = '<div class="avatar-hint">Arraste ou clique para carregar</div>';
-  delete avatarPreview.dataset.imgData;
+  imgState = { src:'', scale:1, offsetX:0, offsetY:0, naturalW:0, naturalH:0 };
   restoreDefaultTheme();
   saveToLocal(true);
 });
-avatarInput?.addEventListener('change', e=>{ const f = e.target.files && e.target.files[0]; if(f) processAvatarFile(f); });
-if(avatarPreview){
-  ['dragenter','dragover'].forEach(ev=>avatarPreview.addEventListener(ev, e=>{ e.preventDefault(); avatarPreview.style.borderColor='var(--accent)'; avatarPreview.style.background='rgba(0,0,0,0.02)'; }));
-  ['dragleave','drop'].forEach(ev=>avatarPreview.addEventListener(ev, e=>{ e.preventDefault(); avatarPreview.style.borderColor='#dbe7ff'; avatarPreview.style.background='#fbfdff'; }));
-  avatarPreview.addEventListener('drop', e=>{ e.preventDefault(); const f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]; if(f) processAvatarFile(f); });
-}
+centerAvatarBtn.addEventListener('click', ()=>{
+  imgState.offsetX = 0; imgState.offsetY = 0;
+  applyTransform(); saveToLocal(true);
+});
+resetAvatarBtn.addEventListener('click', ()=>{
+  imgState.scale = 1; imgState.offsetX = 0; imgState.offsetY = 0;
+  applyTransform(); saveToLocal(true);
+});
+
+['dragenter','dragover'].forEach(ev=> avatarPreview.addEventListener(ev, e=>{ e.preventDefault(); avatarPreview.style.borderColor='var(--accent)'; avatarPreview.style.background='rgba(0,0,0,0.02)'; }));
+['dragleave','drop'].forEach(ev=> avatarPreview.addEventListener(ev, e=>{ e.preventDefault(); avatarPreview.style.borderColor='#dbe7ff'; avatarPreview.style.background='#fbfdff'; }));
+avatarPreview.addEventListener('drop', e=>{
+  e.preventDefault();
+  const f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+  if(f) processAvatarFile(f);
+});
+
 function processAvatarFile(file){
   if(!file.type.startsWith('image/')) return alert('Arquivo não é imagem.');
   const reader = new FileReader();
   reader.onload = ev=>{
-    const img = new Image();
-    img.onload = ()=>{
-      const canvas = document.createElement('canvas'); const size = 400;
-      canvas.width = size; canvas.height = size;
-      const ctx = canvas.getContext('2d');
-      const side = Math.min(img.width,img.height);
-      ctx.drawImage(img,(img.width-side)/2,(img.height-side)/2,side,side,0,0,size,size);
-      const dataURL = canvas.toDataURL('image/jpeg',0.85);
-      avatarPreview.innerHTML = `<img src="${dataURL}">`;
-      avatarPreview.dataset.imgData = dataURL;
-      // extrair paleta e aplicar tema com contraste agressivo
-      const tmpImg = new Image();
-      tmpImg.onload = ()=>{ const palette = extractPaletteFromImage(tmpImg, {bucket:32, top:3}); applyPaletteToCSS(palette); };
-      tmpImg.src = dataURL;
-      saveToLocal(true);
-    };
-    img.src = ev.target.result;
+    const dataURL = ev.target.result;
+    imgState.src = dataURL;
+    imgState.scale = 1;
+    imgState.offsetX = 0;
+    imgState.offsetY = 0;
+    ensureImageElement(dataURL);
+    const tmp = new Image();
+    tmp.onload = ()=>{ try{ const palette = extractPaletteFromImage(tmp,{bucket:32,top:3}); applyPaletteToCSS(palette); }catch(e){} };
+    tmp.src = dataURL;
+    saveToLocal(true);
   };
   reader.readAsDataURL(file);
 }
-document.getElementById('toggleCircular')?.addEventListener('change', e=>{ avatarPreview.style.borderRadius = e.target.checked ? '50%' : '12px'; });
 
-/* Raça select handling */
+/* ---------- Raça select handling ---------- */
 const racaSelect = document.getElementById('racaSelect');
 const racaCustom = document.getElementById('racaCustom');
 const humanVariantBox = document.getElementById('humanVariantBox');
@@ -905,7 +963,7 @@ if(racaSelect && racaCustom){
   });
 });
 
-/* Persistence */
+/* ---------- Persistence: gather/apply/save/load/export/import/clear ---------- */
 function gatherData(){
   const data = { skills:{}, weapons:[], avatar:'', circular:false, meta:{ts:new Date().toISOString()} };
   document.querySelectorAll('[data-key]').forEach(el=>{
@@ -938,7 +996,11 @@ function gatherData(){
     const tds = tr.querySelectorAll('td');
     data.weapons.push({ name:tds[0].innerText, bonus:tds[1].innerText, dmg:tds[2].innerText, notes:tds[3].innerText });
   });
-  data.avatar = avatarPreview?.dataset.imgData || '';
+
+  data.avatar = imgState.src || '';
+  data.avatar_scale = imgState.scale || 1;
+  data.avatar_offsetX = imgState.offsetX || 0;
+  data.avatar_offsetY = imgState.offsetY || 0;
   data.circular = !!document.getElementById('toggleCircular')?.checked;
   return data;
 }
@@ -986,7 +1048,19 @@ function applyData(data){
   document.querySelectorAll('.skill-check').forEach(cb=> cb.checked = !!(data.skills && data.skills[cb.dataset.name]));
   const tbody = document.querySelector('#weaponsTable tbody'); if(tbody) tbody.innerHTML = '';
   (data.weapons || []).forEach(w=> addWeaponRow({ name:w.name, bonus:w.bonus, dmg:w.dmg, notes:w.notes }));
-  if(data.avatar && avatarPreview){ avatarPreview.innerHTML = `<img src="${data.avatar}">`; avatarPreview.dataset.imgData = data.avatar; const tmp = new Image(); tmp.onload = ()=>{ applyPaletteToCSS(extractPaletteFromImage(tmp,{bucket:32,top:3})); }; tmp.src = data.avatar; }
+
+  if(data.avatar){
+    imgState.src = data.avatar;
+    imgState.scale = data.avatar_scale || 1;
+    imgState.offsetX = data.avatar_offsetX || 0;
+    imgState.offsetY = data.avatar_offsetY || 0;
+    ensureImageElement(imgState.src);
+    setTimeout(()=>applyTransform(), 120);
+    const tmp = new Image();
+    tmp.onload = ()=>{ applyPaletteToCSS(extractPaletteFromImage(tmp,{bucket:32,top:3})); };
+    tmp.src = data.avatar;
+  }
+
   if(document.getElementById('toggleCircular')) document.getElementById('toggleCircular').checked = !!data.circular;
 
   enforceChoiceLimits([humanVar1, humanVar2], 2);
