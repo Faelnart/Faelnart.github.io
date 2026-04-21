@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Ficha RPG — Ajuste Quadros Laterais</title>
+<title>Ficha RPG — Equipamentos acima de Ataques e Magias</title>
 <style>
 :root{
   --bg-start:#f6f8fb;
@@ -175,7 +175,7 @@ h1{margin:0;color:var(--accent);font-size:18px;font-weight:700}
   <!-- Header -->
   <div class="header">
     <div class="card" role="banner">
-      <h1>Ficha RPG — Ajuste Quadros Laterais</h1>
+      <h1>Ficha RPG — Equipamentos acima de Ataques</h1>
 
       <div style="display:flex;gap:12px;align-items:center">
         <!-- Aside width controls -->
@@ -383,6 +383,30 @@ h1{margin:0;color:var(--accent);font-size:18px;font-weight:700}
       </div>
     </div>
 
+    <!-- Equipamentos (moved to main, above Ataques & Magias) -->
+    <div class="card" style="margin-top:14px" id="equipCardMain">
+      <div class="section-title">Equipamentos</div>
+      <table class="table" id="equipTable">
+        <thead><tr><th>Item</th><th>Dano</th><th>Peso</th><th>Valor</th><th></th></tr></thead>
+        <tbody></tbody>
+      </table>
+
+      <div style="display:flex;gap:8px;margin-top:10px;align-items:center">
+        <input id="e_name" placeholder="Nome" style="flex:2;padding:8px;border-radius:10px;border:1px solid #eef4ff">
+        <input id="e_dmg" placeholder="1d6" style="width:80px;padding:8px;border-radius:10px;border:1px solid #eef4ff">
+        <input id="e_weight" placeholder="kg" style="width:70px;padding:8px;border-radius:10px;border:1px solid #eef4ff">
+        <input id="e_value" placeholder="gp" style="width:80px;padding:8px;border-radius:10px;border:1px solid #eef4ff">
+        <button id="addEquipBtn" class="btn-ghost small">Adicionar</button>
+      </div>
+
+      <div style="display:flex;gap:8px;align-items:center;margin-top:10px">
+        <div style="flex:1"><strong>Total peso:</strong> <span id="totalWeight">0</span> kg</div>
+        <div style="flex:1;text-align:right"><strong>Total valor:</strong> <span id="totalValue">0</span> gp</div>
+      </div>
+
+      <div style="margin-top:10px;color:var(--muted);font-size:13px">Observação: o campo "Dano" é informativo; o cálculo de dano por arma aparece em Ataques.</div>
+    </div>
+
     <!-- Weapons / Spells -->
     <div class="card" style="margin-top:14px">
       <div class="section-title">Ataques & Magias</div>
@@ -464,29 +488,6 @@ h1{margin:0;color:var(--accent);font-size:18px;font-weight:700}
     </div>
 
     <div class="card">
-      <div class="section-title">Equipamentos</div>
-      <table class="table" id="equipTable">
-        <thead><tr><th>Item</th><th>Dano</th><th>Peso</th><th>Valor</th><th></th></tr></thead>
-        <tbody></tbody>
-      </table>
-
-      <div style="display:flex;gap:8px;margin-top:10px;align-items:center">
-        <input id="e_name" placeholder="Nome" style="flex:2;padding:8px;border-radius:10px;border:1px solid #eef4ff">
-        <input id="e_dmg" placeholder="1d6" style="width:80px;padding:8px;border-radius:10px;border:1px solid #eef4ff">
-        <input id="e_weight" placeholder="kg" style="width:70px;padding:8px;border-radius:10px;border:1px solid #eef4ff">
-        <input id="e_value" placeholder="gp" style="width:80px;padding:8px;border-radius:10px;border:1px solid #eef4ff">
-        <button id="addEquipBtn" class="btn-ghost small">Adicionar</button>
-      </div>
-
-      <div style="display:flex;gap:8px;align-items:center;margin-top:10px">
-        <div style="flex:1"><strong>Total peso:</strong> <span id="totalWeight">0</span> kg</div>
-        <div style="flex:1;text-align:right"><strong>Total valor:</strong> <span id="totalValue">0</span> gp</div>
-      </div>
-
-      <div style="margin-top:10px;color:var(--muted);font-size:13px">Observação: o campo "Dano" é informativo; o cálculo de dano por arma aparece em Ataques.</div>
-    </div>
-
-    <div class="card">
       <div class="section-title">Rolador Rápido</div>
       <div style="display:flex;gap:8px;align-items:center">
         <select id="quickSkillSelect" style="flex:1;padding:8px;border-radius:10px;border:1px solid #eef4ff" data-tooltip="Selecione uma perícia para rolar rapidamente"><option value="">— selecione perícia —</option></select>
@@ -513,9 +514,9 @@ h1{margin:0;color:var(--accent);font-size:18px;font-weight:700}
 </div>
 
 <script>
-/* ====== JS: mantém funcionalidades e adiciona controle de largura lateral ====== */
+/* ====== JS: mantém funcionalidades e atualiza referências após mover Equipamentos para o main ====== */
 
-/* --- Dados e utilitários (mantidos) --- */
+/* --- Dados e utilitários --- */
 const storageKey = 'ficha_rpg_completa_v2_aside';
 const ALL_SKILLS = [
   { name:'Acrobacia', attr:'destreza' },{ name:'Adestrar Animais', attr:'sabedoria' },
@@ -881,7 +882,7 @@ document.getElementById('addWeaponBtn')?.addEventListener('click', ()=>{
   saveToLocal(true);
 });
 
-/* --- Equipamentos --- */
+/* --- Equipamentos (agora no main) --- */
 function addEquipRow(item){
   const tbody = document.querySelector('#equipTable tbody');
   if(!tbody) return;
@@ -1064,9 +1065,32 @@ function processAvatarFile(file){
   reader.readAsDataURL(file);
 }
 
-/* --- Palette controls --- */
-const accentPicker = document.createElement('input');
-/* (palette controls exist in previous versions; omitted here to keep focus on aside sizing) */
+/* --- Aside width controls --- */
+const asideRange = document.getElementById('asideRange');
+const asideVal = document.getElementById('asideVal');
+const expandAsideBtn = document.getElementById('expandAsideBtn');
+
+function setAsideWidth(px){
+  const n = Math.max(parseInt(getComputedStyle(document.documentElement).getPropertyValue('--min-aside-width')) || 320, Math.min(parseInt(getComputedStyle(document.documentElement).getPropertyValue('--max-aside-width')) || 640, parseInt(px)));
+  document.documentElement.style.setProperty('--aside-width', n + 'px');
+  asideRange.value = n;
+  asideVal.textContent = n + 'px';
+}
+function getAsideWidth(){
+  return parseInt(getComputedStyle(document.documentElement).getPropertyValue('--aside-width')) || 420;
+}
+asideRange.addEventListener('input', (e)=>{
+  setAsideWidth(e.target.value);
+  saveToLocal(true);
+});
+expandAsideBtn.addEventListener('click', ()=>{
+  const current = getAsideWidth();
+  const max = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--max-aside-width')) || 640;
+  const min = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--min-aside-width')) || 320;
+  if(current < max) setAsideWidth(max);
+  else setAsideWidth(min);
+  saveToLocal(true);
+});
 
 /* --- Persistence (gather/apply) --- */
 function gatherData(){
@@ -1208,34 +1232,6 @@ document.getElementById('spell_attr')?.addEventListener('change', ()=>{ updateAl
   document.getElementById(id)?.addEventListener('input', ()=>{ updateAll(); saveToLocal(true); });
 });
 
-/* --- Aside width controls --- */
-const asideRange = document.getElementById('asideRange');
-const asideVal = document.getElementById('asideVal');
-const expandAsideBtn = document.getElementById('expandAsideBtn');
-
-function setAsideWidth(px){
-  const n = Math.max(parseInt(getComputedStyle(document.documentElement).getPropertyValue('--min-aside-width')) || 320, Math.min(parseInt(getComputedStyle(document.documentElement).getPropertyValue('--max-aside-width')) || 640, parseInt(px)));
-  document.documentElement.style.setProperty('--aside-width', n + 'px');
-  asideRange.value = n;
-  asideVal.textContent = n + 'px';
-}
-function getAsideWidth(){
-  return parseInt(getComputedStyle(document.documentElement).getPropertyValue('--aside-width')) || 420;
-}
-asideRange.addEventListener('input', (e)=>{
-  setAsideWidth(e.target.value);
-  saveToLocal(true);
-});
-expandAsideBtn.addEventListener('click', ()=>{
-  const current = getAsideWidth();
-  const max = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--max-aside-width')) || 640;
-  const min = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--min-aside-width')) || 320;
-  // toggle between current and max/min
-  if(current < max) setAsideWidth(max);
-  else setAsideWidth(min);
-  saveToLocal(true);
-});
-
 /* --- Init --- */
 window.addEventListener('load', ()=>{
   renderSkillsUI();
@@ -1254,7 +1250,7 @@ window.addEventListener('load', ()=>{
   // initialize aside width UI
   asideRange.value = getAsideWidth();
   asideVal.textContent = getAsideWidth() + 'px';
-  addRollLog('Layout carregado — quadros laterais ajustáveis.');
+  addRollLog('Layout carregado — Equipamentos movidos acima de Ataques & Magias.');
 });
 
 /* Mobile tooltip helper: long-press to show (optional) */
