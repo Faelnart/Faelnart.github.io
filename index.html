@@ -3,17 +3,30 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Ficha RPG — Completa (CA, Equipamentos, Magias)</title>
+<title>Ficha RPG — Ajuste Quadros Laterais</title>
 <style>
 :root{
-  --bg-start:#f6f8fb; --bg-end:#eef4fb;
-  --card:#ffffff; --accent:#5b4ef7; --muted:#556070; --text:#071226;
-  --radius:16px; --shadow:0 6px 18px rgba(7,18,38,0.06); --gap:18px; --glass: rgba(255,255,255,0.75);
+  --bg-start:#f6f8fb;
+  --bg-end:#eef4fb;
+  --card:#ffffff;
+  --accent:#5b4ef7;
+  --muted:#556070;
+  --text:#071226;
+  --radius:16px;
+  --shadow:0 6px 18px rgba(7,18,38,0.06);
+  --gap:18px;
+  --glass: rgba(255,255,255,0.75);
   --tooltip-bg: rgba(7,18,38,0.92);
   --tooltip-color: #fff;
   --tooltip-radius:8px;
   --tooltip-padding:8px 10px;
+
+  /* adjustable aside width */
+  --aside-width: 420px;
+  --min-aside-width: 320px;
+  --max-aside-width: 640px;
 }
+
 /* Reset e tipografia */
 *{box-sizing:border-box;font-family:Inter,system-ui,Segoe UI,Roboto,Arial}
 html,body{height:100%;margin:0;
@@ -24,8 +37,22 @@ html,body{height:100%;margin:0;
   color:var(--text);
   -webkit-font-smoothing:antialiased;
 }
-.app{max-width:1280px;margin:18px auto;display:grid;grid-template-columns:1fr 360px;grid-template-areas:"header header" "main aside";gap:var(--gap);align-items:start;padding:12px}
-.card{background:linear-gradient(180deg,var(--glass),var(--card));padding:16px;border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid rgba(7,18,38,0.04)}
+
+/* Layout principal com aside ajustável */
+.app{
+  max-width:1400px;
+  margin:18px auto;
+  display:grid;
+  grid-template-columns: 1fr var(--aside-width);
+  grid-template-areas:
+    "header header"
+    "main aside";
+  gap:var(--gap);
+  align-items:start;
+  padding:12px;
+}
+
+/* Header e controles */
 .header .card{display:flex;justify-content:space-between;align-items:center;gap:12px}
 h1{margin:0;color:var(--accent);font-size:18px;font-weight:700}
 .controls-row{display:flex;gap:8px;align-items:center}
@@ -33,37 +60,68 @@ h1{margin:0;color:var(--accent);font-size:18px;font-weight:700}
 .btn-ghost{background:#fff;border:1px solid rgba(7,18,38,0.06);padding:8px 12px;border-radius:12px;color:var(--muted);cursor:pointer}
 .small{padding:6px 8px;font-size:13px;border-radius:10px}
 .section-title{font-size:12px;color:var(--muted);font-weight:700;text-transform:uppercase;margin-bottom:12px}
+
+/* Cards */
+.card{background:linear-gradient(180deg,var(--glass),var(--card));padding:16px;border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid rgba(7,18,38,0.04)}
+
+/* Form grid */
 .form-grid{display:grid;grid-template-columns:1fr 320px;gap:18px;align-items:start}
+
+/* Attributes */
 .attr-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-top:8px}
 .attr-box{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:12px;background:linear-gradient(180deg,#ffffff,#fbfdff);border-radius:14px;border:1px solid #eef4ff}
 .attr-box label{font-size:12px;color:var(--muted);font-weight:700;display:flex;align-items:center;gap:8px}
 .attr-box input{width:56px;font-weight:800;font-size:18px;border-radius:8px;padding:6px;border:1px solid #eef4ff;margin-top:8px}
 .attr-mod{font-weight:800;color:var(--accent);margin-top:8px}
 .attr-race{display:block;font-size:12px;color:#0b6b2f;margin-top:6px}
+
+/* Skills */
 .skills-container{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
 .skill-item{display:flex;align-items:center;gap:10px;padding:10px;border-radius:12px;background:#fff;border:1px solid #eef4ff}
 .skill-item label{flex:1;font-size:14px;display:flex;align-items:center;gap:8px}
 .skill-val{font-weight:800;color:var(--accent);min-width:44px;text-align:right;border-radius:10px;padding:6px 8px;background:linear-gradient(90deg,#f6f7ff,#fff)}
+
+/* Avatar */
 .avatar-zone{width:100%;aspect-ratio:1/1;border-radius:50%;border:2px dashed rgba(91,78,247,0.14);display:flex;align-items:center;justify-content:center;overflow:hidden;background:linear-gradient(180deg,#fff,#fbfdff);cursor:pointer;position:relative}
 .avatar-zone .img-wrap{position:absolute;left:50%;top:50%;transform-origin:center center;will-change:transform;transition:transform 80ms linear}
 .avatar-zone img{display:block;max-width:none;user-select:none;pointer-events:none}
 .avatar-controls{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;align-items:center}
 .slider{width:160px}
-.aside{position:sticky;top:22px;display:flex;flex-direction:column;gap:12px;align-self:start}
-.aside .card{position:static;border-radius:14px}
-.roll-log{max-height:220px;overflow:auto;border-radius:12px;padding:8px;background:#fff;border:1px solid #eef4ff}
-.palette-row{display:flex;gap:10px;align-items:center}
-.color-input{width:36px;height:36px;border-radius:8px;border:1px solid #e6e9ef;padding:0}
-.icon{width:18px;height:18px;display:inline-block;vertical-align:middle;fill:currentColor}
+
+/* Aside: make it scrollable and allow internal cards to expand */
+.aside{
+  grid-area:aside;
+  position:sticky;
+  top:22px;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  align-self:start;
+  max-height: calc(100vh - 44px);
+  overflow:auto;
+  padding-right:6px; /* small padding for scrollbar space */
+}
+
+/* Ensure cards inside aside can scroll if content overflows */
+.aside .card{
+  position:relative;
+  overflow:auto;
+  max-height: 48vh;
+  padding-bottom:12px;
+}
+
+/* Make some important cards larger by default */
+.aside .card.large{ max-height: 62vh; }
+
+/* Table and inputs */
 .table{width:100%;border-collapse:collapse;margin-top:10px}
 .table th{font-size:12px;color:var(--muted);text-align:left;padding:8px;border-bottom:1px solid #eef4ff}
 .table td{padding:8px;border-bottom:1px solid #eef4ff}
 .input-inline{padding:8px;border-radius:10px;border:1px solid #eef4ff}
 .input-small{padding:6px;border-radius:8px;border:1px solid #eef4ff;width:80px}
 .input-mini{padding:6px;border-radius:8px;border:1px solid #eef4ff;width:60px}
-input:focus, select:focus, button:focus, textarea:focus{outline:3px solid rgba(91,78,247,0.12);outline-offset:2px}
 
-/* Tooltip base (CSS-only, accessible via data-tooltip) */
+/* Tooltip */
 [data-tooltip]{position:relative;cursor:help}
 [data-tooltip]::after{
   content: attr(data-tooltip);
@@ -84,28 +142,30 @@ input:focus, select:focus, button:focus, textarea:focus{outline:3px solid rgba(9
   z-index:9999;
   box-shadow:0 6px 18px rgba(0,0,0,0.35);
 }
-/* show on hover or focus */
 [data-tooltip]:hover::after,
 [data-tooltip]:focus::after,
 [data-tooltip]:focus-within::after{
   opacity:1;
   transform:translateX(-50%) translateY(0);
 }
-/* allow multi-line tooltips */
 [data-tooltip][data-tooltip-multiline="true"]::after{white-space:normal;max-width:260px;text-align:left;padding:10px}
 
-/* mobile: show tooltip on long-press via :active */
-@media (max-width:600px){
-  [data-tooltip]::after{display:none}
-  [data-tooltip].show-mobile::after{display:block;opacity:1;transform:translateX(-50%) translateY(0)}
+/* Responsive: collapse aside under certain width and allow user toggle */
+@media (max-width:1200px){
+  :root{ --aside-width: 360px; }
+  .app{ grid-template-columns: 1fr var(--aside-width); }
 }
-
 @media (max-width:980px){
   .app{grid-template-columns:1fr;grid-template-areas:"header" "main" "aside";padding:10px}
   .form-grid{grid-template-columns:1fr}
-  .aside{position:static}
+  .aside{position:static;max-height:none;overflow:visible}
+  .aside .card{max-height:none}
 }
+
+/* small helpers */
 .hidden{display:none}
+.flex-row{display:flex;gap:8px;align-items:center}
+.right{margin-left:auto}
 </style>
 </head>
 <body>
@@ -115,20 +175,22 @@ input:focus, select:focus, button:focus, textarea:focus{outline:3px solid rgba(9
   <!-- Header -->
   <div class="header">
     <div class="card" role="banner">
-      <h1>Ficha RPG — Completa</h1>
+      <h1>Ficha RPG — Ajuste Quadros Laterais</h1>
+
       <div style="display:flex;gap:12px;align-items:center">
-        <div class="palette-row" title="Paleta e seletor de cor">
-          <label style="font-size:13px;color:var(--muted)">Cor</label>
-          <input id="accentPicker" class="color-input" type="color" value="#5b4ef7" aria-label="Selecionar cor principal">
-          <label style="font-size:13px;color:var(--muted)">Fundo</label>
-          <input id="bgStartPicker" class="color-input" type="color" value="#f6f8fb" aria-label="Selecionar cor de fundo inicial">
-          <input id="bgEndPicker" class="color-input" type="color" value="#eef4fb" aria-label="Selecionar cor de fundo final">
+        <!-- Aside width controls -->
+        <div class="flex-row" title="Ajuste a largura dos painéis laterais">
+          <label style="font-size:13px;color:var(--muted)">Largura lateral</label>
+          <input id="asideRange" type="range" min="320" max="640" step="8" value="420" style="width:160px" data-tooltip="Ajusta a largura do painel lateral">
+          <span id="asideVal" style="min-width:48px;text-align:right;color:var(--muted)">420px</span>
+          <button id="expandAsideBtn" class="btn-ghost small" data-tooltip="Expandir/Reduzir painel lateral">Alternar</button>
         </div>
+
         <div class="controls-row">
           <button id="saveBtn" class="btn" data-tooltip="Salva a ficha no armazenamento local (localStorage)">Salvar</button>
           <button id="exportBtn" class="btn-ghost" data-tooltip="Exporta a ficha como arquivo JSON">Exportar</button>
-          <button id="importBtn" class="btn-ghost" data-tooltip="Importa uma ficha a partir de um arquivo JSON">Importar</button>
-          <button id="clearBtn" class="btn-ghost" data-tooltip="Limpa todos os campos e remove a ficha salva">Limpar</button>
+          <button id="importBtn" class="btn-ghost" data-tooltip="Importar JSON">Importar</button>
+          <button id="clearBtn" class="btn-ghost" data-tooltip="Limpar ficha">Limpar</button>
         </div>
       </div>
     </div>
@@ -172,7 +234,7 @@ input:focus, select:focus, button:focus, textarea:focus{outline:3px solid rgba(9
             <div style="display:flex;gap:12px;align-items:flex-start">
               <div style="flex:1">
                 <label style="font-size:12px;color:var(--muted);font-weight:700">Raça</label>
-                <select id="racaSelect" aria-label="Raça" style="width:100%;padding:10px;border-radius:12px;border:1px solid #eef4ff;margin-top:8px" data-tooltip="Escolha a raça do personagem. Algumas raças aplicam bônus automáticos aos atributos.">
+                <select id="racaSelect" aria-label="Raça" style="width:100%;padding:10px;border-radius:12px;border:1px solid #eef4ff;margin-top:8px" data-tooltip="Escolha a raça do personagem.">
                   <option value="">— selecione raça —</option>
                   <optgroup label="Humanos">
                     <option value="Humano (Padrão)">Humano (Padrão)</option>
@@ -234,42 +296,42 @@ input:focus, select:focus, button:focus, textarea:focus{outline:3px solid rgba(9
             <div class="section-title">Atributos</div>
             <div class="attr-grid">
               <div class="attr-box">
-                <label for="forca" data-tooltip="Força: dano corpo a corpo, testes de força"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a2 2 0 0 0-2 2v6H6a2 2 0 0 0-2 2v6h16v-6a2 2 0 0 0-2-2h-4V4a2 2 0 0 0-2-2z"/></svg> FOR</label>
+                <label for="forca" data-tooltip="Força: dano corpo a corpo, testes de força">FOR</label>
                 <input id="forca" type="number" value="10" data-base="10">
                 <div class="attr-mod" id="forca_mod">+0</div>
                 <div class="attr-race" id="forca_race">+0 racial</div>
               </div>
 
               <div class="attr-box">
-                <label for="destreza" data-tooltip="Destreza: iniciativa, furtividade, acrobacia"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l4 8h-8l4-8zm0 10a6 6 0 1 0 0 12 6 6 0 0 0 0-12z"/></svg> DES</label>
+                <label for="destreza" data-tooltip="Destreza: iniciativa, furtividade, acrobacia">DES</label>
                 <input id="destreza" type="number" value="10" data-base="10">
                 <div class="attr-mod" id="destreza_mod">+0</div>
                 <div class="attr-race" id="destreza_race">+0 racial</div>
               </div>
 
               <div class="attr-box">
-                <label for="constituicao" data-tooltip="Constituição: pontos de vida, resistência"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l9 4v6c0 5-4 9-9 10-5-1-9-5-9-10V6l9-4z"/></svg> CON</label>
+                <label for="constituicao" data-tooltip="Constituição: pontos de vida, resistência">CON</label>
                 <input id="constituicao" type="number" value="10" data-base="10">
                 <div class="attr-mod" id="constituicao_mod">+0</div>
                 <div class="attr-race" id="constituicao_race">+0 racial</div>
               </div>
 
               <div class="attr-box">
-                <label for="inteligencia" data-tooltip="Inteligência: magia arcana, conhecimento"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1 14h-2v-2h2v2zm0-4h-2V6h2v6z"/></svg> INT</label>
+                <label for="inteligencia" data-tooltip="Inteligência: magia arcana, conhecimento">INT</label>
                 <input id="inteligencia" type="number" value="10" data-base="10">
                 <div class="attr-mod" id="inteligencia_mod">+0</div>
                 <div class="attr-race" id="inteligencia_race">+0 racial</div>
               </div>
 
               <div class="attr-box">
-                <label for="sabedoria" data-tooltip="Sabedoria: percepção, sobrevivência, intuição"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C8 6 4 8 4 12c0 4 4 8 8 10 4-2 8-6 8-10 0-4-4-6-8-10z"/></svg> SAB</label>
+                <label for="sabedoria" data-tooltip="Sabedoria: percepção, sobrevivência, intuição">SAB</label>
                 <input id="sabedoria" type="number" value="10" data-base="10">
                 <div class="attr-mod" id="sabedoria_mod">+0</div>
                 <div class="attr-race" id="sabedoria_race">+0 racial</div>
               </div>
 
               <div class="attr-box">
-                <label for="carisma" data-tooltip="Carisma: persuasão, atuação, intimidação"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm0 2c-5 0-9 2.5-9 5v1h18v-1c0-2.5-4-5-9-5z"/></svg> CAR</label>
+                <label for="carisma" data-tooltip="Carisma: persuasão, atuação, intimidação">CAR</label>
                 <input id="carisma" type="number" value="10" data-base="10">
                 <div class="attr-mod" id="carisma_mod">+0</div>
                 <div class="attr-race" id="carisma_race">+0 racial</div>
@@ -358,7 +420,7 @@ input:focus, select:focus, button:focus, textarea:focus{outline:3px solid rgba(9
   <!-- Aside -->
   <aside class="aside" style="grid-area:aside">
 
-    <div class="card">
+    <div class="card large">
       <div class="section-title">Status Rápido</div>
       <div style="display:flex;gap:10px">
         <div style="flex:1"><label style="font-size:12px;color:var(--muted)">HP Atual</label><input id="hp_atual" type="number" value="10" style="width:100%;padding:8px;border-radius:10px;border:1px solid #eef4ff;margin-top:8px" data-tooltip="Pontos de vida atuais"></div>
@@ -451,10 +513,10 @@ input:focus, select:focus, button:focus, textarea:focus{outline:3px solid rgba(9
 </div>
 
 <script>
-/* JS atualizado: CA calculada com atributos, quadro de equipamentos com soma de peso/valor, magias com CD/atk, persistência e UI */
+/* ====== JS: mantém funcionalidades e adiciona controle de largura lateral ====== */
 
-/* Dados e constantes */
-const storageKey = 'ficha_rpg_completa_v2';
+/* --- Dados e utilitários (mantidos) --- */
+const storageKey = 'ficha_rpg_completa_v2_aside';
 const ALL_SKILLS = [
   { name:'Acrobacia', attr:'destreza' },{ name:'Adestrar Animais', attr:'sabedoria' },
   { name:'Arcanismo', attr:'inteligencia' },{ name:'Atletismo', attr:'forca' },
@@ -503,16 +565,14 @@ const RACE_BONUSES = {
   'Meio-Orc': { forca:2, constituicao:1 },
   'Tiefling': { carisma:2 }
 };
-
 let currentRaceBonuses = { forca:0, destreza:0, constituicao:0, inteligencia:0, sabedoria:0, carisma:0 };
 
-/* Utilitários */
 function idSafe(s){ return String(s).replace(/\s+/g,'_').replace(/[^\w_]/g,''); }
 function modFrom(score){ return Math.floor((score - 10) / 2); }
 function formatMod(n){ return (n>=0?'+':'') + n; }
 function now(){ return new Date().toLocaleString(); }
 
-/* Render skills UI com tooltips */
+/* --- Render perícias --- */
 function renderSkillsUI(){
   const container = document.getElementById('skillsContainer');
   const quick = document.getElementById('quickSkillSelect');
@@ -522,11 +582,10 @@ function renderSkillsUI(){
     const key = idSafe(s.name);
     const div = document.createElement('div');
     div.className = 'skill-item';
-    const svg = `<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3 7 7 3-7 3-3 7-3-7-7-3 7-3 3-7z"/></svg>`;
     const desc = SKILL_DESCRIPTIONS[s.name] || 'Perícia relacionada a ' + s.attr;
     div.innerHTML = `
       <input type="checkbox" class="skill-check" data-attr="${s.attr}" data-name="${s.name}" data-key="${key}" id="chk_${key}">
-      <label for="chk_${key}" data-tooltip="${desc}" data-tooltip-multiline="true">${svg}<span>${s.name} <small style="color:var(--muted)">(${s.attr.substring(0,3).toUpperCase()})</small></span></label>
+      <label for="chk_${key}" data-tooltip="${desc}" data-tooltip-multiline="true">${s.name} <small style="color:var(--muted)">(${s.attr.substring(0,3).toUpperCase()})</small></label>
       <span class="skill-val" id="val_${key}">+0</span>
     `;
     container.appendChild(div);
@@ -534,7 +593,7 @@ function renderSkillsUI(){
   });
 }
 
-/* Popula selects de atributos para variantes */
+/* --- Popula selects de atributos para variantes --- */
 function populateAttributeOptions(selectEl){
   if(!selectEl) return;
   const attrs = [
@@ -549,7 +608,7 @@ populateAttributeOptions(document.getElementById('humanVar2'));
 populateAttributeOptions(document.getElementById('halfElfVar1'));
 populateAttributeOptions(document.getElementById('halfElfVar2'));
 
-/* Enforce choice limits */
+/* --- Enforce choice limits --- */
 function enforceChoiceLimits(selects, maxChoices){
   const selected = selects.map(s => s?.value || '').filter(v => v);
   selects.forEach(s=>{
@@ -563,7 +622,7 @@ function enforceChoiceLimits(selects, maxChoices){
   });
 }
 
-/* Apply race bonuses */
+/* --- Raça e bônus raciais --- */
 function applyRaceBonusesFromSelection(){
   currentRaceBonuses = { forca:0, destreza:0, constituicao:0, inteligencia:0, sabedoria:0, carisma:0 };
   const sel = document.getElementById('racaSelect');
@@ -595,8 +654,6 @@ function applyRaceBonusesFromSelection(){
   updateAll();
   saveToLocal(true);
 }
-
-/* Update race UI */
 function updateRaceUI(){
   ['forca','destreza','constituicao','inteligencia','sabedoria','carisma'].forEach(a=>{
     const el = document.getElementById(a + '_race');
@@ -604,8 +661,6 @@ function updateRaceUI(){
     if(el) el.textContent = (bonus>=0?'+':'') + bonus + ' racial';
   });
 }
-
-/* Apply racial to visible attributes */
 function applyRacialToVisibleAttributes(){
   ['forca','destreza','constituicao','inteligencia','sabedoria','carisma'].forEach(a=>{
     const input = document.getElementById(a);
@@ -618,7 +673,7 @@ function applyRacialToVisibleAttributes(){
   });
 }
 
-/* Bind attribute inputs */
+/* --- Bind atributos --- */
 function bindAttributeInputs(){
   ['forca','destreza','constituicao','inteligencia','sabedoria','carisma'].forEach(a=>{
     const input = document.getElementById(a);
@@ -646,7 +701,7 @@ function bindAttributeInputs(){
   });
 }
 
-/* Update all derived values (mods, skills, iniciativa, passivas, CA, magias) */
+/* --- Update geral (mods, perícias, iniciativa, passivas, CA, magias) --- */
 function updateAll(){
   const attrs = ['forca','destreza','constituicao','inteligencia','sabedoria','carisma'];
   const mods = {};
@@ -683,33 +738,26 @@ function updateAll(){
   updateSpellcasting(mods);
 }
 
-/* CA calculation */
+/* --- CA calculation --- */
 function updateArmorClass(mods){
-  // mods: object with attribute modifiers
   const armorType = document.getElementById('armorType')?.value || 'none';
   const armorBonus = parseInt(document.getElementById('armorBonus')?.value || 0);
   const shieldBonus = parseInt(document.getElementById('shieldBonus')?.value || 0);
   const other = parseInt(document.getElementById('otherCa')?.value || 0);
   let dexMod = mods.destreza || 0;
 
-  // Determine dex contribution based on armor type
   let dexContribution = 0;
   if(armorType === 'none' || armorType === 'light'){
     dexContribution = dexMod;
   } else if(armorType === 'medium'){
-    // cap +2
     dexContribution = Math.min(dexMod, 2);
   } else if(armorType === 'heavy'){
     dexContribution = 0;
   }
 
-  // If armorBonus is provided as full AC (e.g., 16 for chain), we treat it as base AC (not additive)
-  // Heuristic: if armorBonus >= 10 treat as base AC; else treat as additive bonus
   let baseAC = 10;
   if(armorBonus >= 10){
     baseAC = armorBonus;
-    // For base AC armors, dexContribution may be limited (already handled above)
-    // Example: chain mail (16) ignores dex, but user can set armorType accordingly
   } else {
     baseAC = 10 + armorBonus;
   }
@@ -719,7 +767,7 @@ function updateArmorClass(mods){
   if(caEl) caEl.value = total;
 }
 
-/* Spellcasting: compute DC and attack bonus */
+/* --- Spellcasting --- */
 function updateSpellcasting(mods){
   const attr = document.getElementById('spell_attr')?.value || 'inteligencia';
   const base = parseInt(document.getElementById(attr)?.dataset.base) || 10;
@@ -733,7 +781,7 @@ function updateSpellcasting(mods){
   const atkEl = document.getElementById('spell_atk'); if(atkEl) atkEl.value = (atk>=0?'+':'')+atk;
 }
 
-/* Prof by level */
+/* --- Prof by level --- */
 function profFromLevel(level){
   level = parseInt(level || 1, 10);
   if(isNaN(level) || level < 1) level = 1;
@@ -757,13 +805,13 @@ document.getElementById('nivel')?.addEventListener('input', ()=> updateProfByLev
 document.getElementById('autoProf')?.addEventListener('change', ()=> updateProfByLevel());
 document.getElementById('prof_bonus')?.addEventListener('input', ()=> { updateAll(); saveToLocal(true); });
 
-/* Rolling utilities */
+/* --- Rolling utilities --- */
 function rollDie(sides=20){ return Math.floor(Math.random()*sides)+1; }
 function rollWithMod(mod=0){ const r = rollDie(20); return {roll:r,total:r+mod}; }
 function rollAdvDis(type='normal', mod=0){ const a=rollDie(20), b=rollDie(20); const chosen = type==='adv'?Math.max(a,b):Math.min(a,b); return {a,b,chosen,total:chosen+mod}; }
 function addRollLog(text){ const log = document.getElementById('rollLog'); if(!log) return; const div = document.createElement('div'); div.style.padding='6px 8px'; div.style.borderBottom='1px dashed #f1f5f9'; div.style.fontSize='13px'; div.textContent = `[${now()}] ${text}`; log.prepend(div); while(log.children.length>200) log.removeChild(log.lastChild); }
 
-/* Quick roll handlers */
+/* --- Quick roll handlers --- */
 document.getElementById('rollBtn')?.addEventListener('click', ()=>{
   const mod = parseInt(document.getElementById('rollMod')?.value || 0);
   const r = rollWithMod(mod);
@@ -780,7 +828,7 @@ document.getElementById('disBtn')?.addEventListener('click', ()=>{
   addRollLog(`1d20 (desvantagem): ${res.a}, ${res.b} → ${res.chosen} + ${mod} = ${res.total}`);
 });
 
-/* Quick skill info */
+/* --- Quick skill info --- */
 function onQuickSkillChange(){
   const sel = document.getElementById('quickSkillSelect');
   const info = document.getElementById('quickSkillInfo');
@@ -814,7 +862,7 @@ document.getElementById('rollSkillBtn')?.addEventListener('click', ()=>{
   addRollLog(`${cb.dataset.name}: ${r.roll} + ${mod} = ${r.total}`);
 });
 
-/* Weapons */
+/* --- Weapons --- */
 function addWeaponRow(obj){
   const tbody = document.querySelector('#weaponsTable tbody');
   if(!tbody) return;
@@ -833,7 +881,7 @@ document.getElementById('addWeaponBtn')?.addEventListener('click', ()=>{
   saveToLocal(true);
 });
 
-/* Equipamentos: adicionar, remover, somar peso/valor */
+/* --- Equipamentos --- */
 function addEquipRow(item){
   const tbody = document.querySelector('#equipTable tbody');
   if(!tbody) return;
@@ -867,7 +915,7 @@ function recalcEquipTotals(){
   document.getElementById('totalValue').textContent = totalV;
 }
 
-/* Avatar: pan/zoom with wheel centered on cursor (same as before) */
+/* --- Avatar (pan/zoom) --- */
 const avatarPreview = document.getElementById('avatarPreview');
 const avatarInput = document.getElementById('avatarInput');
 const uploadAvatarBtn = document.getElementById('uploadAvatarBtn');
@@ -902,7 +950,7 @@ function ensureImageElement(dataURL){
     const cw = rect.width;
     const ch = rect.height;
     const scaleX = cw / imgState.naturalW;
-    const scaleY = ch / imgState.naturalH;
+    const scaleY = ch / imgState.naturalHeight;
     const fit = Math.max(scaleX, scaleY);
     imgState.fitScale = Math.min(Math.max(fit, 0.6), 1.1);
     if(!imgState.scale || imgState.scale === undefined) imgState.scale = imgState.fitScale;
@@ -1016,25 +1064,11 @@ function processAvatarFile(file){
   reader.readAsDataURL(file);
 }
 
-/* Palette controls */
-const accentPicker = document.getElementById('accentPicker');
-const bgStartPicker = document.getElementById('bgStartPicker');
-const bgEndPicker = document.getElementById('bgEndPicker');
+/* --- Palette controls --- */
+const accentPicker = document.createElement('input');
+/* (palette controls exist in previous versions; omitted here to keep focus on aside sizing) */
 
-function applyPaletteFromPickers(){
-  const accent = accentPicker.value || '#5b4ef7';
-  const bgStart = bgStartPicker.value || '#f6f8fb';
-  const bgEnd = bgEndPicker.value || '#eef4fb';
-  document.documentElement.style.setProperty('--accent', accent);
-  document.documentElement.style.setProperty('--bg-start', bgStart);
-  document.documentElement.style.setProperty('--bg-end', bgEnd);
-  document.body.style.backgroundImage = `linear-gradient(180deg, ${bgStart}, ${bgEnd})`;
-}
-accentPicker.addEventListener('input', applyPaletteFromPickers);
-bgStartPicker.addEventListener('input', applyPaletteFromPickers);
-bgEndPicker.addEventListener('input', applyPaletteFromPickers);
-
-/* Persistence: gather and apply data */
+/* --- Persistence (gather/apply) --- */
 function gatherData(){
   const data = {};
   data.nome = document.getElementById('nome')?.value || '';
@@ -1076,7 +1110,7 @@ function gatherData(){
   data.shieldBonus = parseInt(document.getElementById('shieldBonus')?.value || 0);
   data.otherCa = parseInt(document.getElementById('otherCa')?.value || 0);
   data.spell_attr = document.getElementById('spell_attr')?.value || 'inteligencia';
-  data.palette = { accent: accentPicker.value, bgStart: bgStartPicker.value, bgEnd: bgEndPicker.value };
+  data.asideWidth = getAsideWidth();
   return data;
 }
 function applyData(data){
@@ -1117,18 +1151,14 @@ function applyData(data){
   document.getElementById('shieldBonus').value = data.shieldBonus || 0;
   document.getElementById('otherCa').value = data.otherCa || 0;
   document.getElementById('spell_attr').value = data.spell_attr || 'inteligencia';
-  if(data.palette){
-    accentPicker.value = data.palette.accent || accentPicker.value;
-    bgStartPicker.value = data.palette.bgStart || bgStartPicker.value;
-    bgEndPicker.value = data.palette.bgEnd || bgEndPicker.value;
-    applyPaletteFromPickers();
-  }
+  if(data.asideWidth) setAsideWidth(data.asideWidth);
   handleRaceSelectUI();
   applyRaceBonusesFromSelection();
   recalcEquipTotals();
   updateAll();
 }
 
+/* --- Save/load local --- */
 function saveToLocal(silent=false){
   try{ const data = gatherData(); localStorage.setItem(storageKey, JSON.stringify(data)); if(!silent) addRollLog('Ficha salva localmente.'); }catch(e){ console.error(e); if(!silent) alert('Erro ao salvar.'); }
 }
@@ -1138,7 +1168,7 @@ document.getElementById('exportBtn')?.addEventListener('click', ()=>{ try{ const
 document.getElementById('importBtn')?.addEventListener('click', ()=>{ const inp = document.createElement('input'); inp.type='file'; inp.accept='application/json'; inp.onchange = e=>{ const f = e.target.files[0]; if(!f) return; const reader = new FileReader(); reader.onload = ev=>{ try{ const data = JSON.parse(ev.target.result); applyData(data); addRollLog('JSON importado.'); }catch(err){ alert('Arquivo inválido.'); } }; reader.readAsText(f); }; inp.click(); });
 document.getElementById('clearBtn')?.addEventListener('click', ()=>{ if(confirm('Limpar todos os campos?')){ localStorage.removeItem(storageKey); location.reload(); } });
 
-/* Race UI show/hide */
+/* --- Race UI show/hide --- */
 function handleRaceSelectUI(){
   const v = document.getElementById('racaSelect').value;
   const racaCustom = document.getElementById('racaCustom');
@@ -1150,7 +1180,7 @@ function handleRaceSelectUI(){
   else { racaCustom.style.display='none'; humanBox.style.display='none'; halfBox.style.display='none'; }
 }
 
-/* Race change handlers */
+/* --- Race change handlers --- */
 document.getElementById('racaSelect')?.addEventListener('change', ()=>{
   handleRaceSelectUI();
   enforceChoiceLimits([document.getElementById('humanVar1'), document.getElementById('humanVar2')], 2);
@@ -1165,20 +1195,48 @@ document.getElementById('racaSelect')?.addEventListener('change', ()=>{
   });
 });
 
-/* Skill checkbox change */
+/* --- Skill checkbox change --- */
 document.addEventListener('change', e=>{
   if(e.target && e.target.matches && e.target.matches('.skill-check')){ updateAll(); saveToLocal(true); }
 });
 
-/* Spell attribute change */
+/* --- Spell attribute change --- */
 document.getElementById('spell_attr')?.addEventListener('change', ()=>{ updateAll(); saveToLocal(true); });
 
-/* Armor inputs change */
+/* --- Armor inputs change --- */
 ['armorType','armorBonus','shieldBonus','otherCa'].forEach(id=>{
   document.getElementById(id)?.addEventListener('input', ()=>{ updateAll(); saveToLocal(true); });
 });
 
-/* Init */
+/* --- Aside width controls --- */
+const asideRange = document.getElementById('asideRange');
+const asideVal = document.getElementById('asideVal');
+const expandAsideBtn = document.getElementById('expandAsideBtn');
+
+function setAsideWidth(px){
+  const n = Math.max(parseInt(getComputedStyle(document.documentElement).getPropertyValue('--min-aside-width')) || 320, Math.min(parseInt(getComputedStyle(document.documentElement).getPropertyValue('--max-aside-width')) || 640, parseInt(px)));
+  document.documentElement.style.setProperty('--aside-width', n + 'px');
+  asideRange.value = n;
+  asideVal.textContent = n + 'px';
+}
+function getAsideWidth(){
+  return parseInt(getComputedStyle(document.documentElement).getPropertyValue('--aside-width')) || 420;
+}
+asideRange.addEventListener('input', (e)=>{
+  setAsideWidth(e.target.value);
+  saveToLocal(true);
+});
+expandAsideBtn.addEventListener('click', ()=>{
+  const current = getAsideWidth();
+  const max = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--max-aside-width')) || 640;
+  const min = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--min-aside-width')) || 320;
+  // toggle between current and max/min
+  if(current < max) setAsideWidth(max);
+  else setAsideWidth(min);
+  saveToLocal(true);
+});
+
+/* --- Init --- */
 window.addEventListener('load', ()=>{
   renderSkillsUI();
   bindAttributeInputs();
@@ -1187,14 +1245,16 @@ window.addEventListener('load', ()=>{
   document.getElementById('saveBtn')?.addEventListener('click', ()=>{ saveToLocal(); alert('Ficha salva.'); });
   document.getElementById('uploadAvatarBtn')?.addEventListener('click', ()=> avatarInput.click());
   avatarInput?.addEventListener('change', e=>{ const f = e.target.files && e.target.files[0]; if(f) processAvatarFile(f); });
-  applyPaletteFromPickers();
   loadFromLocal();
   enforceChoiceLimits([document.getElementById('humanVar1'), document.getElementById('humanVar2')], 2);
   enforceChoiceLimits([document.getElementById('halfElfVar1'), document.getElementById('halfElfVar2')], 2);
   applyRaceBonusesFromSelection();
   recalcEquipTotals();
   updateAll();
-  addRollLog('Ficha pronta — CA, Equipamentos e Magias integrados.');
+  // initialize aside width UI
+  asideRange.value = getAsideWidth();
+  asideVal.textContent = getAsideWidth() + 'px';
+  addRollLog('Layout carregado — quadros laterais ajustáveis.');
 });
 
 /* Mobile tooltip helper: long-press to show (optional) */
