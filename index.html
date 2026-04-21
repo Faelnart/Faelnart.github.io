@@ -3,23 +3,18 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Ficha RPG — Completa e Estável</title>
+<title>Ficha RPG — Estável</title>
 <style>
 :root{
-  --bg-start:#f2f4f8;
-  --bg-end:#e9eef6;
-  --card:#ffffff;
-  --accent:#6b5df5;
-  --muted:#6b7280;
-  --text:#0f1724;
-  --radius:12px;
-  --shadow:0 8px 20px rgba(15,23,42,0.06);
-  --gap:18px;
+  --bg-start:#f2f4f8; --bg-end:#e9eef6;
+  --card:#ffffff; --accent:#6b5df5; --muted:#6b7280; --text:#0f1724;
+  --radius:12px; --shadow:0 8px 20px rgba(15,23,42,0.06); --gap:18px;
 }
 *{box-sizing:border-box;font-family:Inter,system-ui,Segoe UI,Roboto,Arial}
 html,body{height:100%}
 body{margin:0;padding:22px;background:linear-gradient(180deg,var(--bg-start),var(--bg-end));color:var(--text);-webkit-font-smoothing:antialiased}
 .container{max-width:1280px;margin:0 auto;display:grid;grid-template-columns:1fr 360px;gap:var(--gap);align-items:start}
+/* header full width */
 header{grid-column:1/-1;display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
 h1{margin:0;color:var(--accent);font-size:18px}
 .controls{display:flex;gap:8px;align-items:center}
@@ -27,11 +22,9 @@ h1{margin:0;color:var(--accent);font-size:18px}
 .btn-ghost{background:#fff;border:1px solid rgba(15,23,36,0.06);padding:8px 12px;border-radius:10px;color:var(--muted);cursor:pointer}
 .card{background:var(--card);padding:14px;border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid rgba(15,23,36,0.04)}
 .section-title{font-size:12px;color:var(--muted);font-weight:700;text-transform:uppercase;margin-bottom:10px;border-bottom:1px solid rgba(15,23,36,0.03);padding-bottom:8px}
-.row{display:flex;gap:10px;align-items:center}
 .field{display:flex;flex-direction:column;gap:6px;margin-bottom:8px}
 label{font-size:12px;color:var(--muted);font-weight:700;text-transform:uppercase}
 input,select,textarea,button{font-size:14px;padding:8px;border-radius:8px;border:1px solid #e6eef8;background:#fff;outline:none}
-input[type="number"]{text-align:center}
 .big{font-size:20px;padding:10px;border-radius:8px;border:0;background:transparent;color:var(--accent);font-weight:800}
 .attr-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
 .attr-box{text-align:center;padding:10px;background:#fbfdff;border-radius:10px;border:1px solid #eef4ff}
@@ -54,6 +47,9 @@ input[type="number"]{text-align:center}
 .roll-entry{font-size:13px;padding:6px;border-bottom:1px dashed #f1f5f9}
 .controls-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 @media (max-width:980px){.container{grid-template-columns:1fr}.aside-col{order:2}}
+/* Ensure main and aside fixed positions in grid */
+main{grid-column:1/2;width:100%;box-sizing:border-box}
+aside{grid-column:2/3;width:100%;box-sizing:border-box}
 </style>
 </head>
 <body>
@@ -63,7 +59,7 @@ input[type="number"]{text-align:center}
   <!-- Header -->
   <div class="module" data-module="header">
     <header class="card" role="banner">
-      <h1>Ficha RPG — Completa</h1>
+      <h1>Ficha RPG — Estável</h1>
       <div class="controls-row">
         <button id="saveBtn" class="btn">Salvar</button>
         <button id="exportBtn" class="btn-ghost">Exportar</button>
@@ -76,7 +72,7 @@ input[type="number"]{text-align:center}
   <!-- Main column -->
   <main>
 
-    <!-- Identidade + Avatar -->
+    <!-- Identidade -->
     <div class="module" data-module="identidade">
       <section class="card" aria-labelledby="ident-title">
         <div id="ident-title" class="section-title">Identidade</div>
@@ -111,7 +107,7 @@ input[type="number"]{text-align:center}
       </section>
     </div>
 
-    <!-- Atributos + Perícias -->
+    <!-- Atributos e Perícias -->
     <div class="module" data-module="atributos">
       <section class="card" aria-labelledby="attr-title">
         <div id="attr-title" class="section-title">Atributos e Perícias</div>
@@ -164,7 +160,7 @@ input[type="number"]{text-align:center}
       </section>
     </div>
 
-    <!-- Ataques e Magias -->
+    <!-- Ataques -->
     <div class="module" data-module="ataques">
       <section class="card" aria-labelledby="atk-title">
         <div id="atk-title" class="section-title">Ataques & Magias</div>
@@ -231,7 +227,7 @@ input[type="number"]{text-align:center}
 
 </div>
 
-<!-- Module control (visible for convenience) -->
+<!-- Module control -->
 <div class="module-control" id="moduleControl" aria-hidden="false" style="display:block">
   <strong>Módulos</strong>
   <div id="moduleControlList" style="margin-top:8px"></div>
@@ -239,52 +235,33 @@ input[type="number"]{text-align:center}
 </div>
 
 <script>
-/* ============================
-   Ficha RPG — Script Integrado
-   - Mantém IDs originais
-   - Integra: perícias, atributos, conjuração, rolador, avatar, armas, autosave, undo, export/import, painel de módulos
-   - Objetivo: sem erros no console; robusto a elementos ausentes
-   ============================ */
-
-/* Utilitários */
-const storageKey = 'ficha_rpg_completa_v1';
+/* ---------- Script integrado e robusto ---------- */
+const storageKey = 'ficha_rpg_estavel_v1';
 const ALL_SKILLS = [
-  { name:'Acrobacia', attr:'destreza', tip:'Equilíbrio, saltos e manobras' },
-  { name:'Adestrar Animais', attr:'sabedoria', tip:'Treinar e controlar animais' },
-  { name:'Arcanismo', attr:'inteligencia', tip:'Conhecimento arcano' },
-  { name:'Atletismo', attr:'forca', tip:'Escalar, nadar, saltar' },
-  { name:'Atuação', attr:'carisma', tip:'Performances' },
-  { name:'Enganação', attr:'carisma', tip:'Mentir e dissimular' },
-  { name:'Furtividade', attr:'destreza', tip:'Esconder-se e mover-se sem ser visto' },
-  { name:'História', attr:'inteligencia', tip:'Conhecimento histórico' },
-  { name:'Intimidação', attr:'carisma', tip:'Ameaçar e coagir' },
-  { name:'Intuição', attr:'sabedoria', tip:'Ler intenções' },
-  { name:'Investigação', attr:'inteligencia', tip:'Analisar pistas' },
-  { name:'Medicina', attr:'sabedoria', tip:'Tratar ferimentos' },
-  { name:'Natureza', attr:'inteligencia', tip:'Conhecimento natural' },
-  { name:'Percepção', attr:'sabedoria', tip:'Notar detalhes' },
-  { name:'Persuasão', attr:'carisma', tip:'Convencer e negociar' },
-  { name:'Prestidigitação', attr:'destreza', tip:'Truques manuais' },
-  { name:'Religião', attr:'inteligencia', tip:'Conhecimento religioso' },
-  { name:'Sobrevivência', attr:'sabedoria', tip:'Rastrear e sobreviver' }
+  { name:'Acrobacia', attr:'destreza' },{ name:'Adestrar Animais', attr:'sabedoria' },
+  { name:'Arcanismo', attr:'inteligencia' },{ name:'Atletismo', attr:'forca' },
+  { name:'Atuação', attr:'carisma' },{ name:'Enganação', attr:'carisma' },
+  { name:'Furtividade', attr:'destreza' },{ name:'História', attr:'inteligencia' },
+  { name:'Intimidação', attr:'carisma' },{ name:'Intuição', attr:'sabedoria' },
+  { name:'Investigação', attr:'inteligencia' },{ name:'Medicina', attr:'sabedoria' },
+  { name:'Natureza', attr:'inteligencia' },{ name:'Percepção', attr:'sabedoria' },
+  { name:'Persuasão', attr:'carisma' },{ name:'Prestidigitação', attr:'destreza' },
+  { name:'Religião', attr:'inteligencia' },{ name:'Sobrevivência', attr:'sabedoria' }
 ];
 function idSafe(s){ return String(s).replace(/\s+/g,'_').replace(/[^\w_]/g,''); }
 function modFrom(score){ return Math.floor((score - 10) / 2); }
 function formatMod(n){ return (n>=0?'+':'') + n; }
 function now(){ return new Date().toLocaleString(); }
 
-/* Render perícias e quick select */
+/* Render perícias */
 function renderSkillsUI(){
   const container = document.getElementById('skillsContainer');
   const quick = document.getElementById('quickSkillSelect');
   if(!container || !quick) return;
-  container.innerHTML = '';
-  quick.innerHTML = '<option value="">— selecione —</option>';
+  container.innerHTML = ''; quick.innerHTML = '<option value="">— selecione —</option>';
   ALL_SKILLS.forEach(s=>{
     const key = idSafe(s.name);
-    const div = document.createElement('div');
-    div.className = 'skill-item';
-    div.title = s.tip;
+    const div = document.createElement('div'); div.className='skill-item'; div.title = s.attr;
     div.innerHTML = `
       <input type="checkbox" class="skill-check" data-attr="${s.attr}" data-name="${s.name}" data-key="${key}" id="chk_${key}">
       <label for="chk_${key}">${s.name} <small style="color:#94a3b8">(${s.attr.substring(0,3).toUpperCase()})</small></label>
@@ -296,19 +273,16 @@ function renderSkillsUI(){
   });
 }
 
-/* Atualiza atributos, perícias, conjuração e campos derivados */
+/* Atualizações */
 function updateAll(){
   const attrs = ['forca','destreza','constituicao','inteligencia','sabedoria','carisma'];
   const mods = {};
   attrs.forEach(a=>{
     const el = document.getElementById(a);
     const score = el ? (parseInt(el.value) || 10) : 10;
-    const m = modFrom(score);
-    mods[a] = m;
-    const modEl = document.getElementById(a + '_mod');
-    if(modEl) modEl.textContent = formatMod(m);
+    const m = modFrom(score); mods[a]=m;
+    const modEl = document.getElementById(a + '_mod'); if(modEl) modEl.textContent = formatMod(m);
   });
-
   const prof = parseInt(document.getElementById('prof_bonus')?.value || 0);
   document.querySelectorAll('.skill-check').forEach(cb=>{
     const attrMod = mods[cb.dataset.attr] || 0;
@@ -316,18 +290,13 @@ function updateAll(){
     const el = document.getElementById('val_' + (cb.dataset.key || idSafe(cb.dataset.name || '')));
     if(el) el.textContent = formatMod(total);
   });
-
-  const iniEl = document.getElementById('iniciativa');
-  if(iniEl) iniEl.value = formatMod(mods.destreza || 0);
-
-  // passive perception / investigation
+  const iniEl = document.getElementById('iniciativa'); if(iniEl) iniEl.value = formatMod(mods.destreza || 0);
   const percCb = Array.from(document.querySelectorAll('.skill-check')).find(c=>c.dataset.name==='Percepção');
   const invCb = Array.from(document.querySelectorAll('.skill-check')).find(c=>c.dataset.name==='Investigação');
   const percVal = 10 + (mods.sabedoria || 0) + ((percCb && percCb.checked) ? prof : 0);
   const invVal = 10 + (mods.inteligencia || 0) + ((invCb && invCb.checked) ? prof : 0);
   const percEl = document.getElementById('perc_passiva'); if(percEl) percEl.value = percVal;
   const invEl = document.getElementById('inv_passiva'); if(invEl) invEl.value = invVal;
-
   updateSpellcasting();
 }
 
@@ -337,237 +306,60 @@ function updateSpellcasting(){
   const score = parseInt(document.getElementById(attr)?.value || 10);
   const mod = modFrom(score);
   const prof = parseInt(document.getElementById('prof_bonus')?.value || 0);
-  const dc = 8 + mod + prof;
-  const atk = mod + prof;
+  const dc = 8 + mod + prof; const atk = mod + prof;
   const dcEl = document.getElementById('spell_dc'); if(dcEl) dcEl.value = dc;
   const atkEl = document.getElementById('spell_atk'); if(atkEl) atkEl.value = (atk>=0?'+':'')+atk;
 }
 
-/* Rolador */
+/* Rolador e histórico */
 function rollDie(sides=20){ return Math.floor(Math.random()*sides)+1; }
 function rollWithMod(mod=0){ const r = rollDie(20); return {roll:r,total:r+mod}; }
-function rollAdvDis(type='normal', mod=0){
-  const a = rollDie(20), b = rollDie(20);
-  const chosen = type==='adv' ? Math.max(a,b) : Math.min(a,b);
-  return {a,b,chosen,total:chosen+mod};
-}
-function addRollLog(text){
-  const log = document.getElementById('rollLog'); if(!log) return;
-  const div = document.createElement('div'); div.className='roll-entry'; div.textContent = `[${now()}] ${text}`;
-  log.prepend(div);
-  while(log.children.length>200) log.removeChild(log.lastChild);
-}
+function rollAdvDis(type='normal', mod=0){ const a=rollDie(20), b=rollDie(20); const chosen = type==='adv'?Math.max(a,b):Math.min(a,b); return {a,b,chosen,total:chosen+mod}; }
+function addRollLog(text){ const log = document.getElementById('rollLog'); if(!log) return; const div = document.createElement('div'); div.className='roll-entry'; div.textContent = `[${now()}] ${text}`; log.prepend(div); while(log.children.length>200) log.removeChild(log.lastChild); }
 
-/* Roll skill by key */
+/* Roll skill */
 function rollSkillByKey(key, options={type:'normal'}){
-  const cb = document.querySelector(`.skill-check[data-key="${key}"]`);
-  if(!cb) return;
-  const attr = cb.dataset.attr;
-  const mod = modFrom(parseInt(document.getElementById(attr)?.value || 10));
-  const prof = cb.checked ? parseInt(document.getElementById('prof_bonus')?.value || 0) : 0;
-  const totalMod = mod + prof;
-  if(options.type==='adv' || options.type==='dis'){
-    const res = rollAdvDis(options.type, totalMod);
-    addRollLog(`${cb.dataset.name}: ${options.type==='adv'?'Vantagem':'Desvantagem'} — ${res.a}, ${res.b} → ${res.chosen} = ${res.total}`);
-    return res;
-  } else {
-    const r = rollWithMod(totalMod);
-    addRollLog(`${cb.dataset.name}: ${r.roll} + ${totalMod} = ${r.total}`);
-    return r;
-  }
+  const cb = document.querySelector(`.skill-check[data-key="${key}"]`); if(!cb) return;
+  const attr = cb.dataset.attr; const mod = modFrom(parseInt(document.getElementById(attr)?.value || 10));
+  const prof = cb.checked ? parseInt(document.getElementById('prof_bonus')?.value || 0) : 0; const totalMod = mod + prof;
+  if(options.type==='adv' || options.type==='dis'){ const res = rollAdvDis(options.type,totalMod); addRollLog(`${cb.dataset.name}: ${options.type==='adv'?'Vantagem':'Desvantagem'} — ${res.a}, ${res.b} → ${res.chosen} = ${res.total}`); return res; }
+  else { const r = rollWithMod(totalMod); addRollLog(`${cb.dataset.name}: ${r.roll} + ${totalMod} = ${r.total}`); return r; }
 }
 
 /* Quick roll handlers */
-document.getElementById('rollSkillBtn')?.addEventListener('click', ()=>{
-  const sel = document.getElementById('quickSkillSelect'); if(!sel) return;
-  const key = sel.value; if(!key) { alert('Selecione uma perícia.'); return; }
-  rollSkillByKey(key,{type:'normal'});
-});
-document.addEventListener('click', e=>{
-  if(e.target && e.target.matches && e.target.matches('.roll-skill')){
-    const key = e.target.dataset.key; rollSkillByKey(key,{type:'normal'});
-  }
-});
+document.getElementById('rollSkillBtn')?.addEventListener('click', ()=>{ const sel=document.getElementById('quickSkillSelect'); if(!sel) return; const key=sel.value; if(!key){ alert('Selecione uma perícia.'); return; } rollSkillByKey(key,{type:'normal'}); });
+document.addEventListener('click', e=>{ if(e.target && e.target.matches && e.target.matches('.roll-skill')){ const key=e.target.dataset.key; rollSkillByKey(key,{type:'normal'}); } });
+document.getElementById('rollBtn')?.addEventListener('click', ()=>{ const mod=parseInt(document.getElementById('rollMod')?.value||0); const r=rollWithMod(mod); addRollLog(`1d20: ${r.roll} + ${mod} = ${r.total}`); });
+document.getElementById('advBtn')?.addEventListener('click', ()=>{ const mod=parseInt(document.getElementById('rollMod')?.value||0); const res=rollAdvDis('adv',mod); addRollLog(`1d20 (vantagem): ${res.a}, ${res.b} → ${res.chosen} + ${mod} = ${res.total}`); });
+document.getElementById('disBtn')?.addEventListener('click', ()=>{ const mod=parseInt(document.getElementById('rollMod')?.value||0); const res=rollAdvDis('dis',mod); addRollLog(`1d20 (desvantagem): ${res.a}, ${res.b} → ${res.chosen} + ${mod} = ${res.total}`); });
 
-/* Quick 1d20 */
-document.getElementById('rollBtn')?.addEventListener('click', ()=>{
-  const mod = parseInt(document.getElementById('rollMod')?.value || 0);
-  const r = rollWithMod(mod);
-  addRollLog(`1d20: ${r.roll} + ${mod} = ${r.total}`);
-});
-document.getElementById('advBtn')?.addEventListener('click', ()=>{
-  const mod = parseInt(document.getElementById('rollMod')?.value || 0);
-  const res = rollAdvDis('adv',mod);
-  addRollLog(`1d20 (vantagem): ${res.a}, ${res.b} → ${res.chosen} + ${mod} = ${res.total}`);
-});
-document.getElementById('disBtn')?.addEventListener('click', ()=>{
-  const mod = parseInt(document.getElementById('rollMod')?.value || 0);
-  const res = rollAdvDis('dis',mod);
-  addRollLog(`1d20 (desvantagem): ${res.a}, ${res.b} → ${res.chosen} + ${mod} = ${res.total}`);
-});
+/* Weapons */
+function addWeaponRow(obj){ const tbody=document.querySelector('#weaponsTable tbody'); if(!tbody) return; const tr=document.createElement('tr'); tr.innerHTML=`<td>${obj.name||''}</td><td>${obj.bonus||''}</td><td>${obj.dmg||''}</td><td>${obj.notes||''}</td><td><button class="del-weap" style="color:red;border:0;background:none;cursor:pointer">×</button> <button class="roll-weap btn-ghost small">Rolar</button></td>`; tbody.appendChild(tr); tr.querySelector('.del-weap')?.addEventListener('click', ()=>tr.remove()); tr.querySelector('.roll-weap')?.addEventListener('click', ()=>{ const bonus=parseInt(tr.children[1].innerText.replace(/\D/g,''))||0; const r=rollWithMod(bonus); addRollLog(`Ataque ${tr.children[0].innerText}: ${r.roll} + ${bonus} = ${r.total}`); }); }
+document.getElementById('addWeaponBtn')?.addEventListener('click', ()=>{ const name=document.getElementById('w_name')?.value||''; const bonus=document.getElementById('w_bonus')?.value||''; const dmg=document.getElementById('w_dmg')?.value||''; if(!name) return alert('Informe o nome da arma.'); addWeaponRow({name,bonus,dmg,notes:''}); document.getElementById('w_name').value=''; document.getElementById('w_bonus').value=''; document.getElementById('w_dmg').value=''; });
 
-/* Weapons: add row with roll button */
-function addWeaponRow(obj){
-  const tbody = document.querySelector('#weaponsTable tbody');
-  if(!tbody) return;
-  const tr = document.createElement('tr');
-  tr.innerHTML = `<td>${obj.name||''}</td><td>${obj.bonus||''}</td><td>${obj.dmg||''}</td><td>${obj.notes||''}</td><td><button class="del-weap" style="color:red;border:0;background:none;cursor:pointer">×</button> <button class="roll-weap btn-ghost small">Rolar</button></td>`;
-  tbody.appendChild(tr);
-  tr.querySelector('.del-weap')?.addEventListener('click', ()=>tr.remove());
-  tr.querySelector('.roll-weap')?.addEventListener('click', ()=>{ const bonus = parseInt(tr.children[1].innerText.replace(/\D/g,''))||0; const r = rollWithMod(bonus); addRollLog(`Ataque ${tr.children[0].innerText}: ${r.roll} + ${bonus} = ${r.total}`); });
-}
-
-/* Add weapon button */
-document.getElementById('addWeaponBtn')?.addEventListener('click', ()=>{
-  const name = document.getElementById('w_name')?.value || '';
-  const bonus = document.getElementById('w_bonus')?.value || '';
-  const dmg = document.getElementById('w_dmg')?.value || '';
-  if(!name) return alert('Informe o nome da arma.');
-  addWeaponRow({name,bonus,dmg,notes:''});
-  document.getElementById('w_name').value=''; document.getElementById('w_bonus').value=''; document.getElementById('w_dmg').value='';
-});
-
-/* Avatar handling */
-const avatarInput = document.getElementById('avatarInput');
-const avatarPreview = document.getElementById('avatarPreview');
+/* Avatar */
+const avatarInput = document.getElementById('avatarInput'); const avatarPreview = document.getElementById('avatarPreview');
 document.getElementById('uploadAvatarBtn')?.addEventListener('click', ()=>avatarInput.click());
-document.getElementById('removeAvatarBtn')?.addEventListener('click', ()=>{
-  avatarPreview.innerHTML = '<div class="avatar-hint">Arraste ou clique para carregar</div>'; delete avatarPreview.dataset.imgData;
-});
-avatarInput?.addEventListener('change', e=>{ const f = e.target.files && e.target.files[0]; if(f) processAvatarFile(f); });
-if(avatarPreview){
-  ['dragenter','dragover'].forEach(ev=>avatarPreview.addEventListener(ev, e=>{ e.preventDefault(); avatarPreview.style.borderColor='var(--accent)'; avatarPreview.style.background='#f7f3ff'; }));
-  ['dragleave','drop'].forEach(ev=>avatarPreview.addEventListener(ev, e=>{ e.preventDefault(); avatarPreview.style.borderColor='#dbe7ff'; avatarPreview.style.background='#fbfdff'; }));
-  avatarPreview.addEventListener('drop', e=>{ e.preventDefault(); const f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]; if(f) processAvatarFile(f); });
-}
-function processAvatarFile(file){
-  if(!file.type.startsWith('image/')) return alert('Arquivo não é imagem.');
-  const reader = new FileReader();
-  reader.onload = ev=>{
-    const img = new Image();
-    img.onload = ()=>{
-      const canvas = document.createElement('canvas'); const size = 400;
-      canvas.width = size; canvas.height = size;
-      const ctx = canvas.getContext('2d');
-      const side = Math.min(img.width,img.height);
-      ctx.drawImage(img,(img.width-side)/2,(img.height-side)/2,side,side,0,0,size,size);
-      const dataURL = canvas.toDataURL('image/jpeg',0.85);
-      avatarPreview.innerHTML = `<img src="${dataURL}">`;
-      avatarPreview.dataset.imgData = dataURL;
-    };
-    img.src = ev.target.result;
-  };
-  reader.readAsDataURL(file);
-}
+document.getElementById('removeAvatarBtn')?.addEventListener('click', ()=>{ avatarPreview.innerHTML = '<div class="avatar-hint">Arraste ou clique para carregar</div>'; delete avatarPreview.dataset.imgData; });
+avatarInput?.addEventListener('change', e=>{ const f=e.target.files && e.target.files[0]; if(f) processAvatarFile(f); });
+if(avatarPreview){ ['dragenter','dragover'].forEach(ev=>avatarPreview.addEventListener(ev,e=>{ e.preventDefault(); avatarPreview.style.borderColor='var(--accent)'; avatarPreview.style.background='#f7f3ff'; })); ['dragleave','drop'].forEach(ev=>avatarPreview.addEventListener(ev,e=>{ e.preventDefault(); avatarPreview.style.borderColor='#dbe7ff'; avatarPreview.style.background='#fbfdff'; })); avatarPreview.addEventListener('drop', e=>{ e.preventDefault(); const f=e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]; if(f) processAvatarFile(f); }); }
+function processAvatarFile(file){ if(!file.type.startsWith('image/')) return alert('Arquivo não é imagem.'); const reader=new FileReader(); reader.onload=ev=>{ const img=new Image(); img.onload=()=>{ const canvas=document.createElement('canvas'); const size=400; canvas.width=size; canvas.height=size; const ctx=canvas.getContext('2d'); const side=Math.min(img.width,img.height); ctx.drawImage(img,(img.width-side)/2,(img.height-side)/2,side,side,0,0,size,size); const dataURL=canvas.toDataURL('image/jpeg',0.85); avatarPreview.innerHTML=`<img src="${dataURL}">`; avatarPreview.dataset.imgData=dataURL; }; img.src=ev.target.result; }; reader.readAsDataURL(file); }
 document.getElementById('toggleCircular')?.addEventListener('change', e=>{ avatarPreview.style.borderRadius = e.target.checked ? '50%' : '12px'; });
 
-/* Autosave + Undo */
-let autosave = true;
-let undoStack = [];
-const maxUndo = 40;
-function snapshot(){
-  try{
-    const data = gatherData();
-    undoStack.push(JSON.stringify(data));
-    if(undoStack.length>maxUndo) undoStack.shift();
-    document.getElementById('saveBtn').disabled = false;
-  }catch(e){ console.error(e); }
-}
-function undo(){
-  if(undoStack.length<2) return alert('Nada para desfazer.');
-  undoStack.pop();
-  const prev = undoStack.pop();
-  if(!prev) return alert('Nada para desfazer.');
-  applyData(JSON.parse(prev));
-  snapshot();
-  addRollLog('Ação desfeita.');
-}
-document.getElementById('saveBtn')?.addEventListener('click', ()=>{ saveToLocal(); snapshot(); alert('Salvo.'); });
-
-/* Autosave interval */
-setInterval(()=>{ if(autosave) saveToLocal(true); }, 5000);
-
-/* Persistence: gather/apply/save/load/export/import/clear */
-function gatherData(){
-  const data = { skills:{}, weapons:[], avatar:'', circular:false, meta:{ts: new Date().toISOString()} };
-  document.querySelectorAll('[data-key]').forEach(el=>{
-    const key = el.dataset.key; if(!key) return;
-    if(el.type==='checkbox') data[key] = el.checked; else data[key] = el.value || '';
-  });
-  document.querySelectorAll('.skill-check').forEach(cb=> data.skills[cb.dataset.name] = !!cb.checked);
-  document.querySelectorAll('#weaponsTable tbody tr').forEach(tr=>{
-    const tds = tr.querySelectorAll('td');
-    data.weapons.push({name:tds[0].innerText, bonus:tds[1].innerText, dmg:tds[2].innerText, notes:tds[3].innerText});
-  });
-  data.avatar = avatarPreview?.dataset.imgData || '';
-  data.circular = !!document.getElementById('toggleCircular')?.checked;
-  return data;
-}
-function applyData(data){
-  if(!data) return;
-  document.querySelectorAll('[data-key]').forEach(el=>{
-    const key = el.dataset.key; if(!key) return;
-    if(el.type==='checkbox') el.checked = !!data[key]; else el.value = data[key] || '';
-  });
-  document.querySelectorAll('.skill-check').forEach(cb=> cb.checked = !!(data.skills && data.skills[cb.dataset.name]));
-  const tbody = document.querySelector('#weaponsTable tbody'); if(tbody) tbody.innerHTML = '';
-  (data.weapons || []).forEach(w=> addWeaponRow({name:w.name, bonus:w.bonus, dmg:w.dmg, notes:w.notes}));
-  if(data.avatar && avatarPreview){ avatarPreview.innerHTML = `<img src="${data.avatar}">`; avatarPreview.dataset.imgData = data.avatar; }
-  if(document.getElementById('toggleCircular')) document.getElementById('toggleCircular').checked = !!data.circular;
-  updateAll();
-}
-function saveToLocal(silent=false){
-  try{ const data = gatherData(); localStorage.setItem(storageKey, JSON.stringify(data)); if(!silent) addRollLog('Ficha salva localmente.'); }catch(e){ console.error(e); if(!silent) alert('Erro ao salvar.'); }
-}
-function loadFromLocal(){ try{ const raw = localStorage.getItem(storageKey); if(!raw) return; const data = JSON.parse(raw); applyData(data); addRollLog('Ficha carregada.'); }catch(e){ console.error(e); alert('Erro ao carregar.'); } }
-document.getElementById('exportBtn')?.addEventListener('click', ()=>{
-  try{ const data = gatherData(); const blob = new Blob([JSON.stringify(data,null,2)],{type:'application/json'}); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'ficha_rpg.json'; a.click(); URL.revokeObjectURL(url); }catch(e){ console.error(e); alert('Erro ao exportar.'); }
-});
-document.getElementById('importBtn')?.addEventListener('click', ()=>{
-  const inp = document.createElement('input'); inp.type='file'; inp.accept='application/json';
-  inp.onchange = e=>{ const f = e.target.files[0]; if(!f) return; const reader = new FileReader(); reader.onload = ev=>{ try{ const data = JSON.parse(ev.target.result); applyData(data); snapshot(); addRollLog('JSON importado.'); }catch(err){ alert('Arquivo inválido.'); } }; reader.readAsText(f); };
-  inp.click();
-});
+/* Persistence */
+function gatherData(){ const data={skills:{},weapons:[],avatar:'',circular:false,meta:{ts:new Date().toISOString()}}; document.querySelectorAll('[data-key]').forEach(el=>{ const key=el.dataset.key; if(!key) return; if(el.type==='checkbox') data[key]=el.checked; else data[key]=el.value||''; }); document.querySelectorAll('.skill-check').forEach(cb=> data.skills[cb.dataset.name]=!!cb.checked); document.querySelectorAll('#weaponsTable tbody tr').forEach(tr=>{ const tds=tr.querySelectorAll('td'); data.weapons.push({name:tds[0].innerText,bonus:tds[1].innerText,dmg:tds[2].innerText,notes:tds[3].innerText}); }); data.avatar = avatarPreview?.dataset.imgData || ''; data.circular = !!document.getElementById('toggleCircular')?.checked; return data; }
+function applyData(data){ if(!data) return; document.querySelectorAll('[data-key]').forEach(el=>{ const key=el.dataset.key; if(!key) return; if(el.type==='checkbox') el.checked = !!data[key]; else el.value = data[key] || ''; }); document.querySelectorAll('.skill-check').forEach(cb=> cb.checked = !!(data.skills && data.skills[cb.dataset.name])); const tbody=document.querySelector('#weaponsTable tbody'); if(tbody) tbody.innerHTML=''; (data.weapons||[]).forEach(w=> addWeaponRow({name:w.name,bonus:w.bonus,dmg:w.dmg,notes:w.notes})); if(data.avatar && avatarPreview){ avatarPreview.innerHTML=`<img src="${data.avatar}">`; avatarPreview.dataset.imgData = data.avatar; } if(document.getElementById('toggleCircular')) document.getElementById('toggleCircular').checked = !!data.circular; updateAll(); }
+function saveToLocal(silent=false){ try{ const data=gatherData(); localStorage.setItem(storageKey, JSON.stringify(data)); if(!silent) addRollLog('Ficha salva localmente.'); }catch(e){ console.error(e); if(!silent) alert('Erro ao salvar.'); } }
+function loadFromLocal(){ try{ const raw=localStorage.getItem(storageKey); if(!raw) return; const data=JSON.parse(raw); applyData(data); addRollLog('Ficha carregada.'); }catch(e){ console.error(e); alert('Erro ao carregar.'); } }
+document.getElementById('exportBtn')?.addEventListener('click', ()=>{ try{ const data=gatherData(); const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='ficha_rpg.json'; a.click(); URL.revokeObjectURL(url); }catch(e){ console.error(e); alert('Erro ao exportar.'); } });
+document.getElementById('importBtn')?.addEventListener('click', ()=>{ const inp=document.createElement('input'); inp.type='file'; inp.accept='application/json'; inp.onchange=e=>{ const f=e.target.files[0]; if(!f) return; const reader=new FileReader(); reader.onload=ev=>{ try{ const data=JSON.parse(ev.target.result); applyData(data); addRollLog('JSON importado.'); }catch(err){ alert('Arquivo inválido.'); } }; reader.readAsText(f); }; inp.click(); });
 document.getElementById('clearBtn')?.addEventListener('click', ()=>{ if(confirm('Limpar todos os campos?')){ localStorage.removeItem(storageKey); location.reload(); } });
 
-/* Module control panel */
-(function initModuleControl(){
-  const list = document.getElementById('moduleControlList');
-  document.querySelectorAll('[data-module]').forEach(m=>{
-    const name = m.dataset.module;
-    const id = 'ctl_'+name.replace(/[^a-z0-9\-_]/gi,'_');
-    const label = document.createElement('label'); label.style.display='flex'; label.style.alignItems='center'; label.style.gap='8px';
-    label.innerHTML = `<input type="checkbox" id="${id}" ${!m.classList.contains('hidden')?'checked':''}> ${name}`;
-    list.appendChild(label);
-    label.querySelector('input').addEventListener('change', e=> m.classList.toggle('hidden', !e.target.checked));
-  });
-  document.getElementById('toggleAll')?.addEventListener('click', ()=>{
-    const checks = Array.from(list.querySelectorAll('input[type="checkbox"]'));
-    const anyUnchecked = checks.some(c=>!c.checked);
-    checks.forEach(c=>{ c.checked = anyUnchecked; c.dispatchEvent(new Event('change')); });
-  });
-})();
+/* Module control */
+(function initModuleControl(){ const list=document.getElementById('moduleControlList'); document.querySelectorAll('[data-module]').forEach(m=>{ const name=m.dataset.module; const id='ctl_'+name.replace(/[^a-z0-9\-_]/gi,'_'); const label=document.createElement('label'); label.style.display='flex'; label.style.alignItems='center'; label.style.gap='8px'; label.innerHTML=`<input type="checkbox" id="${id}" ${!m.classList.contains('hidden')?'checked':''}> ${name}`; list.appendChild(label); label.querySelector('input').addEventListener('change', e=> m.classList.toggle('hidden', !e.target.checked)); }); document.getElementById('toggleAll')?.addEventListener('click', ()=>{ const checks=Array.from(list.querySelectorAll('input[type="checkbox"]')); const anyUnchecked=checks.some(c=>!c.checked); checks.forEach(c=>{ c.checked = anyUnchecked; c.dispatchEvent(new Event('change')); }); }); })();
 
-/* Undo stack initial snapshot */
-function initialSnapshot(){ undoStack = []; snapshot(); }
-initialSnapshot();
-
-/* Event wiring */
-document.addEventListener('input', e=>{ if(e.target && (e.target.matches('input')||e.target.matches('select')||e.target.matches('textarea'))){ updateAll(); snapshot(); } });
-document.addEventListener('change', e=>{ if(e.target && e.target.matches('.skill-check')) updateAll(); });
-
-/* Delegated roll-skill buttons (already handled above) */
-document.addEventListener('click', e=>{
-  if(e.target && e.target.matches && e.target.matches('.roll-skill')){ const key = e.target.dataset.key; rollSkillByKey(key,{type:'normal'}); }
-});
-
-/* Init on load */
-window.addEventListener('load', ()=>{
-  renderSkillsUI();
-  loadFromLocal();
-  updateAll();
-  addRollLog('Ficha pronta.');
-});
+/* Init */
+window.addEventListener('load', ()=>{ renderSkillsUI(); loadFromLocal(); updateAll(); addRollLog('Ficha pronta.'); document.querySelectorAll('input,select,textarea').forEach(i=> i.addEventListener('input', ()=>{ updateAll(); })); document.addEventListener('change', e=>{ if(e.target && e.target.matches && e.target.matches('.skill-check')) updateAll(); }); });
 </script>
 </body>
 </html>
