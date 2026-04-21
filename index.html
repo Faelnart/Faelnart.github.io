@@ -318,10 +318,10 @@ aside{grid-column:2/3;width:100%;box-sizing:border-box}
 
 <script>
 /* ============================
-   Versão restaurada + extração de cores do Avatar
-   - Mantém toda a lógica anterior (atributos, racial, perícias, rolagens, persistência)
-   - Adiciona: extração simples de paleta ao carregar Avatar e aplicação às variáveis CSS
-   - Remoções/alterações mínimas: processAvatarFile agora também aplica paleta; remover Avatar restaura tema padrão
+   Código completo e corrigido
+   - Mantém lógica de atributos, racial, perícias, rolagens, persistência
+   - Adiciona extração de cores do Avatar e aplicação ao tema (variáveis CSS)
+   - Corrige trechos faltantes e finaliza inicialização
    ============================ */
 
 /* Utilitários e dados */
@@ -342,7 +342,7 @@ function modFrom(score){ return Math.floor((score - 10) / 2); }
 function formatMod(n){ return (n>=0?'+':'') + n; }
 function now(){ return new Date().toLocaleString(); }
 
-/* RACE_BONUSES: base automáticos (Meio-Elfo handled separately) */
+/* RACE_BONUSES */
 const RACE_BONUSES = {
   'Humano (Padrão)': { forca:1, destreza:1, constituicao:1, inteligencia:1, sabedoria:1, carisma:1 },
   'Anão (Colina)': { forca:0, destreza:0, constituicao:2, inteligencia:0, sabedoria:1, carisma:0 },
@@ -355,7 +355,7 @@ const RACE_BONUSES = {
   'Draconato': { forca:2, destreza:0, constituicao:0, inteligencia:0, sabedoria:0, carisma:1 },
   'Gnomo (Floresta)': { forca:0, destreza:0, constituicao:0, inteligencia:2, sabedoria:0, carisma:0 },
   'Gnomo (Rocha)': { forca:0, destreza:0, constituicao:1, inteligencia:2, sabedoria:0, carisma:0 },
-  'Meio-Elfo': { carisma:2 }, // +2 carisma; user chooses two other +1
+  'Meio-Elfo': { carisma:2 },
   'Meio-Orc': { forca:2, destreza:0, constituicao:1, inteligencia:0, sabedoria:0, carisma:0 },
   'Tiefling': { forca:0, destreza:0, constituicao:0, inteligencia:0, sabedoria:0, carisma:2 }
 };
@@ -363,9 +363,7 @@ const RACE_BONUSES = {
 /* Estado atual dos bônus raciais aplicados */
 let currentRaceBonuses = { forca:0, destreza:0, constituicao:0, inteligencia:0, sabedoria:0, carisma:0 };
 
-/* ---------- Paleta / Tema por Avatar (novidade) ---------- */
-
-/* Helpers de cor */
+/* ---------- Paleta / Tema por Avatar ---------- */
 function clamp(v,min,max){ return Math.max(min,Math.min(max,v)); }
 function rgbToHex(r,g,b){ return '#'+[r,g,b].map(x=>x.toString(16).padStart(2,'0')).join(''); }
 function hexToRgb(hex){ const m = hex.replace('#',''); return {r:parseInt(m.slice(0,2),16), g:parseInt(m.slice(2,4),16), b:parseInt(m.slice(4,6),16)}; }
@@ -379,8 +377,6 @@ function contrastRatio(rgb1, rgb2){
   const lighter = Math.max(L1,L2), darker = Math.min(L1,L2);
   return (lighter + 0.05) / (darker + 0.05);
 }
-
-/* Extrai cores dominantes (amostragem + bucket) */
 function extractPaletteFromImage(img, options = {bucket:32, top:3}){
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d');
@@ -409,8 +405,6 @@ function extractPaletteFromImage(img, options = {bucket:32, top:3}){
   while(palette.length < topN) palette.push({r:200,g:200,b:200,hex:'#c8c8c8'});
   return palette;
 }
-
-/* Aplica paleta ao CSS (variáveis) */
 function applyPaletteToCSS(palette){
   if(!palette || !palette.length) return;
   const primary = palette[0];
@@ -430,12 +424,9 @@ function applyPaletteToCSS(palette){
   root.style.setProperty('--bg-end', bgEnd);
   root.style.setProperty('--accent', accentHex);
   root.style.setProperty('--text', textColor);
-  // card background: keep readable
   const cardBg = (textColor === '#ffffff') ? 'rgba(0,0,0,0.06)' : '#ffffff';
   root.style.setProperty('--card', cardBg);
 }
-
-/* Restaura tema padrão */
 function restoreDefaultTheme(){
   const root = document.documentElement;
   root.style.setProperty('--bg-start', '#f2f4f8');
@@ -445,9 +436,7 @@ function restoreDefaultTheme(){
   root.style.setProperty('--card', '#ffffff');
 }
 
-/* ---------- Fim Paleta / Tema ---------- */
-
-/* Render perícias e quick select */
+/* ---------- UI: skills, variants, attributes ---------- */
 function renderSkillsUI(){
   const container = document.getElementById('skillsContainer');
   const quick = document.getElementById('quickSkillSelect');
@@ -468,8 +457,6 @@ function renderSkillsUI(){
     const opt = document.createElement('option'); opt.value = key; opt.textContent = s.name; quick.appendChild(opt);
   });
 }
-
-/* Popula selects de atributos para variantes */
 function populateAttributeOptions(selectEl){
   const attrs = [
     {v:'forca', t:'FOR'}, {v:'destreza', t:'DES'}, {v:'constituicao', t:'CON'},
@@ -479,8 +466,6 @@ function populateAttributeOptions(selectEl){
   selectEl.innerHTML = '<option value="">— escolha —</option>';
   attrs.forEach(a=>{ const o = document.createElement('option'); o.value = a.v; o.textContent = a.t; selectEl.appendChild(o); });
 }
-
-/* Inicializa variant selects */
 const humanVar1 = document.getElementById('humanVar1');
 const humanVar2 = document.getElementById('humanVar2');
 const halfElfVar1 = document.getElementById('halfElfVar1');
@@ -489,8 +474,6 @@ populateAttributeOptions(humanVar1);
 populateAttributeOptions(humanVar2);
 populateAttributeOptions(halfElfVar1);
 populateAttributeOptions(halfElfVar2);
-
-/* Enforce choice limits and prevent duplicates inside a group */
 function enforceChoiceLimits(selects, maxChoices){
   const selected = selects.map(s => s?.value || '').filter(v => v);
   selects.forEach(s=>{
@@ -527,7 +510,7 @@ function enforceChoiceLimits(selects, maxChoices){
   }
 }
 
-/* Apply race bonuses based on selection and variant choices */
+/* Apply race bonuses */
 function applyRaceBonusesFromSelection(){
   currentRaceBonuses = { forca:0, destreza:0, constituicao:0, inteligencia:0, sabedoria:0, carisma:0 };
   const sel = document.getElementById('racaSelect');
@@ -560,8 +543,6 @@ function applyRaceBonusesFromSelection(){
   updateRaceUI();
   updateAll();
 }
-
-/* Update race UI labels */
 function updateRaceUI(){
   const attrs = ['forca','destreza','constituicao','inteligencia','sabedoria','carisma'];
   attrs.forEach(a=>{
@@ -570,8 +551,6 @@ function updateRaceUI(){
     if(el) el.textContent = (bonus>=0?'+':'') + bonus + ' racial';
   });
 }
-
-/* Apply racial bonuses to visible attribute inputs using data-base */
 function applyRacialToVisibleAttributes(){
   const attrs = ['forca','destreza','constituicao','inteligencia','sabedoria','carisma'];
   attrs.forEach(a=>{
@@ -585,8 +564,6 @@ function applyRacialToVisibleAttributes(){
     input.value = effective;
   });
 }
-
-/* When user edits visible attribute, update data-base accordingly (base = edited - racial) */
 function bindAttributeInputs(){
   const attrs = ['forca','destreza','constituicao','inteligencia','sabedoria','carisma'];
   attrs.forEach(a=>{
@@ -613,7 +590,7 @@ function bindAttributeInputs(){
   });
 }
 
-/* Update all derived values using effective attributes (base + racial) */
+/* Update all derived values */
 function updateAll(){
   const attrs = ['forca','destreza','constituicao','inteligencia','sabedoria','carisma'];
   const mods = {};
@@ -625,4 +602,377 @@ function updateAll(){
     const m = modFrom(effective);
     mods[a] = m;
     const modEl = document.getElementById(a + '_mod');
-    if(modEl) modEl.textContent =
+    if(modEl) modEl.textContent = formatMod(m);
+  });
+
+  const prof = parseInt(document.getElementById('prof_bonus')?.value || 0);
+  document.querySelectorAll('.skill-check').forEach(cb=>{
+    const attrMod = mods[cb.dataset.attr] || 0;
+    const total = attrMod + (cb.checked ? prof : 0);
+    const el = document.getElementById('val_' + (cb.dataset.key || idSafe(cb.dataset.name || '')));
+    if(el) el.textContent = formatMod(total);
+  });
+
+  const iniEl = document.getElementById('iniciativa');
+  if(iniEl) iniEl.value = formatMod(mods.destreza || 0);
+
+  const percCb = Array.from(document.querySelectorAll('.skill-check')).find(c=>c.dataset.name==='Percepção');
+  const invCb = Array.from(document.querySelectorAll('.skill-check')).find(c=>c.dataset.name==='Investigação');
+  const percVal = 10 + (mods.sabedoria || 0) + ((percCb && percCb.checked) ? prof : 0);
+  const invVal = 10 + (mods.inteligencia || 0) + ((invCb && invCb.checked) ? prof : 0);
+  const percEl = document.getElementById('perc_passiva'); if(percEl) percEl.value = percVal;
+  const invEl = document.getElementById('inv_passiva'); if(invEl) invEl.value = invVal;
+
+  updateSpellcasting();
+}
+
+/* Spellcasting */
+function updateSpellcasting(){
+  const attr = document.getElementById('spell_attr')?.value || 'inteligencia';
+  const base = parseInt(document.getElementById(attr)?.dataset.base) || 10;
+  const raceBonus = currentRaceBonuses[attr] || 0;
+  const effective = base + raceBonus;
+  const mod = modFrom(effective);
+  const prof = parseInt(document.getElementById('prof_bonus')?.value || 0);
+  const dc = 8 + mod + prof;
+  const atk = mod + prof;
+  const dcEl = document.getElementById('spell_dc'); if(dcEl) dcEl.value = dc;
+  const atkEl = document.getElementById('spell_atk'); if(atkEl) atkEl.value = (atk>=0?'+':'')+atk;
+}
+
+/* Prof by level */
+function profFromLevel(level){
+  level = parseInt(level || 1, 10);
+  if(isNaN(level) || level < 1) level = 1;
+  if(level <= 4) return 2;
+  if(level <= 8) return 3;
+  if(level <= 12) return 4;
+  if(level <= 16) return 5;
+  return 6;
+}
+function updateProfByLevel(){
+  const auto = !!document.getElementById('autoProf')?.checked;
+  const nivelEl = document.getElementById('nivel');
+  const profEl = document.getElementById('prof_bonus');
+  if(!nivelEl || !profEl) return;
+  const nivel = parseInt(nivelEl.value || 1, 10) || 1;
+  if(auto){ profEl.value = profFromLevel(nivel); profEl.readOnly = true; } else { profEl.readOnly = false; }
+  if(typeof updateAll === 'function') updateAll();
+}
+(function bindLevelProf(){
+  const nivelEl = document.getElementById('nivel');
+  const autoProfEl = document.getElementById('autoProf');
+  if(nivelEl){
+    nivelEl.addEventListener('input', () => {
+      let v = parseInt(nivelEl.value || 1, 10);
+      if(isNaN(v) || v < 1) v = 1;
+      if(v > 20) v = 20;
+      nivelEl.value = v;
+      updateProfByLevel();
+    });
+  }
+  if(autoProfEl){
+    autoProfEl.addEventListener('change', () => { updateProfByLevel(); });
+  }
+  updateProfByLevel();
+})();
+
+/* Rolador e histórico */
+function rollDie(sides=20){ return Math.floor(Math.random()*sides)+1; }
+function rollWithMod(mod=0){ const r = rollDie(20); return {roll:r,total:r+mod}; }
+function rollAdvDis(type='normal', mod=0){ const a=rollDie(20), b=rollDie(20); const chosen = type==='adv'?Math.max(a,b):Math.min(a,b); return {a,b,chosen,total:chosen+mod}; }
+function addRollLog(text){ const log = document.getElementById('rollLog'); if(!log) return; const div = document.createElement('div'); div.className='roll-entry'; div.textContent = `[${now()}] ${text}`; log.prepend(div); while(log.children.length>200) log.removeChild(log.lastChild); }
+
+function rollSkillByKey(key, options={type:'normal'}){
+  const cb = document.querySelector(`.skill-check[data-key="${key}"]`); if(!cb) return;
+  const attr = cb.dataset.attr;
+  const base = parseInt(document.getElementById(attr)?.dataset.base) || 10;
+  const raceBonus = currentRaceBonuses[attr] || 0;
+  const mod = modFrom(base + raceBonus);
+  const prof = cb.checked ? parseInt(document.getElementById('prof_bonus')?.value || 0) : 0;
+  const totalMod = mod + prof;
+  if(options.type==='adv' || options.type==='dis'){ const res = rollAdvDis(options.type,totalMod); addRollLog(`${cb.dataset.name}: ${options.type==='adv'?'Vantagem':'Desvantagem'} — ${res.a}, ${res.b} → ${res.chosen} = ${res.total}`); return res; }
+  else { const r = rollWithMod(totalMod); addRollLog(`${cb.dataset.name}: ${r.roll} + ${totalMod} = ${r.total}`); return r; }
+}
+
+/* Quick roll handlers */
+document.getElementById('rollSkillBtn')?.addEventListener('click', ()=>{
+  const sel = document.getElementById('quickSkillSelect'); if(!sel) return;
+  const key = sel.value; if(!key){ alert('Selecione uma perícia.'); return; }
+  rollSkillByKey(key,{type:'normal'});
+});
+document.addEventListener('click', e=>{
+  if(e.target && e.target.matches && e.target.matches('.roll-skill')){
+    const key = e.target.dataset.key; rollSkillByKey(key,{type:'normal'});
+  }
+});
+document.getElementById('rollBtn')?.addEventListener('click', ()=>{
+  const mod = parseInt(document.getElementById('rollMod')?.value || 0);
+  const r = rollWithMod(mod);
+  addRollLog(`1d20: ${r.roll} + ${mod} = ${r.total}`);
+});
+document.getElementById('advBtn')?.addEventListener('click', ()=>{
+  const mod = parseInt(document.getElementById('rollMod')?.value || 0);
+  const res = rollAdvDis('adv',mod);
+  addRollLog(`1d20 (vantagem): ${res.a}, ${res.b} → ${res.chosen} + ${mod} = ${res.total}`);
+});
+document.getElementById('disBtn')?.addEventListener('click', ()=>{
+  const mod = parseInt(document.getElementById('rollMod')?.value || 0);
+  const res = rollAdvDis('dis',mod);
+  addRollLog(`1d20 (desvantagem): ${res.a}, ${res.b} → ${res.chosen} + ${mod} = ${res.total}`);
+});
+
+/* Quick skill info */
+function onQuickSkillChange(){
+  const sel = document.getElementById('quickSkillSelect');
+  const info = document.getElementById('quickSkillInfo');
+  const rollMod = document.getElementById('rollMod');
+  if(!sel || !info || !rollMod) return;
+  const key = sel.value;
+  if(!key){ info.textContent = ''; return; }
+  const cb = document.querySelector(`.skill-check[data-key="${key}"]`);
+  if(!cb){ info.textContent = ''; return; }
+  const attr = cb.dataset.attr;
+  const base = parseInt(document.getElementById(attr)?.dataset.base) || 10;
+  const raceBonus = currentRaceBonuses[attr] || 0;
+  const attrMod = modFrom(base + raceBonus);
+  const prof = cb.checked ? parseInt(document.getElementById('prof_bonus')?.value || 0) : 0;
+  const total = attrMod + prof;
+  rollMod.value = total;
+  const attrLabel = attr.substring(0,3).toUpperCase();
+  info.textContent = `${formatMod(total)} = ${formatMod(attrMod)} (${attrLabel})${prof ? ` ${formatMod(prof)} (Prof)` : ''}`;
+}
+document.getElementById('quickSkillSelect')?.addEventListener('change', onQuickSkillChange);
+document.addEventListener('change', e=>{
+  if(e.target && e.target.matches && (e.target.matches('.skill-check') || e.target.matches('#prof_bonus'))){
+    onQuickSkillChange(); updateAll();
+  }
+});
+document.getElementById('prof_bonus')?.addEventListener('input', ()=>{ onQuickSkillChange(); updateAll(); });
+
+/* Weapons */
+function addWeaponRow(obj){
+  const tbody = document.querySelector('#weaponsTable tbody');
+  if(!tbody) return;
+  const tr = document.createElement('tr');
+  tr.innerHTML = `<td>${obj.name||''}</td><td>${obj.bonus||''}</td><td>${obj.dmg||''}</td><td>${obj.notes||''}</td><td><button class="del-weap" style="color:red;border:0;background:none;cursor:pointer">×</button> <button class="roll-weap btn-ghost small">Rolar</button></td>`;
+  tbody.appendChild(tr);
+  tr.querySelector('.del-weap')?.addEventListener('click', ()=>tr.remove());
+  tr.querySelector('.roll-weap')?.addEventListener('click', ()=>{ const bonus = parseInt(tr.children[1].innerText.replace(/\D/g,''))||0; const r = rollWithMod(bonus); addRollLog(`Ataque ${tr.children[0].innerText}: ${r.roll} + ${bonus} = ${r.total}`); });
+}
+document.getElementById('addWeaponBtn')?.addEventListener('click', ()=>{
+  const name = document.getElementById('w_name')?.value || '';
+  const bonus = document.getElementById('w_bonus')?.value || '';
+  const dmg = document.getElementById('w_dmg')?.value || '';
+  if(!name) return alert('Informe o nome da arma.');
+  addWeaponRow({ name, bonus, dmg, notes:'' });
+  document.getElementById('w_name').value=''; document.getElementById('w_bonus').value=''; document.getElementById('w_dmg').value='';
+});
+
+/* Avatar handling (com extração de paleta) */
+const avatarInput = document.getElementById('avatarInput');
+const avatarPreview = document.getElementById('avatarPreview');
+document.getElementById('uploadAvatarBtn')?.addEventListener('click', ()=>avatarInput.click());
+document.getElementById('removeAvatarBtn')?.addEventListener('click', ()=>{
+  avatarPreview.innerHTML = '<div class="avatar-hint">Arraste ou clique para carregar</div>';
+  delete avatarPreview.dataset.imgData;
+  restoreDefaultTheme();
+  saveToLocal(true);
+});
+avatarInput?.addEventListener('change', e=>{ const f = e.target.files && e.target.files[0]; if(f) processAvatarFile(f); });
+if(avatarPreview){
+  ['dragenter','dragover'].forEach(ev=>avatarPreview.addEventListener(ev, e=>{ e.preventDefault(); avatarPreview.style.borderColor='var(--accent)'; avatarPreview.style.background='rgba(0,0,0,0.02)'; }));
+  ['dragleave','drop'].forEach(ev=>avatarPreview.addEventListener(ev, e=>{ e.preventDefault(); avatarPreview.style.borderColor='#dbe7ff'; avatarPreview.style.background='#fbfdff'; }));
+  avatarPreview.addEventListener('drop', e=>{ e.preventDefault(); const f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]; if(f) processAvatarFile(f); });
+}
+function processAvatarFile(file){
+  if(!file.type.startsWith('image/')) return alert('Arquivo não é imagem.');
+  const reader = new FileReader();
+  reader.onload = ev=>{
+    const img = new Image();
+    img.onload = ()=>{
+      const canvas = document.createElement('canvas'); const size = 400;
+      canvas.width = size; canvas.height = size;
+      const ctx = canvas.getContext('2d');
+      const side = Math.min(img.width,img.height);
+      ctx.drawImage(img,(img.width-side)/2,(img.height-side)/2,side,side,0,0,size,size);
+      const dataURL = canvas.toDataURL('image/jpeg',0.85);
+      avatarPreview.innerHTML = `<img src="${dataURL}">`;
+      avatarPreview.dataset.imgData = dataURL;
+      // extrair paleta e aplicar tema
+      const tmpImg = new Image();
+      tmpImg.onload = ()=>{ const palette = extractPaletteFromImage(tmpImg, {bucket:32, top:3}); applyPaletteToCSS(palette); };
+      tmpImg.src = dataURL;
+      saveToLocal(true);
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+document.getElementById('toggleCircular')?.addEventListener('change', e=>{ avatarPreview.style.borderRadius = e.target.checked ? '50%' : '12px'; });
+
+/* Raça select handling */
+const racaSelect = document.getElementById('racaSelect');
+const racaCustom = document.getElementById('racaCustom');
+const humanVariantBox = document.getElementById('humanVariantBox');
+const halfElfBox = document.getElementById('halfElfBox');
+
+if(racaSelect && racaCustom){
+  racaSelect.addEventListener('change', ()=>{
+    const v = racaSelect.value;
+    if(v === 'Outra'){
+      racaCustom.style.display = 'block';
+      racaCustom.focus();
+      humanVariantBox.style.display = 'none';
+      halfElfBox.style.display = 'none';
+    } else if(v === 'Humano (Variante)'){
+      racaCustom.style.display = 'none';
+      humanVariantBox.style.display = 'flex';
+      halfElfBox.style.display = 'none';
+    } else if(v === 'Meio-Elfo'){
+      racaCustom.style.display = 'none';
+      humanVariantBox.style.display = 'none';
+      halfElfBox.style.display = 'flex';
+    } else {
+      racaCustom.style.display = 'none';
+      humanVariantBox.style.display = 'none';
+      halfElfBox.style.display = 'none';
+    }
+    enforceChoiceLimits([humanVar1, humanVar2], 2);
+    enforceChoiceLimits([halfElfVar1, halfElfVar2], 2);
+    applyRaceBonusesFromSelection();
+  });
+}
+[humanVar1, humanVar2].forEach(s=>{
+  s?.addEventListener('change', ()=>{
+    enforceChoiceLimits([humanVar1, humanVar2], 2);
+    applyRaceBonusesFromSelection();
+  });
+});
+[halfElfVar1, halfElfVar2].forEach(s=>{
+  s?.addEventListener('change', ()=>{
+    enforceChoiceLimits([halfElfVar1, halfElfVar2], 2);
+    applyRaceBonusesFromSelection();
+  });
+});
+
+/* Persistence: gather/apply/save/load/export/import/clear */
+function gatherData(){
+  const data = { skills:{}, weapons:[], avatar:'', circular:false, meta:{ts:new Date().toISOString()} };
+  document.querySelectorAll('[data-key]').forEach(el=>{
+    const key = el.dataset.key; if(!key) return;
+    if(key === 'raca') return;
+    if(el.type === 'checkbox') data[key] = el.checked;
+    else data[key] = el.value || '';
+  });
+
+  ['forca','destreza','constituicao','inteligencia','sabedoria','carisma'].forEach(a=>{
+    const el = document.getElementById(a);
+    const base = parseInt(el?.dataset.base);
+    data[a] = isNaN(base) ? (parseInt(el?.value) || 10) : base;
+  });
+
+  const rSel = document.getElementById('racaSelect');
+  const rCustom = document.getElementById('racaCustom');
+  if(rSel){
+    if(rSel.value === 'Outra') data.raca = rCustom?.value || '';
+    else data.raca = rSel.value || '';
+  } else data.raca = '';
+
+  data.humanVar1 = humanVar1?.value || '';
+  data.humanVar2 = humanVar2?.value || '';
+  data.halfElfVar1 = halfElfVar1?.value || '';
+  data.halfElfVar2 = halfElfVar2?.value || '';
+
+  document.querySelectorAll('.skill-check').forEach(cb=> data.skills[cb.dataset.name] = !!cb.checked);
+  document.querySelectorAll('#weaponsTable tbody tr').forEach(tr=>{
+    const tds = tr.querySelectorAll('td');
+    data.weapons.push({ name:tds[0].innerText, bonus:tds[1].innerText, dmg:tds[2].innerText, notes:tds[3].innerText });
+  });
+  data.avatar = avatarPreview?.dataset.imgData || '';
+  data.circular = !!document.getElementById('toggleCircular')?.checked;
+  return data;
+}
+
+function applyData(data){
+  if(!data) return;
+  document.querySelectorAll('[data-key]').forEach(el=>{
+    const key = el.dataset.key; if(!key) return;
+    if(key === 'raca') return;
+    if(el.type === 'checkbox') el.checked = !!data[key];
+    else el.value = data[key] || '';
+  });
+
+  const rSel = document.getElementById('racaSelect');
+  const rCustom = document.getElementById('racaCustom');
+  if(rSel){
+    const val = data.raca || '';
+    let found = false;
+    for(const opt of Array.from(rSel.options)){
+      if(opt.value === val){
+        rSel.value = val; found = true; break;
+      }
+    }
+    if(!found){
+      if(val){
+        rSel.value = 'Outra';
+        if(rCustom){ rCustom.style.display = 'block'; rCustom.value = val; }
+      } else {
+        rSel.value = '';
+        if(rCustom){ rCustom.style.display = 'none'; rCustom.value = ''; }
+      }
+    } else {
+      if(rCustom){ rCustom.style.display = 'none'; rCustom.value = ''; }
+    }
+  }
+
+  if(data.humanVar1) humanVar1.value = data.humanVar1;
+  if(data.humanVar2) humanVar2.value = data.humanVar2;
+  if(data.halfElfVar1) halfElfVar1.value = data.halfElfVar1;
+  if(data.halfElfVar2) halfElfVar2.value = data.halfElfVar2;
+
+  if(racaSelect.value === 'Humano (Variante)') humanVariantBox.style.display = 'flex'; else humanVariantBox.style.display = 'none';
+  if(racaSelect.value === 'Meio-Elfo') halfElfBox.style.display = 'flex'; else halfElfBox.style.display = 'none';
+
+  document.querySelectorAll('.skill-check').forEach(cb=> cb.checked = !!(data.skills && data.skills[cb.dataset.name]));
+  const tbody = document.querySelector('#weaponsTable tbody'); if(tbody) tbody.innerHTML = '';
+  (data.weapons || []).forEach(w=> addWeaponRow({ name:w.name, bonus:w.bonus, dmg:w.dmg, notes:w.notes }));
+  if(data.avatar && avatarPreview){ avatarPreview.innerHTML = `<img src="${data.avatar}">`; avatarPreview.dataset.imgData = data.avatar; const tmp = new Image(); tmp.onload = ()=>{ applyPaletteToCSS(extractPaletteFromImage(tmp,{bucket:32,top:3})); }; tmp.src = data.avatar; }
+  if(document.getElementById('toggleCircular')) document.getElementById('toggleCircular').checked = !!data.circular;
+
+  enforceChoiceLimits([humanVar1, humanVar2], 2);
+  enforceChoiceLimits([halfElfVar1, halfElfVar2], 2);
+  applyRaceBonusesFromSelection();
+  updateAll();
+}
+
+function saveToLocal(silent=false){ try{ const data = gatherData(); localStorage.setItem(storageKey, JSON.stringify(data)); if(!silent) addRollLog('Ficha salva localmente.'); }catch(e){ console.error(e); if(!silent) alert('Erro ao salvar.'); } }
+function loadFromLocal(){ try{ const raw = localStorage.getItem(storageKey); if(!raw) return; const data = JSON.parse(raw); applyData(data); addRollLog('Ficha carregada.'); }catch(e){ console.error(e); alert('Erro ao carregar.'); } }
+
+document.getElementById('exportBtn')?.addEventListener('click', ()=>{ try{ const data = gatherData(); const blob = new Blob([JSON.stringify(data,null,2)],{type:'application/json'}); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'ficha_rpg.json'; a.click(); URL.revokeObjectURL(url); }catch(e){ console.error(e); alert('Erro ao exportar.'); } });
+document.getElementById('importBtn')?.addEventListener('click', ()=>{ const inp = document.createElement('input'); inp.type='file'; inp.accept='application/json'; inp.onchange = e=>{ const f = e.target.files[0]; if(!f) return; const reader = new FileReader(); reader.onload = ev=>{ try{ const data = JSON.parse(ev.target.result); applyData(data); addRollLog('JSON importado.'); }catch(err){ alert('Arquivo inválido.'); } }; reader.readAsText(f); }; inp.click(); });
+document.getElementById('clearBtn')?.addEventListener('click', ()=>{ if(confirm('Limpar todos os campos?')){ localStorage.removeItem(storageKey); location.reload(); } });
+
+/* Module control */
+(function initModuleControl(){ const list=document.getElementById('moduleControlList'); document.querySelectorAll('[data-module]').forEach(m=>{ const name=m.dataset.module; const id='ctl_'+name.replace(/[^a-z0-9\-_]/gi,'_'); const label=document.createElement('label'); label.style.display='flex'; label.style.alignItems='center'; label.style.gap='8px'; label.innerHTML=`<input type="checkbox" id="${id}" ${!m.classList.contains('hidden')?'checked':''}> ${name}`; list.appendChild(label); label.querySelector('input').addEventListener('change', e=> m.classList.toggle('hidden', !e.target.checked)); }); document.getElementById('toggleAll')?.addEventListener('click', ()=>{ const checks=Array.from(list.querySelectorAll('input[type="checkbox"]')); const anyUnchecked=checks.some(c=>!c.checked); checks.forEach(c=>{ c.checked = anyUnchecked; c.dispatchEvent(new Event('change')); }); }); })();
+
+/* Inicialização */
+window.addEventListener('load', ()=>{
+  renderSkillsUI();
+  bindAttributeInputs();
+  loadFromLocal();
+  applyRacialToVisibleAttributes();
+  updateAll();
+  addRollLog('Ficha pronta.');
+  document.querySelectorAll('input,select,textarea').forEach(i=> i.addEventListener('input', ()=>{ updateAll(); }));
+  document.addEventListener('change', e=>{ if(e.target && e.target.matches && e.target.matches('.skill-check')) updateAll(); });
+  document.getElementById('quickSkillSelect')?.addEventListener('change', onQuickSkillChange);
+  document.getElementById('prof_bonus')?.addEventListener('input', onQuickSkillChange);
+  ['forca','destreza','constituicao','inteligencia','sabedoria','carisma'].forEach(id=>{ const el=document.getElementById(id); if(el) el.addEventListener('input', onQuickSkillChange); });
+  document.getElementById('racaSelect')?.addEventListener('change', applyRaceBonusesFromSelection);
+  document.getElementById('racaCustom')?.addEventListener('input', ()=>{ applyRaceBonusesFromSelection(); });
+  document.getElementById('saveBtn')?.addEventListener('click', ()=>{ saveToLocal(); alert('Ficha salva.'); });
+});
+</script>
+</body>
+</html>
