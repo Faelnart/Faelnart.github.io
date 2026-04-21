@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Ficha RPG — Equipamentos acima de Ataques e Magias</title>
+<title>Ficha RPG — Paleta e Classe D&D 5E</title>
 <style>
 :root{
   --bg-start:#f6f8fb;
@@ -20,8 +20,6 @@
   --tooltip-color: #fff;
   --tooltip-radius:8px;
   --tooltip-padding:8px 10px;
-
-  /* adjustable aside width */
   --aside-width: 420px;
   --min-aside-width: 320px;
   --max-aside-width: 640px;
@@ -38,7 +36,7 @@ html,body{height:100%;margin:0;
   -webkit-font-smoothing:antialiased;
 }
 
-/* Layout principal com aside ajustável */
+/* Layout principal */
 .app{
   max-width:1400px;
   margin:18px auto;
@@ -52,7 +50,7 @@ html,body{height:100%;margin:0;
   padding:12px;
 }
 
-/* Header e controles */
+/* Header */
 .header .card{display:flex;justify-content:space-between;align-items:center;gap:12px}
 h1{margin:0;color:var(--accent);font-size:18px;font-weight:700}
 .controls-row{display:flex;gap:8px;align-items:center}
@@ -88,7 +86,7 @@ h1{margin:0;color:var(--accent);font-size:18px;font-weight:700}
 .avatar-controls{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;align-items:center}
 .slider{width:160px}
 
-/* Aside: make it scrollable and allow internal cards to expand */
+/* Aside */
 .aside{
   grid-area:aside;
   position:sticky;
@@ -99,19 +97,10 @@ h1{margin:0;color:var(--accent);font-size:18px;font-weight:700}
   align-self:start;
   max-height: calc(100vh - 44px);
   overflow:auto;
-  padding-right:6px; /* small padding for scrollbar space */
+  padding-right:6px;
 }
-
-/* Ensure cards inside aside can scroll if content overflows */
-.aside .card{
-  position:relative;
-  overflow:auto;
-  max-height: 48vh;
-  padding-bottom:12px;
-}
-
-/* Make some important cards larger by default */
-.aside .card.large{ max-height: 62vh; }
+.aside .card{position:relative;overflow:auto;max-height:48vh;padding-bottom:12px}
+.aside .card.large{ max-height:62vh; }
 
 /* Table and inputs */
 .table{width:100%;border-collapse:collapse;margin-top:10px}
@@ -150,11 +139,8 @@ h1{margin:0;color:var(--accent);font-size:18px;font-weight:700}
 }
 [data-tooltip][data-tooltip-multiline="true"]::after{white-space:normal;max-width:260px;text-align:left;padding:10px}
 
-/* Responsive: collapse aside under certain width and allow user toggle */
-@media (max-width:1200px){
-  :root{ --aside-width: 360px; }
-  .app{ grid-template-columns: 1fr var(--aside-width); }
-}
+/* Responsive */
+@media (max-width:1200px){ :root{ --aside-width: 360px; } .app{ grid-template-columns: 1fr var(--aside-width); } }
 @media (max-width:980px){
   .app{grid-template-columns:1fr;grid-template-areas:"header" "main" "aside";padding:10px}
   .form-grid{grid-template-columns:1fr}
@@ -162,10 +148,11 @@ h1{margin:0;color:var(--accent);font-size:18px;font-weight:700}
   .aside .card{max-height:none}
 }
 
-/* small helpers */
+/* helpers */
 .hidden{display:none}
 .flex-row{display:flex;gap:8px;align-items:center}
 .right{margin-left:auto}
+.color-input{width:36px;height:36px;border-radius:8px;border:1px solid #e6e9ef;padding:0}
 </style>
 </head>
 <body>
@@ -174,14 +161,24 @@ h1{margin:0;color:var(--accent);font-size:18px;font-weight:700}
 
   <!-- Header -->
   <div class="header">
-    <div class="card" role="banner">
-      <h1>Ficha RPG — Equipamentos acima de Ataques</h1>
+    <div class="card" role="banner" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+      <h1>Ficha RPG — Paleta e Classe D&D 5E</h1>
 
-      <div style="display:flex;gap:12px;align-items:center">
-        <!-- Aside width controls -->
+      <div style="display:flex;gap:12px;align-items:center;margin-left:auto;flex-wrap:wrap">
+
+        <!-- Paleta de cores (reposicionada) -->
+        <div class="flex-row" title="Paleta de cores">
+          <label style="font-size:13px;color:var(--muted)">Cor</label>
+          <input id="accentPicker" class="color-input" type="color" value="#5b4ef7" aria-label="Selecionar cor principal" data-tooltip="Cor principal do tema">
+          <label style="font-size:13px;color:var(--muted)">Fundo</label>
+          <input id="bgStartPicker" class="color-input" type="color" value="#f6f8fb" aria-label="Selecionar cor de fundo inicial" data-tooltip="Cor de topo do fundo">
+          <input id="bgEndPicker" class="color-input" type="color" value="#eef4fb" aria-label="Selecionar cor de fundo final" data-tooltip="Cor de base do fundo">
+        </div>
+
+        <!-- Controle de largura lateral -->
         <div class="flex-row" title="Ajuste a largura dos painéis laterais">
-          <label style="font-size:13px;color:var(--muted)">Largura lateral</label>
-          <input id="asideRange" type="range" min="320" max="640" step="8" value="420" style="width:160px" data-tooltip="Ajusta a largura do painel lateral">
+          <label style="font-size:13px;color:var(--muted)">Lateral</label>
+          <input id="asideRange" type="range" min="320" max="640" step="8" value="420" style="width:140px" data-tooltip="Ajusta a largura do painel lateral">
           <span id="asideVal" style="min-width:48px;text-align:right;color:var(--muted)">420px</span>
           <button id="expandAsideBtn" class="btn-ghost small" data-tooltip="Expandir/Reduzir painel lateral">Alternar</button>
         </div>
@@ -219,7 +216,25 @@ h1{margin:0;color:var(--accent);font-size:18px;font-weight:700}
           <div style="display:flex;gap:12px;margin-top:12px">
             <div style="flex:1">
               <label style="font-size:12px;color:var(--muted);font-weight:700">Classe</label>
-              <input id="classe" type="text" style="width:100%;padding:10px;border-radius:12px;border:1px solid #eef4ff;margin-top:8px" data-tooltip="Classe ou profissão do personagem">
+              <!-- SELECT com classes D&D 5E -->
+              <select id="classe" style="width:100%;padding:10px;border-radius:12px;border:1px solid #eef4ff;margin-top:8px" data-tooltip="Selecione a classe (D&D 5E)">
+                <option value="">— selecione classe —</option>
+                <option>Barbarian</option>
+                <option>Bard</option>
+                <option>Cleric</option>
+                <option>Druid</option>
+                <option>Fighter</option>
+                <option>Monk</option>
+                <option>Paladin</option>
+                <option>Ranger</option>
+                <option>Rogue</option>
+                <option>Sorcerer</option>
+                <option>Warlock</option>
+                <option>Wizard</option>
+                <option>Artificer</option>
+                <option>Blood Hunter</option>
+                <option>Homebrew</option>
+              </select>
             </div>
             <div style="width:140px">
               <label style="font-size:12px;color:var(--muted);font-weight:700">XP</label>
@@ -514,10 +529,10 @@ h1{margin:0;color:var(--accent);font-size:18px;font-weight:700}
 </div>
 
 <script>
-/* ====== JS: mantém funcionalidades e atualiza referências após mover Equipamentos para o main ====== */
+/* JS completo: mantém todas as funcionalidades e integrações (paleta, classe select, aside width, avatar, perícias, CA, equipamentos, persistência) */
 
-/* --- Dados e utilitários --- */
-const storageKey = 'ficha_rpg_completa_v2_aside';
+/* ---------- Dados e utilitários ---------- */
+const storageKey = 'ficha_rpg_completa_v3';
 const ALL_SKILLS = [
   { name:'Acrobacia', attr:'destreza' },{ name:'Adestrar Animais', attr:'sabedoria' },
   { name:'Arcanismo', attr:'inteligencia' },{ name:'Atletismo', attr:'forca' },
@@ -568,12 +583,13 @@ const RACE_BONUSES = {
 };
 let currentRaceBonuses = { forca:0, destreza:0, constituicao:0, inteligencia:0, sabedoria:0, carisma:0 };
 
+/* utilitários */
 function idSafe(s){ return String(s).replace(/\s+/g,'_').replace(/[^\w_]/g,''); }
 function modFrom(score){ return Math.floor((score - 10) / 2); }
 function formatMod(n){ return (n>=0?'+':'') + n; }
 function now(){ return new Date().toLocaleString(); }
 
-/* --- Render perícias --- */
+/* ---------- Render perícias e quick select ---------- */
 function renderSkillsUI(){
   const container = document.getElementById('skillsContainer');
   const quick = document.getElementById('quickSkillSelect');
@@ -594,7 +610,7 @@ function renderSkillsUI(){
   });
 }
 
-/* --- Popula selects de atributos para variantes --- */
+/* Popula selects de atributos para variantes */
 function populateAttributeOptions(selectEl){
   if(!selectEl) return;
   const attrs = [
@@ -609,7 +625,7 @@ populateAttributeOptions(document.getElementById('humanVar2'));
 populateAttributeOptions(document.getElementById('halfElfVar1'));
 populateAttributeOptions(document.getElementById('halfElfVar2'));
 
-/* --- Enforce choice limits --- */
+/* Enforce choice limits */
 function enforceChoiceLimits(selects, maxChoices){
   const selected = selects.map(s => s?.value || '').filter(v => v);
   selects.forEach(s=>{
@@ -623,7 +639,7 @@ function enforceChoiceLimits(selects, maxChoices){
   });
 }
 
-/* --- Raça e bônus raciais --- */
+/* Apply race bonuses */
 function applyRaceBonusesFromSelection(){
   currentRaceBonuses = { forca:0, destreza:0, constituicao:0, inteligencia:0, sabedoria:0, carisma:0 };
   const sel = document.getElementById('racaSelect');
@@ -655,6 +671,7 @@ function applyRaceBonusesFromSelection(){
   updateAll();
   saveToLocal(true);
 }
+
 function updateRaceUI(){
   ['forca','destreza','constituicao','inteligencia','sabedoria','carisma'].forEach(a=>{
     const el = document.getElementById(a + '_race');
@@ -662,6 +679,7 @@ function updateRaceUI(){
     if(el) el.textContent = (bonus>=0?'+':'') + bonus + ' racial';
   });
 }
+
 function applyRacialToVisibleAttributes(){
   ['forca','destreza','constituicao','inteligencia','sabedoria','carisma'].forEach(a=>{
     const input = document.getElementById(a);
@@ -674,7 +692,7 @@ function applyRacialToVisibleAttributes(){
   });
 }
 
-/* --- Bind atributos --- */
+/* Bind attribute inputs */
 function bindAttributeInputs(){
   ['forca','destreza','constituicao','inteligencia','sabedoria','carisma'].forEach(a=>{
     const input = document.getElementById(a);
@@ -702,7 +720,7 @@ function bindAttributeInputs(){
   });
 }
 
-/* --- Update geral (mods, perícias, iniciativa, passivas, CA, magias) --- */
+/* Update all derived values */
 function updateAll(){
   const attrs = ['forca','destreza','constituicao','inteligencia','sabedoria','carisma'];
   const mods = {};
@@ -739,7 +757,7 @@ function updateAll(){
   updateSpellcasting(mods);
 }
 
-/* --- CA calculation --- */
+/* CA calculation */
 function updateArmorClass(mods){
   const armorType = document.getElementById('armorType')?.value || 'none';
   const armorBonus = parseInt(document.getElementById('armorBonus')?.value || 0);
@@ -768,7 +786,7 @@ function updateArmorClass(mods){
   if(caEl) caEl.value = total;
 }
 
-/* --- Spellcasting --- */
+/* Spellcasting */
 function updateSpellcasting(mods){
   const attr = document.getElementById('spell_attr')?.value || 'inteligencia';
   const base = parseInt(document.getElementById(attr)?.dataset.base) || 10;
@@ -782,7 +800,7 @@ function updateSpellcasting(mods){
   const atkEl = document.getElementById('spell_atk'); if(atkEl) atkEl.value = (atk>=0?'+':'')+atk;
 }
 
-/* --- Prof by level --- */
+/* Prof by level */
 function profFromLevel(level){
   level = parseInt(level || 1, 10);
   if(isNaN(level) || level < 1) level = 1;
@@ -806,13 +824,13 @@ document.getElementById('nivel')?.addEventListener('input', ()=> updateProfByLev
 document.getElementById('autoProf')?.addEventListener('change', ()=> updateProfByLevel());
 document.getElementById('prof_bonus')?.addEventListener('input', ()=> { updateAll(); saveToLocal(true); });
 
-/* --- Rolling utilities --- */
+/* Rolling utilities */
 function rollDie(sides=20){ return Math.floor(Math.random()*sides)+1; }
 function rollWithMod(mod=0){ const r = rollDie(20); return {roll:r,total:r+mod}; }
 function rollAdvDis(type='normal', mod=0){ const a=rollDie(20), b=rollDie(20); const chosen = type==='adv'?Math.max(a,b):Math.min(a,b); return {a,b,chosen,total:chosen+mod}; }
 function addRollLog(text){ const log = document.getElementById('rollLog'); if(!log) return; const div = document.createElement('div'); div.style.padding='6px 8px'; div.style.borderBottom='1px dashed #f1f5f9'; div.style.fontSize='13px'; div.textContent = `[${now()}] ${text}`; log.prepend(div); while(log.children.length>200) log.removeChild(log.lastChild); }
 
-/* --- Quick roll handlers --- */
+/* Quick roll handlers */
 document.getElementById('rollBtn')?.addEventListener('click', ()=>{
   const mod = parseInt(document.getElementById('rollMod')?.value || 0);
   const r = rollWithMod(mod);
@@ -829,7 +847,7 @@ document.getElementById('disBtn')?.addEventListener('click', ()=>{
   addRollLog(`1d20 (desvantagem): ${res.a}, ${res.b} → ${res.chosen} + ${mod} = ${res.total}`);
 });
 
-/* --- Quick skill info --- */
+/* Quick skill info */
 function onQuickSkillChange(){
   const sel = document.getElementById('quickSkillSelect');
   const info = document.getElementById('quickSkillInfo');
@@ -863,7 +881,7 @@ document.getElementById('rollSkillBtn')?.addEventListener('click', ()=>{
   addRollLog(`${cb.dataset.name}: ${r.roll} + ${mod} = ${r.total}`);
 });
 
-/* --- Weapons --- */
+/* Weapons */
 function addWeaponRow(obj){
   const tbody = document.querySelector('#weaponsTable tbody');
   if(!tbody) return;
@@ -882,7 +900,7 @@ document.getElementById('addWeaponBtn')?.addEventListener('click', ()=>{
   saveToLocal(true);
 });
 
-/* --- Equipamentos (agora no main) --- */
+/* Equipamentos */
 function addEquipRow(item){
   const tbody = document.querySelector('#equipTable tbody');
   if(!tbody) return;
@@ -916,7 +934,7 @@ function recalcEquipTotals(){
   document.getElementById('totalValue').textContent = totalV;
 }
 
-/* --- Avatar (pan/zoom) --- */
+/* Avatar: pan/zoom */
 const avatarPreview = document.getElementById('avatarPreview');
 const avatarInput = document.getElementById('avatarInput');
 const uploadAvatarBtn = document.getElementById('uploadAvatarBtn');
@@ -1065,34 +1083,25 @@ function processAvatarFile(file){
   reader.readAsDataURL(file);
 }
 
-/* --- Aside width controls --- */
-const asideRange = document.getElementById('asideRange');
-const asideVal = document.getElementById('asideVal');
-const expandAsideBtn = document.getElementById('expandAsideBtn');
+/* Palette controls */
+const accentPicker = document.getElementById('accentPicker');
+const bgStartPicker = document.getElementById('bgStartPicker');
+const bgEndPicker = document.getElementById('bgEndPicker');
 
-function setAsideWidth(px){
-  const n = Math.max(parseInt(getComputedStyle(document.documentElement).getPropertyValue('--min-aside-width')) || 320, Math.min(parseInt(getComputedStyle(document.documentElement).getPropertyValue('--max-aside-width')) || 640, parseInt(px)));
-  document.documentElement.style.setProperty('--aside-width', n + 'px');
-  asideRange.value = n;
-  asideVal.textContent = n + 'px';
+function applyPaletteFromPickers(){
+  const accent = accentPicker.value || '#5b4ef7';
+  const bgStart = bgStartPicker.value || '#f6f8fb';
+  const bgEnd = bgEndPicker.value || '#eef4fb';
+  document.documentElement.style.setProperty('--accent', accent);
+  document.documentElement.style.setProperty('--bg-start', bgStart);
+  document.documentElement.style.setProperty('--bg-end', bgEnd);
+  document.body.style.backgroundImage = `linear-gradient(180deg, ${bgStart}, ${bgEnd})`;
 }
-function getAsideWidth(){
-  return parseInt(getComputedStyle(document.documentElement).getPropertyValue('--aside-width')) || 420;
-}
-asideRange.addEventListener('input', (e)=>{
-  setAsideWidth(e.target.value);
-  saveToLocal(true);
-});
-expandAsideBtn.addEventListener('click', ()=>{
-  const current = getAsideWidth();
-  const max = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--max-aside-width')) || 640;
-  const min = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--min-aside-width')) || 320;
-  if(current < max) setAsideWidth(max);
-  else setAsideWidth(min);
-  saveToLocal(true);
-});
+accentPicker.addEventListener('input', applyPaletteFromPickers);
+bgStartPicker.addEventListener('input', applyPaletteFromPickers);
+bgEndPicker.addEventListener('input', applyPaletteFromPickers);
 
-/* --- Persistence (gather/apply) --- */
+/* Persistence: gather and apply data */
 function gatherData(){
   const data = {};
   data.nome = document.getElementById('nome')?.value || '';
@@ -1134,6 +1143,7 @@ function gatherData(){
   data.shieldBonus = parseInt(document.getElementById('shieldBonus')?.value || 0);
   data.otherCa = parseInt(document.getElementById('otherCa')?.value || 0);
   data.spell_attr = document.getElementById('spell_attr')?.value || 'inteligencia';
+  data.palette = { accent: accentPicker.value, bgStart: bgStartPicker.value, bgEnd: bgEndPicker.value };
   data.asideWidth = getAsideWidth();
   return data;
 }
@@ -1175,6 +1185,12 @@ function applyData(data){
   document.getElementById('shieldBonus').value = data.shieldBonus || 0;
   document.getElementById('otherCa').value = data.otherCa || 0;
   document.getElementById('spell_attr').value = data.spell_attr || 'inteligencia';
+  if(data.palette){
+    accentPicker.value = data.palette.accent || accentPicker.value;
+    bgStartPicker.value = data.palette.bgStart || bgStartPicker.value;
+    bgEndPicker.value = data.palette.bgEnd || bgEndPicker.value;
+    applyPaletteFromPickers();
+  }
   if(data.asideWidth) setAsideWidth(data.asideWidth);
   handleRaceSelectUI();
   applyRaceBonusesFromSelection();
@@ -1182,7 +1198,7 @@ function applyData(data){
   updateAll();
 }
 
-/* --- Save/load local --- */
+/* Save/load local */
 function saveToLocal(silent=false){
   try{ const data = gatherData(); localStorage.setItem(storageKey, JSON.stringify(data)); if(!silent) addRollLog('Ficha salva localmente.'); }catch(e){ console.error(e); if(!silent) alert('Erro ao salvar.'); }
 }
@@ -1192,7 +1208,7 @@ document.getElementById('exportBtn')?.addEventListener('click', ()=>{ try{ const
 document.getElementById('importBtn')?.addEventListener('click', ()=>{ const inp = document.createElement('input'); inp.type='file'; inp.accept='application/json'; inp.onchange = e=>{ const f = e.target.files[0]; if(!f) return; const reader = new FileReader(); reader.onload = ev=>{ try{ const data = JSON.parse(ev.target.result); applyData(data); addRollLog('JSON importado.'); }catch(err){ alert('Arquivo inválido.'); } }; reader.readAsText(f); }; inp.click(); });
 document.getElementById('clearBtn')?.addEventListener('click', ()=>{ if(confirm('Limpar todos os campos?')){ localStorage.removeItem(storageKey); location.reload(); } });
 
-/* --- Race UI show/hide --- */
+/* Race UI show/hide */
 function handleRaceSelectUI(){
   const v = document.getElementById('racaSelect').value;
   const racaCustom = document.getElementById('racaCustom');
@@ -1204,7 +1220,7 @@ function handleRaceSelectUI(){
   else { racaCustom.style.display='none'; humanBox.style.display='none'; halfBox.style.display='none'; }
 }
 
-/* --- Race change handlers --- */
+/* Race change handlers */
 document.getElementById('racaSelect')?.addEventListener('change', ()=>{
   handleRaceSelectUI();
   enforceChoiceLimits([document.getElementById('humanVar1'), document.getElementById('humanVar2')], 2);
@@ -1219,20 +1235,47 @@ document.getElementById('racaSelect')?.addEventListener('change', ()=>{
   });
 });
 
-/* --- Skill checkbox change --- */
+/* Skill checkbox change */
 document.addEventListener('change', e=>{
   if(e.target && e.target.matches && e.target.matches('.skill-check')){ updateAll(); saveToLocal(true); }
 });
 
-/* --- Spell attribute change --- */
+/* Spell attribute change */
 document.getElementById('spell_attr')?.addEventListener('change', ()=>{ updateAll(); saveToLocal(true); });
 
-/* --- Armor inputs change --- */
+/* Armor inputs change */
 ['armorType','armorBonus','shieldBonus','otherCa'].forEach(id=>{
   document.getElementById(id)?.addEventListener('input', ()=>{ updateAll(); saveToLocal(true); });
 });
 
-/* --- Init --- */
+/* Aside width controls */
+const asideRange = document.getElementById('asideRange');
+const asideVal = document.getElementById('asideVal');
+const expandAsideBtn = document.getElementById('expandAsideBtn');
+
+function setAsideWidth(px){
+  const n = Math.max(parseInt(getComputedStyle(document.documentElement).getPropertyValue('--min-aside-width')) || 320, Math.min(parseInt(getComputedStyle(document.documentElement).getPropertyValue('--max-aside-width')) || 640, parseInt(px)));
+  document.documentElement.style.setProperty('--aside-width', n + 'px');
+  asideRange.value = n;
+  asideVal.textContent = n + 'px';
+}
+function getAsideWidth(){
+  return parseInt(getComputedStyle(document.documentElement).getPropertyValue('--aside-width')) || 420;
+}
+asideRange.addEventListener('input', (e)=>{
+  setAsideWidth(e.target.value);
+  saveToLocal(true);
+});
+expandAsideBtn.addEventListener('click', ()=>{
+  const current = getAsideWidth();
+  const max = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--max-aside-width')) || 640;
+  const min = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--min-aside-width')) || 320;
+  if(current < max) setAsideWidth(max);
+  else setAsideWidth(min);
+  saveToLocal(true);
+});
+
+/* Init */
 window.addEventListener('load', ()=>{
   renderSkillsUI();
   bindAttributeInputs();
@@ -1241,19 +1284,19 @@ window.addEventListener('load', ()=>{
   document.getElementById('saveBtn')?.addEventListener('click', ()=>{ saveToLocal(); alert('Ficha salva.'); });
   document.getElementById('uploadAvatarBtn')?.addEventListener('click', ()=> avatarInput.click());
   avatarInput?.addEventListener('change', e=>{ const f = e.target.files && e.target.files[0]; if(f) processAvatarFile(f); });
+  applyPaletteFromPickers();
   loadFromLocal();
   enforceChoiceLimits([document.getElementById('humanVar1'), document.getElementById('humanVar2')], 2);
   enforceChoiceLimits([document.getElementById('halfElfVar1'), document.getElementById('halfElfVar2')], 2);
   applyRaceBonusesFromSelection();
   recalcEquipTotals();
   updateAll();
-  // initialize aside width UI
   asideRange.value = getAsideWidth();
   asideVal.textContent = getAsideWidth() + 'px';
-  addRollLog('Layout carregado — Equipamentos movidos acima de Ataques & Magias.');
+  addRollLog('Ficha pronta — paleta e classe integradas.');
 });
 
-/* Mobile tooltip helper: long-press to show (optional) */
+/* Mobile tooltip helper */
 let touchTimer = null;
 document.querySelectorAll('[data-tooltip]').forEach(el=>{
   el.addEventListener('touchstart', (e)=>{
