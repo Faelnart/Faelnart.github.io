@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Ficha RPG — Racial aplicado aos Atributos (com tema por Avatar)</title>
+<title>Ficha RPG — Racial aplicado aos Atributos (acessibilidade WCAG)</title>
 <style>
 :root{
   --bg-start:#f2f4f8; --bg-end:#e9eef6;
@@ -318,10 +318,9 @@ aside{grid-column:2/3;width:100%;box-sizing:border-box}
 
 <script>
 /* ============================
-   Código completo e corrigido
-   - Mantém lógica de atributos, racial, perícias, rolagens, persistência
-   - Adiciona extração de cores do Avatar e aplicação ao tema (variáveis CSS)
-   - Corrige trechos faltantes e finaliza inicialização
+   Código com contraste agressivo para WCAG
+   - Ajusta escolha de cor do texto e cores auxiliares para priorizar contraste >= 4.5:1
+   - Mantém funcionalidades anteriores (atributos, racial, perícias, avatar, persistência)
    ============================ */
 
 /* Utilitários e dados */
@@ -363,7 +362,9 @@ const RACE_BONUSES = {
 /* Estado atual dos bônus raciais aplicados */
 let currentRaceBonuses = { forca:0, destreza:0, constituicao:0, inteligencia:0, sabedoria:0, carisma:0 };
 
-/* ---------- Paleta / Tema por Avatar ---------- */
+/* ---------- Acessibilidade: contraste agressivo ---------- */
+
+/* cor utilitárias */
 function clamp(v,min,max){ return Math.max(min,Math.min(max,v)); }
 function rgbToHex(r,g,b){ return '#'+[r,g,b].map(x=>x.toString(16).padStart(2,'0')).join(''); }
 function hexToRgb(hex){ const m = hex.replace('#',''); return {r:parseInt(m.slice(0,2),16), g:parseInt(m.slice(2,4),16), b:parseInt(m.slice(4,6),16)}; }
@@ -377,6 +378,44 @@ function contrastRatio(rgb1, rgb2){
   const lighter = Math.max(L1,L2), darker = Math.min(L1,L2);
   return (lighter + 0.05) / (darker + 0.05);
 }
+function lightenColor(c, amt){ return {r:clamp(Math.round(c.r + amt),0,255), g:clamp(Math.round(c.g + amt),0,255), b:clamp(Math.round(c.b + amt),0,255)}; }
+function darkenColor(c, amt){ return {r:clamp(Math.round(c.r - amt),0,255), g:clamp(Math.round(c.g - amt),0,255), b:clamp(Math.round(c.b - amt),0,255)}; }
+function desaturate(c, amt){ // amt 0..1
+  const gray = Math.round(0.299*c.r + 0.587*c.g + 0.114*c.b);
+  return { r: Math.round(c.r + (gray - c.r) * amt), g: Math.round(c.g + (gray - c.g) * amt), b: Math.round(c.b + (gray - c.b) * amt) };
+}
+
+/* Escolhe cor de texto com objetivo WCAG 4.5:1; se não possível, força contraste ajustando background */
+function chooseAccessibleTextAndMuted(accentRgb, bgStartRgb, bgEndRgb){
+  const white = {r:255,g:255,b:255}, black = {r:0,g:0,b:0};
+  // compute average background for contrast checks
+  const bgAvg = { r: Math.round((bgStartRgb.r + bgEndRgb.r)/2), g: Math.round((bgStartRgb.g + bgEndRgb.g)/2), b: Math.round((bgStartRgb.b + bgEndRgb.b)/2) };
+  const contrastWhite = contrastRatio(white, bgAvg);
+  const contrastBlack = contrastRatio(black, bgAvg);
+  // prefer white or black that meets 4.5:1
+  if(contrastWhite >= 4.5) return { textHex: '#ffffff', mutedHex: rgbToHex(...Object.values(desaturate(black,0.6))) };
+  if(contrastBlack >= 4.5) return { textHex: '#0f1724', mutedHex: rgbToHex(...Object.values(desaturate(white,0.6))) };
+  // else try to pick text color based on accent contrast with bgAvg
+  const contrastAccentWhite = contrastRatio(white, accentRgb);
+  const contrastAccentBlack = contrastRatio(black, accentRgb);
+  let textHex = (contrastAccentWhite > contrastAccentBlack) ? '#ffffff' : '#0f1724';
+  // if still below 4.5, adjust bg to ensure contrast: darken or lighten bgAvg until contrast achieved
+  let bgCandidate = {...bgAvg};
+  let attempts = 0;
+  while(attempts < 12){
+    const contrast = contrastRatio(textHex === '#ffffff' ? white : black, bgCandidate);
+    if(contrast >= 4.5) break;
+    // move bg away from text: if text is white, darken bg; if text is black, lighten bg
+    if(textHex === '#ffffff'){ bgCandidate = darkenColor(bgCandidate, 18); }
+    else { bgCandidate = lightenColor(bgCandidate, 18); }
+    attempts++;
+  }
+  // produce muted color as desaturated version of text (ensures readable but subdued)
+  const muted = textHex === '#ffffff' ? desaturate(black,0.6) : desaturate(white,0.6);
+  return { textHex, mutedHex: rgbToHex(...Object.values(muted)), bgAdjusted: rgbToHex(bgCandidate.r,bgCandidate.g,bgCandidate.b) };
+}
+
+/* Extrai paleta simples da imagem */
 function extractPaletteFromImage(img, options = {bucket:32, top:3}){
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d');
@@ -405,38 +444,48 @@ function extractPaletteFromImage(img, options = {bucket:32, top:3}){
   while(palette.length < topN) palette.push({r:200,g:200,b:200,hex:'#c8c8c8'});
   return palette;
 }
+
+/* Aplica paleta ao CSS com foco em contraste WCAG */
 function applyPaletteToCSS(palette){
   if(!palette || !palette.length) return;
   const primary = palette[0];
   const secondary = palette[1] || primary;
   const accent = palette[2] || primary;
-  function lighten(c, amt){ return {r:clamp(Math.round(c.r + amt),0,255), g:clamp(Math.round(c.g + amt),0,255), b:clamp(Math.round(c.b + amt),0,255)}; }
-  const bgStart = rgbToHex(...Object.values(lighten(primary, 36)));
-  const bgEnd = rgbToHex(...Object.values(lighten(secondary, 56)));
+  // create bg variations
+  const bgStartRgb = lightenColor(primary, 36);
+  const bgEndRgb = lightenColor(secondary, 56);
+  const bgStartHex = rgbToHex(bgStartRgb.r,bgStartRgb.g,bgStartRgb.b);
+  const bgEndHex = rgbToHex(bgEndRgb.r,bgEndRgb.g,bgEndRgb.b);
   const accentHex = accent.hex;
-  const white = {r:255,g:255,b:255}, black = {r:0,g:0,b:0};
-  const accentRgb = hexToRgb(accentHex);
-  const contrastWithWhite = contrastRatio(accentRgb, white);
-  const contrastWithBlack = contrastRatio(accentRgb, black);
-  const textColor = (contrastWithWhite > contrastWithBlack) ? '#ffffff' : '#0f1724';
+  // choose accessible text and muted colors
+  const accentRgb = {r:accent.r,g:accent.g,b:accent.b};
+  const choice = chooseAccessibleTextAndMuted(accentRgb, bgStartRgb, bgEndRgb);
+  const textHex = choice.textHex || '#0f1724';
+  const mutedHex = choice.mutedHex || '#6b7280';
+  // if choose returned bgAdjusted, use it to bias backgrounds for stronger contrast
   const root = document.documentElement;
-  root.style.setProperty('--bg-start', bgStart);
-  root.style.setProperty('--bg-end', bgEnd);
+  root.style.setProperty('--bg-start', choice.bgAdjusted ? choice.bgAdjusted : bgStartHex);
+  root.style.setProperty('--bg-end', bgEndHex);
   root.style.setProperty('--accent', accentHex);
-  root.style.setProperty('--text', textColor);
-  const cardBg = (textColor === '#ffffff') ? 'rgba(0,0,0,0.06)' : '#ffffff';
+  root.style.setProperty('--text', textHex);
+  root.style.setProperty('--muted', mutedHex);
+  // card background: ensure contrast with text
+  const cardBg = (textHex === '#ffffff') ? 'rgba(0,0,0,0.06)' : '#ffffff';
   root.style.setProperty('--card', cardBg);
 }
+
+/* Restaura tema padrão */
 function restoreDefaultTheme(){
   const root = document.documentElement;
   root.style.setProperty('--bg-start', '#f2f4f8');
   root.style.setProperty('--bg-end', '#e9eef6');
   root.style.setProperty('--accent', '#6b5df5');
   root.style.setProperty('--text', '#0f1724');
+  root.style.setProperty('--muted', '#6b7280');
   root.style.setProperty('--card', '#ffffff');
 }
 
-/* ---------- UI: skills, variants, attributes ---------- */
+/* ---------- UI e lógica da ficha (mantida) ---------- */
 function renderSkillsUI(){
   const container = document.getElementById('skillsContainer');
   const quick = document.getElementById('quickSkillSelect');
@@ -449,7 +498,7 @@ function renderSkillsUI(){
     div.title = s.attr;
     div.innerHTML = `
       <input type="checkbox" class="skill-check" data-attr="${s.attr}" data-name="${s.name}" data-key="${key}" id="chk_${key}">
-      <label for="chk_${key}">${s.name} <small style="color:#94a3b8">(${s.attr.substring(0,3).toUpperCase()})</small></label>
+      <label for="chk_${key}">${s.name} <small style="color:var(--muted)">(${s.attr.substring(0,3).toUpperCase()})</small></label>
       <button class="btn-ghost small roll-skill" data-key="${key}">Rolar</button>
       <span class="skill-val" id="val_${key}">+0</span>
     `;
@@ -769,7 +818,7 @@ document.getElementById('addWeaponBtn')?.addEventListener('click', ()=>{
   document.getElementById('w_name').value=''; document.getElementById('w_bonus').value=''; document.getElementById('w_dmg').value='';
 });
 
-/* Avatar handling (com extração de paleta) */
+/* Avatar handling (com extração de paleta e contraste agressivo) */
 const avatarInput = document.getElementById('avatarInput');
 const avatarPreview = document.getElementById('avatarPreview');
 document.getElementById('uploadAvatarBtn')?.addEventListener('click', ()=>avatarInput.click());
@@ -799,7 +848,7 @@ function processAvatarFile(file){
       const dataURL = canvas.toDataURL('image/jpeg',0.85);
       avatarPreview.innerHTML = `<img src="${dataURL}">`;
       avatarPreview.dataset.imgData = dataURL;
-      // extrair paleta e aplicar tema
+      // extrair paleta e aplicar tema com contraste agressivo
       const tmpImg = new Image();
       tmpImg.onload = ()=>{ const palette = extractPaletteFromImage(tmpImg, {bucket:32, top:3}); applyPaletteToCSS(palette); };
       tmpImg.src = dataURL;
@@ -856,7 +905,7 @@ if(racaSelect && racaCustom){
   });
 });
 
-/* Persistence: gather/apply/save/load/export/import/clear */
+/* Persistence */
 function gatherData(){
   const data = { skills:{}, weapons:[], avatar:'', circular:false, meta:{ts:new Date().toISOString()} };
   document.querySelectorAll('[data-key]').forEach(el=>{
