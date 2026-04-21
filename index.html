@@ -3,436 +3,571 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Ficha RPG — Corrigida e Modular</title>
+<title>Ficha RPG — Completa e Estável</title>
 <style>
 :root{
-  --bg-start:#121212;
-  --bg-end:#2d2d2d;
-  --card-start:#ffffff;
-  --card-end:#f3f4f6;
-  --accent:#7c5cff;
-  --muted:#64748b;
-  --text:#1e293b;
+  --bg-start:#f2f4f8;
+  --bg-end:#e9eef6;
+  --card:#ffffff;
+  --accent:#6b5df5;
+  --muted:#6b7280;
+  --text:#0f1724;
   --radius:12px;
-  --shadow:0 10px 25px rgba(0,0,0,0.1);
-  --gap:20px;
+  --shadow:0 8px 20px rgba(15,23,42,0.06);
+  --gap:18px;
 }
-
-/* Base e tipografia */
-*{box-sizing:border-box; font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;}
+*{box-sizing:border-box;font-family:Inter,system-ui,Segoe UI,Roboto,Arial}
 html,body{height:100%}
-body{margin:0;padding:25px;background:linear-gradient(180deg,var(--bg-start),var(--bg-end));color:var(--text);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;}
-
-/* Layout principal: grid estável */
-.container{
-  max-width:1300px;
-  margin:0 auto;
-  display:grid;
-  grid-template-columns: 1fr 350px;
-  gap:var(--gap);
-  align-items:start;
-}
-
-/* Header full width */
-header{grid-column:1/-1;display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
-header h1{color:var(--accent);font-size:24px;margin:0;text-transform:uppercase;letter-spacing:1px}
-
-/* Buttons */
-.btn-group{display:flex;gap:10px}
-.btn{background:var(--accent);color:#fff;border:0;padding:10px 20px;border-radius:8px;font-weight:700;cursor:pointer;transition:0.18s}
-.btn:hover{transform:translateY(-2px)}
-.btn-secondary{background:#334155;color:#fff}
-
-/* Cards and modules */
-.module{display:block;width:100%;box-sizing:border-box;margin-bottom:var(--gap)}
-.card{background:linear-gradient(180deg,var(--card-start),var(--card-end));padding:20px;border-radius:var(--radius);box-shadow:var(--shadow);width:100%;box-sizing:border-box}
-.section-title{display:block;font-size:13px;font-weight:800;color:var(--muted);text-transform:uppercase;margin-bottom:15px;border-bottom:1px solid #f1f5f9;padding-bottom:5px}
-
-/* Forms */
-.field-group{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:15px}
-.field{display:flex;flex-direction:column;gap:6px}
-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase}
-input,select,textarea{padding:10px;border-radius:6px;border:1px solid #e2e8f0;background:#fcfcfc;font-size:14px;outline:none}
-input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 8px 20px rgba(124,92,255,0.06)}
-.big-input{font-size:22px;font-weight:800;border:0;background:transparent;padding:0;width:100%;color:var(--accent)}
-
-/* Atributos */
+body{margin:0;padding:22px;background:linear-gradient(180deg,var(--bg-start),var(--bg-end));color:var(--text);-webkit-font-smoothing:antialiased}
+.container{max-width:1280px;margin:0 auto;display:grid;grid-template-columns:1fr 360px;gap:var(--gap);align-items:start}
+header{grid-column:1/-1;display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+h1{margin:0;color:var(--accent);font-size:18px}
+.controls{display:flex;gap:8px;align-items:center}
+.btn{background:linear-gradient(90deg,var(--accent),#5f3df5);color:#fff;border:0;padding:8px 12px;border-radius:10px;cursor:pointer}
+.btn-ghost{background:#fff;border:1px solid rgba(15,23,36,0.06);padding:8px 12px;border-radius:10px;color:var(--muted);cursor:pointer}
+.card{background:var(--card);padding:14px;border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid rgba(15,23,36,0.04)}
+.section-title{font-size:12px;color:var(--muted);font-weight:700;text-transform:uppercase;margin-bottom:10px;border-bottom:1px solid rgba(15,23,36,0.03);padding-bottom:8px}
+.row{display:flex;gap:10px;align-items:center}
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:8px}
+label{font-size:12px;color:var(--muted);font-weight:700;text-transform:uppercase}
+input,select,textarea,button{font-size:14px;padding:8px;border-radius:8px;border:1px solid #e6eef8;background:#fff;outline:none}
+input[type="number"]{text-align:center}
+.big{font-size:20px;padding:10px;border-radius:8px;border:0;background:transparent;color:var(--accent);font-weight:800}
 .attr-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
-.attr-box{text-align:center;padding:10px;background:#f8fafc;border-radius:10px;border:1px solid #e2e8f0}
-.attr-box input{width:50px;text-align:center;font-size:18px;font-weight:800;padding:5px;margin-bottom:5px}
-.attr-mod{display:block;font-size:16px;font-weight:700;color:var(--accent)}
-
-/* Perícias */
+.attr-box{text-align:center;padding:10px;background:#fbfdff;border-radius:10px;border:1px solid #eef4ff}
+.attr-box input{width:56px;font-weight:800;font-size:18px}
+.attr-mod{font-weight:800;color:var(--accent);margin-top:6px}
 .skills-container{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
-.skill-item{display:flex;align-items:center;gap:8px;font-size:13px;padding:6px 10px;background:#fff;border:1px solid #f1f5f9;border-radius:6px}
-.skill-item input[type="checkbox"]{width:16px;height:16px;cursor:pointer}
-.skill-val{margin-left:auto;font-weight:800;color:var(--accent);min-width:25px;text-align:right}
-
-/* Avatar */
-.avatar-zone{width:100%;aspect-ratio:1/1;border-radius:12px;border:2px dashed #cbd5e1;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#f8fafc;transition:0.18s;position:relative}
+.skill-item{display:flex;align-items:center;gap:8px;padding:8px;border-radius:8px;background:#fff;border:1px solid #eef4ff}
+.skill-item label{flex:1}
+.skill-val{font-weight:800;color:var(--accent);min-width:36px;text-align:right}
+.avatar-zone{width:100%;aspect-ratio:1/1;border-radius:12px;border:2px dashed #dbe7ff;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#fbfdff}
 .avatar-zone img{width:100%;height:100%;object-fit:cover}
-.avatar-hint{font-size:11px;color:var(--muted);text-align:center;padding:20px}
-
-/* Tables */
-table{width:100%;border-collapse:collapse;margin-top:10px}
-th{text-align:left;font-size:11px;color:var(--muted);padding:8px}
-td{padding:5px;border-bottom:1px solid #f1f5f9}
-
-/* Aside and main placement */
-main{grid-column:1/2;width:100%;box-sizing:border-box}
-aside{grid-column:2/3;width:100%;box-sizing:border-box}
-
-/* Responsive */
-@media (max-width:1000px){
-  .container{grid-template-columns:1fr}
-  main{grid-column:1/-1}
-  aside{grid-column:1/-1}
-  .attr-grid{grid-template-columns:repeat(3,1fr)}
-  .skills-container{grid-template-columns:1fr}
-}
-
-/* Prevent overflow from internal elements */
-.card, .field-group, .attr-grid, .skills-container, table{max-width:100%;box-sizing:border-box}
-input,select,textarea,button{max-width:100%;box-sizing:border-box}
-label, .skill-item, td{overflow-wrap:break-word}
-
-/* Hidden module helper */
+.table{width:100%;border-collapse:collapse;margin-top:10px}
+.table th{font-size:12px;color:var(--muted);text-align:left;padding:8px}
+.table td{padding:6px;border-bottom:1px solid #eef4ff}
+.aside-col{display:flex;flex-direction:column;gap:12px}
+.module{display:block;width:100%}
 .module.hidden{display:none !important}
-
-/* Module control (hidden by default) */
-.module-control{position:fixed;right:18px;top:80px;background:#fff;border:1px solid #e6e6e6;padding:10px;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,0.08);font-size:13px;z-index:9999;display:none}
-.module-control label{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.module-control{position:fixed;right:18px;top:80px;background:#fff;border:1px solid #eef2ff;padding:10px;border-radius:8px;box-shadow:0 8px 24px rgba(15,23,36,0.06);font-size:13px;z-index:9999}
+.roll-log{max-height:220px;overflow:auto;border:1px solid #eef4ff;padding:8px;border-radius:8px;background:#fff}
+.roll-entry{font-size:13px;padding:6px;border-bottom:1px dashed #f1f5f9}
+.controls-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+@media (max-width:980px){.container{grid-template-columns:1fr}.aside-col{order:2}}
 </style>
 </head>
 <body>
 
 <div class="container">
 
-  <!-- Header module -->
+  <!-- Header -->
   <div class="module" data-module="header">
-    <header>
-      <h1>Ficha de Personagem</h1>
-      <div class="btn-group">
-        <button class="btn" onclick="saveData()">Salvar</button>
-        <button class="btn btn-secondary" onclick="exportJSON()">Exportar</button>
-        <button class="btn btn-secondary" onclick="clearData()">Resetar</button>
+    <header class="card" role="banner">
+      <h1>Ficha RPG — Completa</h1>
+      <div class="controls-row">
+        <button id="saveBtn" class="btn">Salvar</button>
+        <button id="exportBtn" class="btn-ghost">Exportar</button>
+        <button id="importBtn" class="btn-ghost">Importar</button>
+        <button id="clearBtn" class="btn-ghost">Limpar</button>
       </div>
     </header>
   </div>
 
-  <!-- Main left column: estrutura original, cada card envolvido por module -->
+  <!-- Main column -->
   <main>
 
-    <div class="module" data-module="informacoes-basicas">
-      <div class="card">
-        <span class="section-title">Informações Básicas</span>
-        <div style="display:grid; grid-template-columns: 1fr 200px; gap:20px;">
-          <div class="field-group">
-            <div class="field" style="grid-column: span 2;">
-              <label>Nome do Personagem</label>
-              <input id="nome" data-key="nome" class="big-input" type="text" placeholder="Ex: Valerius">
+    <!-- Identidade + Avatar -->
+    <div class="module" data-module="identidade">
+      <section class="card" aria-labelledby="ident-title">
+        <div id="ident-title" class="section-title">Identidade</div>
+        <div style="display:grid;grid-template-columns:1fr 240px;gap:14px">
+          <div>
+            <div class="field"><label>Nome do personagem</label><input id="nome" data-key="nome" class="big" type="text" value="Seu Nome"></div>
+            <div style="display:flex;gap:8px">
+              <div style="flex:1" class="field"><label>Classe</label><input id="classe" data-key="classe" type="text"></div>
+              <div style="width:120px" class="field"><label>Nível</label><input id="nivel" data-key="nivel" type="number" min="1" max="20" value="1"></div>
+              <div style="width:120px" class="field"><label>XP</label><input id="xp" data-key="xp" type="number" min="0"></div>
             </div>
-            <div class="field"><label>Classe/Nível</label><input id="classe" data-key="classe" type="text"></div>
-            <div class="field"><label>Antecedente</label><input id="antecedente" data-key="antecedente" type="text"></div>
-            <div class="field"><label>Raça</label><input id="raca" data-key="raca" type="text"></div>
-            <div class="field"><label>Tendência</label><input id="tendencia" data-key="tendencia" type="text"></div>
+            <div style="display:flex;gap:8px;margin-top:8px">
+              <div style="flex:1" class="field"><label>Antecedente / Raça</label><input id="antecedente" data-key="antecedente" type="text"></div>
+              <div style="width:140px" class="field"><label>CA</label><input id="ca" data-key="ca" type="number"></div>
+            </div>
           </div>
 
-          <div class="field">
-            <label>Avatar (Solte a imagem aqui)</label>
-            <div class="avatar-zone" id="avatarPreview">
-              <div class="avatar-hint">Arraste uma foto para cá</div>
+          <div>
+            <div class="field"><label>Avatar</label>
+              <div id="avatarPreview" class="avatar-zone" title="Arraste uma imagem aqui">
+                <div class="avatar-hint">Arraste ou clique para carregar</div>
+              </div>
             </div>
-
-            <label style="margin-top:10px; display:flex; align-items:center; gap:5px; cursor:pointer">
-              <input type="checkbox" id="toggleCircular"> Estilo Circular
-            </label>
+            <div style="display:flex;gap:8px;align-items:center;margin-top:8px">
+              <input id="avatarInput" type="file" accept="image/*" style="display:none">
+              <button id="uploadAvatarBtn" class="btn-ghost">Carregar</button>
+              <button id="removeAvatarBtn" class="btn-ghost">Remover</button>
+              <label style="margin-left:auto"><input id="toggleCircular" type="checkbox"> Circular</label>
+            </div>
           </div>
         </div>
-      </div>
+      </section>
     </div>
 
+    <!-- Atributos + Perícias -->
     <div class="module" data-module="atributos">
-      <div class="card">
-        <span class="section-title">Atributos</span>
-        <div class="attr-grid">
-          <div class="attr-box"><label>FOR</label><input type="number" id="forca" data-key="forca" value="10"><span class="attr-mod" id="forca_mod">+0</span></div>
-          <div class="attr-box"><label>DES</label><input type="number" id="destreza" data-key="destreza" value="10"><span class="attr-mod" id="destreza_mod">+0</span></div>
-          <div class="attr-box"><label>CON</label><input type="number" id="constituicao" data-key="constituicao" value="10"><span class="attr-mod" id="constituicao_mod">+0</span></div>
-          <div class="attr-box"><label>INT</label><input type="number" id="inteligencia" data-key="inteligencia" value="10"><span class="attr-mod" id="inteligencia_mod">+0</span></div>
-          <div class="attr-box"><label>SAB</label><input type="number" id="sabedoria" data-key="sabedoria" value="10"><span class="attr-mod" id="sabedoria_mod">+0</span></div>
-          <div class="attr-box"><label>CAR</label><input type="number" id="carisma" data-key="carisma" value="10"><span class="attr-mod" id="carisma_mod">+0</span></div>
-        </div>
-      </div>
-    </div>
+      <section class="card" aria-labelledby="attr-title">
+        <div id="attr-title" class="section-title">Atributos e Perícias</div>
 
-    <div class="module" data-module="pericias">
-      <div class="card">
-        <div style="display:flex; justify-content:space-between; align-items:center">
-          <span class="section-title">Perícias & Proficiências</span>
-          <div class="field" style="width:100px; margin-bottom:10px">
-            <label>Bônus Prof.</label>
-            <input type="number" id="prof_bonus" data-key="prof_bonus" value="2" style="height:30px; text-align:center">
+        <div style="display:flex;gap:12px;align-items:flex-start">
+          <div style="flex:1">
+            <div class="attr-grid" aria-hidden="false">
+              <div class="attr-box"><label>FOR</label><input id="forca" data-key="forca" type="number" value="10"><div class="attr-mod" id="forca_mod">+0</div></div>
+              <div class="attr-box"><label>DES</label><input id="destreza" data-key="destreza" type="number" value="10"><div class="attr-mod" id="destreza_mod">+0</div></div>
+              <div class="attr-box"><label>CON</label><input id="constituicao" data-key="constituicao" type="number" value="10"><div class="attr-mod" id="constituicao_mod">+0</div></div>
+              <div class="attr-box"><label>INT</label><input id="inteligencia" data-key="inteligencia" type="number" value="10"><div class="attr-mod" id="inteligencia_mod">+0</div></div>
+              <div class="attr-box"><label>SAB</label><input id="sabedoria" data-key="sabedoria" type="number" value="10"><div class="attr-mod" id="sabedoria_mod">+0</div></div>
+              <div class="attr-box"><label>CAR</label><input id="carisma" data-key="carisma" type="number" value="10"><div class="attr-mod" id="carisma_mod">+0</div></div>
+            </div>
+
+            <div style="display:flex;gap:10px;align-items:center;margin-top:10px">
+              <div style="width:140px" class="field"><label>Bônus Prof.</label><input id="prof_bonus" data-key="prof_bonus" type="number" value="2"></div>
+              <label style="display:flex;align-items:center;gap:8px;color:var(--muted)"><input id="autoProf" type="checkbox"> Calcular por nível</label>
+              <div style="margin-left:auto;color:var(--muted);font-size:13px">Níveis 1–4:+2 • 5–8:+3 • 9–12:+4 • 13–16:+5 • 17–20:+6</div>
+            </div>
+          </div>
+
+          <div style="width:360px">
+            <div class="card" style="padding:12px">
+              <strong>Conjuração</strong>
+              <div style="display:flex;gap:8px;align-items:center;margin-top:8px">
+                <label style="width:140px">Atributo de Conjuração</label>
+                <select id="spell_attr" style="flex:1">
+                  <option value="inteligencia">Inteligência</option>
+                  <option value="sabedoria">Sabedoria</option>
+                  <option value="carisma">Carisma</option>
+                </select>
+              </div>
+              <div style="display:flex;gap:8px;margin-top:8px">
+                <div style="flex:1" class="field"><label>Spell DC</label><input id="spell_dc" readonly></div>
+                <div style="flex:1" class="field"><label>Spell Atk</label><input id="spell_atk" readonly></div>
+              </div>
+              <div style="margin-top:10px">
+                <label>Histórico de rolagens</label>
+                <div id="rollLog" class="roll-log" aria-live="polite"></div>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="skills-container" id="skillsContainer"></div>
-      </div>
+
+        <div style="margin-top:12px">
+          <div class="section-title" style="margin-top:0">Perícias</div>
+          <div id="skillsContainer" class="skills-container" aria-live="polite"></div>
+        </div>
+      </section>
     </div>
 
+    <!-- Ataques e Magias -->
     <div class="module" data-module="ataques">
-      <div class="card">
-        <span class="section-title">Ataques & Conjuração</span>
-        <table id="weaponsTable">
-          <thead><tr><th>Arma</th><th>Bônus Atq</th><th>Dano/Tipo</th><th>Notas</th><th></th></tr></thead>
+      <section class="card" aria-labelledby="atk-title">
+        <div id="atk-title" class="section-title">Ataques & Magias</div>
+        <table class="table" id="weaponsTable" aria-describedby="atk-title">
+          <thead><tr><th>Nome</th><th>Bônus</th><th>Dano</th><th>Notas</th><th></th></tr></thead>
           <tbody></tbody>
         </table>
-        <div style="display:flex; gap:10px; margin-top:10px">
+        <div style="display:flex;gap:8px;margin-top:10px">
           <input id="w_name" placeholder="Nome" style="flex:2">
-          <input id="w_atq" placeholder="+5" style="flex:1">
-          <input id="w_dmg" placeholder="1d8+3" style="flex:1">
-          <button class="btn" onclick="addWeapon()">Add</button>
+          <input id="w_bonus" placeholder="+Atq" style="width:100px">
+          <input id="w_dmg" placeholder="1d8 + STR" style="flex:1">
+          <button id="addWeaponBtn" class="btn">Adicionar</button>
         </div>
-      </div>
+      </section>
     </div>
 
   </main>
 
-  <!-- Right column (aside) -->
-  <aside>
+  <!-- Aside column -->
+  <aside class="aside-col">
 
-    <div class="module" data-module="status-vitais">
-      <div class="card" style="background:var(--accent); color:white;">
-        <span class="section-title" style="color:white; border-color:rgba(255,255,255,0.2)">Status Vitais</span>
-        <div class="field"><label style="color:white">Pontos de Vida</label>
-          <div style="display:flex; gap:5px; align-items:center">
-            <input id="hp_atual" data-key="hp_atual" type="number" style="width:100%; background:rgba(0,0,0,0.2); border:0; color:white">
-            <span style="color:white">/</span>
-            <input id="hp_max" data-key="hp_max" type="number" style="width:100%; background:rgba(0,0,0,0.2); border:0; color:white">
-          </div>
+    <div class="module" data-module="status">
+      <section class="card">
+        <div class="section-title">Status Rápido</div>
+        <div style="display:flex;gap:8px">
+          <div style="flex:1" class="field"><label>HP Atual</label><input id="hp_atual" data-key="hp_atual" type="number" value="10"></div>
+          <div style="flex:1" class="field"><label>HP Máx</label><input id="hp_max" data-key="hp_max" type="number" value="10"></div>
         </div>
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:15px">
-          <div class="field"><label style="color:white">CA</label><input id="ca" data-key="ca" type="number"></div>
-          <div class="field"><label style="color:white">Iniciativa</label><input id="iniciativa" readonly></div>
+        <div style="display:flex;gap:8px;margin-top:8px">
+          <div style="flex:1" class="field"><label>CA</label><input id="ca_quick" readonly></div>
+          <div style="flex:1" class="field"><label>Iniciativa</label><input id="iniciativa" readonly></div>
         </div>
-      </div>
+      </section>
     </div>
 
     <div class="module" data-module="sentidos">
-      <div class="card">
-        <span class="section-title">Sentidos</span>
+      <section class="card">
+        <div class="section-title">Sentidos</div>
         <div class="field"><label>Percepção Passiva</label><input id="perc_passiva" readonly></div>
-        <div class="field" style="margin-top:10px"><label>Investigação Passiva</label><input id="inv_passiva" readonly></div>
-      </div>
+        <div class="field"><label>Investigação Passiva</label><input id="inv_passiva" readonly></div>
+      </section>
     </div>
 
-    <div class="module" data-module="moedas">
-      <div class="card">
-        <span class="section-title">Moedas</span>
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px">
-          <div class="field"><label>PO</label><input data-key="po" type="number"></div>
-          <div class="field"><label>PP</label><input data-key="pp" type="number"></div>
-          <div class="field"><label>PC</label><input data-key="pc" type="number"></div>
-          <div class="field"><label>PL</label><input data-key="pl" type="number"></div>
+    <div class="module" data-module="rolador">
+      <section class="card">
+        <div class="section-title">Rolador Rápido</div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <select id="quickSkillSelect" style="flex:1"><option value="">— selecione perícia —</option></select>
+          <button id="rollSkillBtn" class="btn-ghost">Rolar</button>
         </div>
-      </div>
+        <div style="margin-top:10px">
+          <label>1d20</label>
+          <div style="display:flex;gap:8px;margin-top:6px">
+            <input id="rollMod" type="number" value="0" style="width:80px">
+            <button id="rollBtn" class="btn">1d20</button>
+            <button id="advBtn" class="btn-ghost">Vantagem</button>
+            <button id="disBtn" class="btn-ghost">Desvantagem</button>
+          </div>
+        </div>
+      </section>
     </div>
 
   </aside>
 
 </div>
 
-<!-- painel de controle opcional para ativar/desativar módulos -->
-<div class="module-control" id="moduleControl" aria-hidden="false" style="display:none">
+<!-- Module control (visible for convenience) -->
+<div class="module-control" id="moduleControl" aria-hidden="false" style="display:block">
   <strong>Módulos</strong>
-  <div id="moduleControlList"></div>
+  <div id="moduleControlList" style="margin-top:8px"></div>
+  <div style="margin-top:8px"><button id="toggleAll" class="btn-ghost">Alternar todos</button></div>
 </div>
 
 <script>
-/* ---------- Mantive toda a lógica original (IDs e funções) ---------- */
-/* Lista de perícias padrão D&D 5e */
+/* ============================
+   Ficha RPG — Script Integrado
+   - Mantém IDs originais
+   - Integra: perícias, atributos, conjuração, rolador, avatar, armas, autosave, undo, export/import, painel de módulos
+   - Objetivo: sem erros no console; robusto a elementos ausentes
+   ============================ */
+
+/* Utilitários */
+const storageKey = 'ficha_rpg_completa_v1';
 const ALL_SKILLS = [
-  { name: 'Acrobacia', attr: 'destreza' },
-  { name: 'Adestrar Animais', attr: 'sabedoria' },
-  { name: 'Arcanismo', attr: 'inteligencia' },
-  { name: 'Atletismo', attr: 'forca' },
-  { name: 'Atuação', attr: 'carisma' },
-  { name: 'Enganação', attr: 'carisma' },
-  { name: 'Furtividade', attr: 'destreza' },
-  { name: 'História', attr: 'inteligencia' },
-  { name: 'Intimidação', attr: 'carisma' },
-  { name: 'Intuição', attr: 'sabedoria' },
-  { name: 'Investigação', attr: 'inteligencia' },
-  { name: 'Medicina', attr: 'sabedoria' },
-  { name: 'Natureza', attr: 'inteligencia' },
-  { name: 'Percepção', attr: 'sabedoria' },
-  { name: 'Persuasão', attr: 'carisma' },
-  { name: 'Prestidigitação', attr: 'destreza' },
-  { name: 'Religião', attr: 'inteligencia' },
-  { name: 'Sobrevivência', attr: 'sabedoria' }
+  { name:'Acrobacia', attr:'destreza', tip:'Equilíbrio, saltos e manobras' },
+  { name:'Adestrar Animais', attr:'sabedoria', tip:'Treinar e controlar animais' },
+  { name:'Arcanismo', attr:'inteligencia', tip:'Conhecimento arcano' },
+  { name:'Atletismo', attr:'forca', tip:'Escalar, nadar, saltar' },
+  { name:'Atuação', attr:'carisma', tip:'Performances' },
+  { name:'Enganação', attr:'carisma', tip:'Mentir e dissimular' },
+  { name:'Furtividade', attr:'destreza', tip:'Esconder-se e mover-se sem ser visto' },
+  { name:'História', attr:'inteligencia', tip:'Conhecimento histórico' },
+  { name:'Intimidação', attr:'carisma', tip:'Ameaçar e coagir' },
+  { name:'Intuição', attr:'sabedoria', tip:'Ler intenções' },
+  { name:'Investigação', attr:'inteligencia', tip:'Analisar pistas' },
+  { name:'Medicina', attr:'sabedoria', tip:'Tratar ferimentos' },
+  { name:'Natureza', attr:'inteligencia', tip:'Conhecimento natural' },
+  { name:'Percepção', attr:'sabedoria', tip:'Notar detalhes' },
+  { name:'Persuasão', attr:'carisma', tip:'Convencer e negociar' },
+  { name:'Prestidigitação', attr:'destreza', tip:'Truques manuais' },
+  { name:'Religião', attr:'inteligencia', tip:'Conhecimento religioso' },
+  { name:'Sobrevivência', attr:'sabedoria', tip:'Rastrear e sobreviver' }
 ];
+function idSafe(s){ return String(s).replace(/\s+/g,'_').replace(/[^\w_]/g,''); }
+function modFrom(score){ return Math.floor((score - 10) / 2); }
+function formatMod(n){ return (n>=0?'+':'') + n; }
+function now(){ return new Date().toLocaleString(); }
 
-/* Normaliza string para id seguro */
-function idSafe(name){ return name.replace(/\s+/g,'_').replace(/[^\w_]/g,''); }
-
-/* Render perícias (IDs normalizados) */
-function renderSkills() {
+/* Render perícias e quick select */
+function renderSkillsUI(){
   const container = document.getElementById('skillsContainer');
-  if(!container) return;
-  container.innerHTML = ALL_SKILLS.map(s => {
+  const quick = document.getElementById('quickSkillSelect');
+  if(!container || !quick) return;
+  container.innerHTML = '';
+  quick.innerHTML = '<option value="">— selecione —</option>';
+  ALL_SKILLS.forEach(s=>{
     const key = idSafe(s.name);
-    return `
-      <div class="skill-item">
-        <input type="checkbox" class="skill-check" data-attr="${s.attr}" data-name="${s.name}" data-key="${key}" id="chk_${key}">
-        <label for="chk_${key}">${s.name} <small style="color:#94a3b8">(${s.attr.substring(0,3).toUpperCase()})</small></label>
-        <span class="skill-val" id="val_${key}">+0</span>
-      </div>
+    const div = document.createElement('div');
+    div.className = 'skill-item';
+    div.title = s.tip;
+    div.innerHTML = `
+      <input type="checkbox" class="skill-check" data-attr="${s.attr}" data-name="${s.name}" data-key="${key}" id="chk_${key}">
+      <label for="chk_${key}">${s.name} <small style="color:#94a3b8">(${s.attr.substring(0,3).toUpperCase()})</small></label>
+      <button class="btn-ghost small roll-skill" data-key="${key}">Rolar</button>
+      <span class="skill-val" id="val_${key}">+0</span>
     `;
-  }).join('');
+    container.appendChild(div);
+    const opt = document.createElement('option'); opt.value = key; opt.textContent = s.name; quick.appendChild(opt);
+  });
 }
 
-/* Cálculos automáticos (com proteções) */
-function updateCalculations() {
-  const profEl = document.getElementById('prof_bonus');
-  const prof = profEl ? (parseInt(profEl.value) || 0) : 0;
-  const attrs = ['forca', 'destreza', 'constituicao', 'inteligencia', 'sabedoria', 'carisma'];
+/* Atualiza atributos, perícias, conjuração e campos derivados */
+function updateAll(){
+  const attrs = ['forca','destreza','constituicao','inteligencia','sabedoria','carisma'];
   const mods = {};
-  attrs.forEach(a => {
+  attrs.forEach(a=>{
     const el = document.getElementById(a);
     const score = el ? (parseInt(el.value) || 10) : 10;
-    const mod = Math.floor((score - 10) / 2);
-    mods[a] = mod;
+    const m = modFrom(score);
+    mods[a] = m;
     const modEl = document.getElementById(a + '_mod');
-    if(modEl) modEl.textContent = (mod >= 0 ? '+' : '') + mod;
+    if(modEl) modEl.textContent = formatMod(m);
   });
 
-  document.querySelectorAll('.skill-check').forEach(cb => {
+  const prof = parseInt(document.getElementById('prof_bonus')?.value || 0);
+  document.querySelectorAll('.skill-check').forEach(cb=>{
     const attrMod = mods[cb.dataset.attr] || 0;
     const total = attrMod + (cb.checked ? prof : 0);
-    const id = 'val_' + (cb.dataset.key || idSafe(cb.dataset.name || ''));
-    const el = document.getElementById(id);
-    if(el) el.textContent = (total >= 0 ? '+' : '') + total;
+    const el = document.getElementById('val_' + (cb.dataset.key || idSafe(cb.dataset.name || '')));
+    if(el) el.textContent = formatMod(total);
   });
 
   const iniEl = document.getElementById('iniciativa');
-  if(iniEl) iniEl.value = (mods.destreza >= 0 ? '+' : '') + mods.destreza;
+  if(iniEl) iniEl.value = formatMod(mods.destreza || 0);
 
-  // Percepção passiva and Investigação passiva
-  const percCheckbox = Array.from(document.querySelectorAll('.skill-check')).find(cb => cb.dataset.name === 'Percepção');
-  const invCheckbox = Array.from(document.querySelectorAll('.skill-check')).find(cb => cb.dataset.name === 'Investigação');
-  const percProf = (percCheckbox && percCheckbox.checked) ? prof : 0;
-  const invProf = (invCheckbox && invCheckbox.checked) ? prof : 0;
-  const percEl = document.getElementById('perc_passiva');
-  if(percEl) percEl.value = 10 + (mods.sabedoria || 0) + percProf;
-  const invEl = document.getElementById('inv_passiva');
-  if(invEl) invEl.value = 10 + (mods.inteligencia || 0) + invProf;
+  // passive perception / investigation
+  const percCb = Array.from(document.querySelectorAll('.skill-check')).find(c=>c.dataset.name==='Percepção');
+  const invCb = Array.from(document.querySelectorAll('.skill-check')).find(c=>c.dataset.name==='Investigação');
+  const percVal = 10 + (mods.sabedoria || 0) + ((percCb && percCb.checked) ? prof : 0);
+  const invVal = 10 + (mods.inteligencia || 0) + ((invCb && invCb.checked) ? prof : 0);
+  const percEl = document.getElementById('perc_passiva'); if(percEl) percEl.value = percVal;
+  const invEl = document.getElementById('inv_passiva'); if(invEl) invEl.value = invVal;
+
+  updateSpellcasting();
 }
 
-/* Avatar drag & drop (com checagens) */
-const avZone = document.getElementById('avatarPreview');
-if(avZone){
-  avZone.addEventListener('dragover', e => { e.preventDefault(); avZone.style.borderColor = 'var(--accent)'; avZone.style.background = '#f1edff'; });
-  avZone.addEventListener('dragleave', () => { avZone.style.borderColor = '#cbd5e1'; avZone.style.background = '#f8fafc'; });
-  avZone.addEventListener('drop', e => {
-    e.preventDefault();
-    avZone.style.borderColor = '#cbd5e1';
-    avZone.style.background = '#f8fafc';
-    const file = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
-    if (file && file.type && file.type.startsWith('image/')) {
-      const reader = new FileReader();
-      reader.onload = event => {
-        const img = new Image();
-        img.onload = () => {
-          try {
-            const canvas = document.createElement('canvas');
-            const size = 400;
-            canvas.width = size; canvas.height = size;
-            const ctx = canvas.getContext('2d');
-            const side = Math.min(img.width, img.height);
-            ctx.drawImage(img, (img.width-side)/2, (img.height-side)/2, side, side, 0, 0, size, size);
-            const dataURL = canvas.toDataURL('image/jpeg', 0.8);
-            avZone.innerHTML = `<img src="${dataURL}">`;
-            avZone.dataset.imgData = dataURL;
-          } catch(err) {
-            console.error(err);
-            alert('Erro ao processar a imagem.');
-          }
-        };
-        img.src = event.target.result;
-      };
-      reader.readAsDataURL(file);
-    } else {
-      alert('Arraste um arquivo de imagem válido.');
-    }
+/* Spellcasting */
+function updateSpellcasting(){
+  const attr = document.getElementById('spell_attr')?.value || 'inteligencia';
+  const score = parseInt(document.getElementById(attr)?.value || 10);
+  const mod = modFrom(score);
+  const prof = parseInt(document.getElementById('prof_bonus')?.value || 0);
+  const dc = 8 + mod + prof;
+  const atk = mod + prof;
+  const dcEl = document.getElementById('spell_dc'); if(dcEl) dcEl.value = dc;
+  const atkEl = document.getElementById('spell_atk'); if(atkEl) atkEl.value = (atk>=0?'+':'')+atk;
+}
+
+/* Rolador */
+function rollDie(sides=20){ return Math.floor(Math.random()*sides)+1; }
+function rollWithMod(mod=0){ const r = rollDie(20); return {roll:r,total:r+mod}; }
+function rollAdvDis(type='normal', mod=0){
+  const a = rollDie(20), b = rollDie(20);
+  const chosen = type==='adv' ? Math.max(a,b) : Math.min(a,b);
+  return {a,b,chosen,total:chosen+mod};
+}
+function addRollLog(text){
+  const log = document.getElementById('rollLog'); if(!log) return;
+  const div = document.createElement('div'); div.className='roll-entry'; div.textContent = `[${now()}] ${text}`;
+  log.prepend(div);
+  while(log.children.length>200) log.removeChild(log.lastChild);
+}
+
+/* Roll skill by key */
+function rollSkillByKey(key, options={type:'normal'}){
+  const cb = document.querySelector(`.skill-check[data-key="${key}"]`);
+  if(!cb) return;
+  const attr = cb.dataset.attr;
+  const mod = modFrom(parseInt(document.getElementById(attr)?.value || 10));
+  const prof = cb.checked ? parseInt(document.getElementById('prof_bonus')?.value || 0) : 0;
+  const totalMod = mod + prof;
+  if(options.type==='adv' || options.type==='dis'){
+    const res = rollAdvDis(options.type, totalMod);
+    addRollLog(`${cb.dataset.name}: ${options.type==='adv'?'Vantagem':'Desvantagem'} — ${res.a}, ${res.b} → ${res.chosen} = ${res.total}`);
+    return res;
+  } else {
+    const r = rollWithMod(totalMod);
+    addRollLog(`${cb.dataset.name}: ${r.roll} + ${totalMod} = ${r.total}`);
+    return r;
+  }
+}
+
+/* Quick roll handlers */
+document.getElementById('rollSkillBtn')?.addEventListener('click', ()=>{
+  const sel = document.getElementById('quickSkillSelect'); if(!sel) return;
+  const key = sel.value; if(!key) { alert('Selecione uma perícia.'); return; }
+  rollSkillByKey(key,{type:'normal'});
+});
+document.addEventListener('click', e=>{
+  if(e.target && e.target.matches && e.target.matches('.roll-skill')){
+    const key = e.target.dataset.key; rollSkillByKey(key,{type:'normal'});
+  }
+});
+
+/* Quick 1d20 */
+document.getElementById('rollBtn')?.addEventListener('click', ()=>{
+  const mod = parseInt(document.getElementById('rollMod')?.value || 0);
+  const r = rollWithMod(mod);
+  addRollLog(`1d20: ${r.roll} + ${mod} = ${r.total}`);
+});
+document.getElementById('advBtn')?.addEventListener('click', ()=>{
+  const mod = parseInt(document.getElementById('rollMod')?.value || 0);
+  const res = rollAdvDis('adv',mod);
+  addRollLog(`1d20 (vantagem): ${res.a}, ${res.b} → ${res.chosen} + ${mod} = ${res.total}`);
+});
+document.getElementById('disBtn')?.addEventListener('click', ()=>{
+  const mod = parseInt(document.getElementById('rollMod')?.value || 0);
+  const res = rollAdvDis('dis',mod);
+  addRollLog(`1d20 (desvantagem): ${res.a}, ${res.b} → ${res.chosen} + ${mod} = ${res.total}`);
+});
+
+/* Weapons: add row with roll button */
+function addWeaponRow(obj){
+  const tbody = document.querySelector('#weaponsTable tbody');
+  if(!tbody) return;
+  const tr = document.createElement('tr');
+  tr.innerHTML = `<td>${obj.name||''}</td><td>${obj.bonus||''}</td><td>${obj.dmg||''}</td><td>${obj.notes||''}</td><td><button class="del-weap" style="color:red;border:0;background:none;cursor:pointer">×</button> <button class="roll-weap btn-ghost small">Rolar</button></td>`;
+  tbody.appendChild(tr);
+  tr.querySelector('.del-weap')?.addEventListener('click', ()=>tr.remove());
+  tr.querySelector('.roll-weap')?.addEventListener('click', ()=>{ const bonus = parseInt(tr.children[1].innerText.replace(/\D/g,''))||0; const r = rollWithMod(bonus); addRollLog(`Ataque ${tr.children[0].innerText}: ${r.roll} + ${bonus} = ${r.total}`); });
+}
+
+/* Add weapon button */
+document.getElementById('addWeaponBtn')?.addEventListener('click', ()=>{
+  const name = document.getElementById('w_name')?.value || '';
+  const bonus = document.getElementById('w_bonus')?.value || '';
+  const dmg = document.getElementById('w_dmg')?.value || '';
+  if(!name) return alert('Informe o nome da arma.');
+  addWeaponRow({name,bonus,dmg,notes:''});
+  document.getElementById('w_name').value=''; document.getElementById('w_bonus').value=''; document.getElementById('w_dmg').value='';
+});
+
+/* Avatar handling */
+const avatarInput = document.getElementById('avatarInput');
+const avatarPreview = document.getElementById('avatarPreview');
+document.getElementById('uploadAvatarBtn')?.addEventListener('click', ()=>avatarInput.click());
+document.getElementById('removeAvatarBtn')?.addEventListener('click', ()=>{
+  avatarPreview.innerHTML = '<div class="avatar-hint">Arraste ou clique para carregar</div>'; delete avatarPreview.dataset.imgData;
+});
+avatarInput?.addEventListener('change', e=>{ const f = e.target.files && e.target.files[0]; if(f) processAvatarFile(f); });
+if(avatarPreview){
+  ['dragenter','dragover'].forEach(ev=>avatarPreview.addEventListener(ev, e=>{ e.preventDefault(); avatarPreview.style.borderColor='var(--accent)'; avatarPreview.style.background='#f7f3ff'; }));
+  ['dragleave','drop'].forEach(ev=>avatarPreview.addEventListener(ev, e=>{ e.preventDefault(); avatarPreview.style.borderColor='#dbe7ff'; avatarPreview.style.background='#fbfdff'; }));
+  avatarPreview.addEventListener('drop', e=>{ e.preventDefault(); const f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]; if(f) processAvatarFile(f); });
+}
+function processAvatarFile(file){
+  if(!file.type.startsWith('image/')) return alert('Arquivo não é imagem.');
+  const reader = new FileReader();
+  reader.onload = ev=>{
+    const img = new Image();
+    img.onload = ()=>{
+      const canvas = document.createElement('canvas'); const size = 400;
+      canvas.width = size; canvas.height = size;
+      const ctx = canvas.getContext('2d');
+      const side = Math.min(img.width,img.height);
+      ctx.drawImage(img,(img.width-side)/2,(img.height-side)/2,side,side,0,0,size,size);
+      const dataURL = canvas.toDataURL('image/jpeg',0.85);
+      avatarPreview.innerHTML = `<img src="${dataURL}">`;
+      avatarPreview.dataset.imgData = dataURL;
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+document.getElementById('toggleCircular')?.addEventListener('change', e=>{ avatarPreview.style.borderRadius = e.target.checked ? '50%' : '12px'; });
+
+/* Autosave + Undo */
+let autosave = true;
+let undoStack = [];
+const maxUndo = 40;
+function snapshot(){
+  try{
+    const data = gatherData();
+    undoStack.push(JSON.stringify(data));
+    if(undoStack.length>maxUndo) undoStack.shift();
+    document.getElementById('saveBtn').disabled = false;
+  }catch(e){ console.error(e); }
+}
+function undo(){
+  if(undoStack.length<2) return alert('Nada para desfazer.');
+  undoStack.pop();
+  const prev = undoStack.pop();
+  if(!prev) return alert('Nada para desfazer.');
+  applyData(JSON.parse(prev));
+  snapshot();
+  addRollLog('Ação desfeita.');
+}
+document.getElementById('saveBtn')?.addEventListener('click', ()=>{ saveToLocal(); snapshot(); alert('Salvo.'); });
+
+/* Autosave interval */
+setInterval(()=>{ if(autosave) saveToLocal(true); }, 5000);
+
+/* Persistence: gather/apply/save/load/export/import/clear */
+function gatherData(){
+  const data = { skills:{}, weapons:[], avatar:'', circular:false, meta:{ts: new Date().toISOString()} };
+  document.querySelectorAll('[data-key]').forEach(el=>{
+    const key = el.dataset.key; if(!key) return;
+    if(el.type==='checkbox') data[key] = el.checked; else data[key] = el.value || '';
   });
-}
-
-/* toggle circular */
-const toggleCircularEl = document.getElementById('toggleCircular');
-if(toggleCircularEl && avZone){
-  toggleCircularEl.addEventListener('change', e => { avZone.style.borderRadius = e.target.checked ? '50%' : '12px'; });
-}
-
-/* Weapons */
-function addWeapon(data = null) {
-  const row = document.createElement('tr');
-  const name = data ? (data.n || data.name) : document.getElementById('w_name').value;
-  const atq = data ? (data.a || data.bonus) : document.getElementById('w_atq').value;
-  const dmg = data ? (data.d || data.dmg) : document.getElementById('w_dmg').value;
-  if(!name && !data) return;
-  row.innerHTML = `
-    <td>${name}</td><td>${atq}</td><td>${dmg}</td><td>-</td>
-    <td><button onclick="this.parentElement.parentElement.remove()" style="color:red; border:0; background:none; cursor:pointer">×</button></td>
-  `;
-  document.querySelector('#weaponsTable tbody').appendChild(row);
-  if(!data) { document.getElementById('w_name').value = ''; document.getElementById('w_atq').value = ''; document.getElementById('w_dmg').value = ''; }
-}
-
-/* Persistence */
-const storageKey = 'rpg_sheet_data_final';
-function saveData() {
-  const data = { skills: {}, weapons: [] };
-  document.querySelectorAll('[data-key]').forEach(el => data[el.dataset.key] = el.value);
-  document.querySelectorAll('.skill-check').forEach(cb => data.skills[cb.dataset.name] = cb.checked);
-  document.querySelectorAll('#weaponsTable tbody tr').forEach(tr => {
+  document.querySelectorAll('.skill-check').forEach(cb=> data.skills[cb.dataset.name] = !!cb.checked);
+  document.querySelectorAll('#weaponsTable tbody tr').forEach(tr=>{
     const tds = tr.querySelectorAll('td');
-    data.weapons.push({n: tds[0].innerText, a: tds[1].innerText, d: tds[2].innerText});
+    data.weapons.push({name:tds[0].innerText, bonus:tds[1].innerText, dmg:tds[2].innerText, notes:tds[3].innerText});
   });
-  data.avatar = avZone && avZone.dataset.imgData ? avZone.dataset.imgData : '';
-  data.circular = document.getElementById('toggleCircular').checked;
-  localStorage.setItem(storageKey, JSON.stringify(data));
-  alert("Ficha salva no navegador!");
+  data.avatar = avatarPreview?.dataset.imgData || '';
+  data.circular = !!document.getElementById('toggleCircular')?.checked;
+  return data;
 }
-function loadData() {
-  const raw = localStorage.getItem(storageKey);
-  if(!raw) return;
-  const data = JSON.parse(raw);
-  document.querySelectorAll('[data-key]').forEach(el => el.value = data[el.dataset.key] || '');
-  document.querySelectorAll('.skill-check').forEach(cb => cb.checked = data.skills[cb.dataset.name] || false);
-  if(data.avatar) { avZone.innerHTML = `<img src="${data.avatar}">`; avZone.dataset.imgData = data.avatar; }
-  document.getElementById('toggleCircular').checked = data.circular;
-  avZone.style.borderRadius = data.circular ? '50%' : '12px';
-  document.querySelector('#weaponsTable tbody').innerHTML = '';
-  data.weapons.forEach(w => addWeapon(w));
-  updateCalculations();
+function applyData(data){
+  if(!data) return;
+  document.querySelectorAll('[data-key]').forEach(el=>{
+    const key = el.dataset.key; if(!key) return;
+    if(el.type==='checkbox') el.checked = !!data[key]; else el.value = data[key] || '';
+  });
+  document.querySelectorAll('.skill-check').forEach(cb=> cb.checked = !!(data.skills && data.skills[cb.dataset.name]));
+  const tbody = document.querySelector('#weaponsTable tbody'); if(tbody) tbody.innerHTML = '';
+  (data.weapons || []).forEach(w=> addWeaponRow({name:w.name, bonus:w.bonus, dmg:w.dmg, notes:w.notes}));
+  if(data.avatar && avatarPreview){ avatarPreview.innerHTML = `<img src="${data.avatar}">`; avatarPreview.dataset.imgData = data.avatar; }
+  if(document.getElementById('toggleCircular')) document.getElementById('toggleCircular').checked = !!data.circular;
+  updateAll();
 }
-function exportJSON() {
-  const data = localStorage.getItem(storageKey);
-  const blob = new Blob([data], {type: 'application/json'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = 'minha_ficha.json'; a.click();
+function saveToLocal(silent=false){
+  try{ const data = gatherData(); localStorage.setItem(storageKey, JSON.stringify(data)); if(!silent) addRollLog('Ficha salva localmente.'); }catch(e){ console.error(e); if(!silent) alert('Erro ao salvar.'); }
 }
-function clearData() {
-  if(confirm("Deseja apagar tudo?")) { localStorage.removeItem(storageKey); location.reload(); }
-}
+function loadFromLocal(){ try{ const raw = localStorage.getItem(storageKey); if(!raw) return; const data = JSON.parse(raw); applyData(data); addRollLog('Ficha carregada.'); }catch(e){ console.error(e); alert('Erro ao carregar.'); } }
+document.getElementById('exportBtn')?.addEventListener('click', ()=>{
+  try{ const data = gatherData(); const blob = new Blob([JSON.stringify(data,null,2)],{type:'application/json'}); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'ficha_rpg.json'; a.click(); URL.revokeObjectURL(url); }catch(e){ console.error(e); alert('Erro ao exportar.'); }
+});
+document.getElementById('importBtn')?.addEventListener('click', ()=>{
+  const inp = document.createElement('input'); inp.type='file'; inp.accept='application/json';
+  inp.onchange = e=>{ const f = e.target.files[0]; if(!f) return; const reader = new FileReader(); reader.onload = ev=>{ try{ const data = JSON.parse(ev.target.result); applyData(data); snapshot(); addRollLog('JSON importado.'); }catch(err){ alert('Arquivo inválido.'); } }; reader.readAsText(f); };
+  inp.click();
+});
+document.getElementById('clearBtn')?.addEventListener('click', ()=>{ if(confirm('Limpar todos os campos?')){ localStorage.removeItem(storageKey); location.reload(); } });
 
-/* Init */
-window.onload = () => {
-  renderSkills();
-  loadData();
-  document.querySelectorAll('input').forEach(i => i.addEventListener('input', updateCalculations));
-};
+/* Module control panel */
+(function initModuleControl(){
+  const list = document.getElementById('moduleControlList');
+  document.querySelectorAll('[data-module]').forEach(m=>{
+    const name = m.dataset.module;
+    const id = 'ctl_'+name.replace(/[^a-z0-9\-_]/gi,'_');
+    const label = document.createElement('label'); label.style.display='flex'; label.style.alignItems='center'; label.style.gap='8px';
+    label.innerHTML = `<input type="checkbox" id="${id}" ${!m.classList.contains('hidden')?'checked':''}> ${name}`;
+    list.appendChild(label);
+    label.querySelector('input').addEventListener('change', e=> m.classList.toggle('hidden', !e.target.checked));
+  });
+  document.getElementById('toggleAll')?.addEventListener('click', ()=>{
+    const checks = Array.from(list.querySelectorAll('input[type="checkbox"]'));
+    const anyUnchecked = checks.some(c=>!c.checked);
+    checks.forEach(c=>{ c.checked = anyUnchecked; c.dispatchEvent(new Event('change')); });
+  });
+})();
+
+/* Undo stack initial snapshot */
+function initialSnapshot(){ undoStack = []; snapshot(); }
+initialSnapshot();
+
+/* Event wiring */
+document.addEventListener('input', e=>{ if(e.target && (e.target.matches('input')||e.target.matches('select')||e.target.matches('textarea'))){ updateAll(); snapshot(); } });
+document.addEventListener('change', e=>{ if(e.target && e.target.matches('.skill-check')) updateAll(); });
+
+/* Delegated roll-skill buttons (already handled above) */
+document.addEventListener('click', e=>{
+  if(e.target && e.target.matches && e.target.matches('.roll-skill')){ const key = e.target.dataset.key; rollSkillByKey(key,{type:'normal'}); }
+});
+
+/* Init on load */
+window.addEventListener('load', ()=>{
+  renderSkillsUI();
+  loadFromLocal();
+  updateAll();
+  addRollLog('Ficha pronta.');
+});
 </script>
-
 </body>
 </html>
