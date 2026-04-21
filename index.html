@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Ficha RPG — Perícias com Tooltips (BG fixo)</title>
+<title>Ficha RPG — Completa (CA, Equipamentos, Magias)</title>
 <style>
 :root{
   --bg-start:#f6f8fb; --bg-end:#eef4fb;
@@ -17,7 +17,6 @@
 /* Reset e tipografia */
 *{box-sizing:border-box;font-family:Inter,system-ui,Segoe UI,Roboto,Arial}
 html,body{height:100%;margin:0;
-  /* background gradient fixed, sem repetição, cobrindo toda a página de cima a baixo */
   background-image: linear-gradient(180deg,var(--bg-start),var(--bg-end));
   background-repeat: no-repeat;
   background-attachment: fixed;
@@ -59,6 +58,9 @@ h1{margin:0;color:var(--accent);font-size:18px;font-weight:700}
 .table{width:100%;border-collapse:collapse;margin-top:10px}
 .table th{font-size:12px;color:var(--muted);text-align:left;padding:8px;border-bottom:1px solid #eef4ff}
 .table td{padding:8px;border-bottom:1px solid #eef4ff}
+.input-inline{padding:8px;border-radius:10px;border:1px solid #eef4ff}
+.input-small{padding:6px;border-radius:8px;border:1px solid #eef4ff;width:80px}
+.input-mini{padding:6px;border-radius:8px;border:1px solid #eef4ff;width:60px}
 input:focus, select:focus, button:focus, textarea:focus{outline:3px solid rgba(91,78,247,0.12);outline-offset:2px}
 
 /* Tooltip base (CSS-only, accessible via data-tooltip) */
@@ -113,7 +115,7 @@ input:focus, select:focus, button:focus, textarea:focus{outline:3px solid rgba(9
   <!-- Header -->
   <div class="header">
     <div class="card" role="banner">
-      <h1>Ficha RPG — Perícias com Tooltips</h1>
+      <h1>Ficha RPG — Completa</h1>
       <div style="display:flex;gap:12px;align-items:center">
         <div class="palette-row" title="Paleta e seletor de cor">
           <label style="font-size:13px;color:var(--muted)">Cor</label>
@@ -322,6 +324,23 @@ input:focus, select:focus, button:focus, textarea:focus{outline:3px solid rgba(9
     <!-- Weapons / Spells -->
     <div class="card" style="margin-top:14px">
       <div class="section-title">Ataques & Magias</div>
+
+      <!-- Spellcasting controls -->
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px">
+        <label style="font-size:13px;color:var(--muted);width:120px">Atributo de Magia</label>
+        <select id="spell_attr" class="input-inline" style="flex:1" data-tooltip="Atributo usado para calcular CD e bônus de ataque das magias">
+          <option value="inteligencia">Inteligência</option>
+          <option value="sabedoria">Sabedoria</option>
+          <option value="carisma">Carisma</option>
+        </select>
+
+        <label style="font-size:13px;color:var(--muted);margin-left:8px">CD</label>
+        <input id="spell_dc" class="input-mini" readonly data-tooltip="Classe de Dificuldade das magias (8 + mod + prof)">
+
+        <label style="font-size:13px;color:var(--muted);margin-left:8px">Atk Magia</label>
+        <input id="spell_atk" class="input-mini" readonly data-tooltip="Bônus de ataque com magias (mod + prof)">
+      </div>
+
       <table class="table" id="weaponsTable" aria-describedby="atk-title">
         <thead><tr><th>Nome</th><th>Bônus</th><th>Dano</th><th>Notas</th><th></th></tr></thead>
         <tbody></tbody>
@@ -345,9 +364,34 @@ input:focus, select:focus, button:focus, textarea:focus{outline:3px solid rgba(9
         <div style="flex:1"><label style="font-size:12px;color:var(--muted)">HP Atual</label><input id="hp_atual" type="number" value="10" style="width:100%;padding:8px;border-radius:10px;border:1px solid #eef4ff;margin-top:8px" data-tooltip="Pontos de vida atuais"></div>
         <div style="flex:1"><label style="font-size:12px;color:var(--muted)">HP Máx</label><input id="hp_max" type="number" value="10" style="width:100%;padding:8px;border-radius:10px;border:1px solid #eef4ff;margin-top:8px" data-tooltip="Pontos de vida máximos"></div>
       </div>
-      <div style="display:flex;gap:10px;margin-top:12px">
-        <div style="flex:1"><label style="font-size:12px;color:var(--muted)">CA</label><input id="ca_quick" readonly style="width:100%;padding:8px;border-radius:10px;border:1px solid #eef4ff;margin-top:8px" data-tooltip="Classe de Armadura (calculada)"></div>
-        <div style="flex:1"><label style="font-size:12px;color:var(--muted)">Iniciativa</label><input id="iniciativa" readonly style="width:100%;padding:8px;border-radius:10px;border:1px solid #eef4ff;margin-top:8px" data-tooltip="Modificador de iniciativa (base: Destreza)"></div>
+      <div style="display:flex;gap:10px;margin-top:12px;align-items:center">
+        <div style="flex:1">
+          <label style="font-size:12px;color:var(--muted)">CA</label>
+          <input id="ca_quick" readonly style="width:100%;padding:8px;border-radius:10px;border:1px solid #eef4ff;margin-top:8px" data-tooltip="Classe de Armadura (calculada automaticamente)">
+        </div>
+        <div style="flex:1">
+          <label style="font-size:12px;color:var(--muted)">Iniciativa</label>
+          <input id="iniciativa" readonly style="width:100%;padding:8px;border-radius:10px;border:1px solid #eef4ff;margin-top:8px" data-tooltip="Modificador de iniciativa (base: Destreza)">
+        </div>
+      </div>
+
+      <!-- CA details -->
+      <div style="display:flex;gap:8px;align-items:center;margin-top:10px">
+        <label style="font-size:12px;color:var(--muted);width:90px">Armadura</label>
+        <select id="armorType" class="input-inline" style="flex:1" data-tooltip="Tipo de armadura (define se Destreza é limitada)">
+          <option value="none">Nenhuma</option>
+          <option value="light">Leve (DEX total)</option>
+          <option value="medium">Média (DEX até +2)</option>
+          <option value="heavy">Pesada (sem bônus de DEX)</option>
+        </select>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;margin-top:8px">
+        <label style="font-size:12px;color:var(--muted);width:90px">Bônus Arm.</label>
+        <input id="armorBonus" class="input-small" type="number" value="0" data-tooltip="Bônus fixo da armadura (ex: 11 para couro batido)">
+        <label style="font-size:12px;color:var(--muted);width:70px;margin-left:6px">Escudo</label>
+        <input id="shieldBonus" class="input-mini" type="number" value="0" data-tooltip="Bônus de escudo (+2 normalmente)">
+        <label style="font-size:12px;color:var(--muted);width:70px;margin-left:6px">Outros</label>
+        <input id="otherCa" class="input-mini" type="number" value="0" data-tooltip="Outros modificadores de CA">
       </div>
     </div>
 
@@ -355,6 +399,29 @@ input:focus, select:focus, button:focus, textarea:focus{outline:3px solid rgba(9
       <div class="section-title">Sentidos</div>
       <div style="margin-top:6px"><label style="font-size:12px;color:var(--muted)">Percepção Passiva</label><input id="perc_passiva" readonly style="width:100%;padding:8px;border-radius:10px;border:1px solid #eef4ff;margin-top:8px" data-tooltip="Percepção passiva (10 + Sabedoria + proficiência se treinado)"></div>
       <div style="margin-top:8px"><label style="font-size:12px;color:var(--muted)">Investigação Passiva</label><input id="inv_passiva" readonly style="width:100%;padding:8px;border-radius:10px;border:1px solid #eef4ff;margin-top:8px" data-tooltip="Investigação passiva (10 + Inteligência + proficiência se treinado)"></div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">Equipamentos</div>
+      <table class="table" id="equipTable">
+        <thead><tr><th>Item</th><th>Dano</th><th>Peso</th><th>Valor</th><th></th></tr></thead>
+        <tbody></tbody>
+      </table>
+
+      <div style="display:flex;gap:8px;margin-top:10px;align-items:center">
+        <input id="e_name" placeholder="Nome" style="flex:2;padding:8px;border-radius:10px;border:1px solid #eef4ff">
+        <input id="e_dmg" placeholder="1d6" style="width:80px;padding:8px;border-radius:10px;border:1px solid #eef4ff">
+        <input id="e_weight" placeholder="kg" style="width:70px;padding:8px;border-radius:10px;border:1px solid #eef4ff">
+        <input id="e_value" placeholder="gp" style="width:80px;padding:8px;border-radius:10px;border:1px solid #eef4ff">
+        <button id="addEquipBtn" class="btn-ghost small">Adicionar</button>
+      </div>
+
+      <div style="display:flex;gap:8px;align-items:center;margin-top:10px">
+        <div style="flex:1"><strong>Total peso:</strong> <span id="totalWeight">0</span> kg</div>
+        <div style="flex:1;text-align:right"><strong>Total valor:</strong> <span id="totalValue">0</span> gp</div>
+      </div>
+
+      <div style="margin-top:10px;color:var(--muted);font-size:13px">Observação: o campo "Dano" é informativo; o cálculo de dano por arma aparece em Ataques.</div>
     </div>
 
     <div class="card">
@@ -384,10 +451,10 @@ input:focus, select:focus, button:focus, textarea:focus{outline:3px solid rgba(9
 </div>
 
 <script>
-/* JS com tooltips nas perícias (descrições por perícia) — funcionalidade inalterada */
+/* JS atualizado: CA calculada com atributos, quadro de equipamentos com soma de peso/valor, magias com CD/atk, persistência e UI */
 
-/* Dados */
-const storageKey = 'ficha_rpg_pericias_tooltips_v1';
+/* Dados e constantes */
+const storageKey = 'ficha_rpg_completa_v2';
 const ALL_SKILLS = [
   { name:'Acrobacia', attr:'destreza' },{ name:'Adestrar Animais', attr:'sabedoria' },
   { name:'Arcanismo', attr:'inteligencia' },{ name:'Atletismo', attr:'forca' },
@@ -399,8 +466,6 @@ const ALL_SKILLS = [
   { name:'Persuasão', attr:'carisma' },{ name:'Prestidigitação', attr:'destreza' },
   { name:'Religião', attr:'inteligencia' },{ name:'Sobrevivência', attr:'sabedoria' }
 ];
-
-/* Descrições curtas para tooltips de perícias */
 const SKILL_DESCRIPTIONS = {
   'Acrobacia': 'Equilíbrio, saltos e manobras ágeis; evita quedas e realiza acrobacias.',
   'Adestrar Animais': 'Treinar, acalmar ou controlar animais; interpretar comportamento animal.',
@@ -438,14 +503,16 @@ const RACE_BONUSES = {
   'Meio-Orc': { forca:2, constituicao:1 },
   'Tiefling': { carisma:2 }
 };
+
 let currentRaceBonuses = { forca:0, destreza:0, constituicao:0, inteligencia:0, sabedoria:0, carisma:0 };
 
+/* Utilitários */
 function idSafe(s){ return String(s).replace(/\s+/g,'_').replace(/[^\w_]/g,''); }
 function modFrom(score){ return Math.floor((score - 10) / 2); }
 function formatMod(n){ return (n>=0?'+':'') + n; }
 function now(){ return new Date().toLocaleString(); }
 
-/* Render skills UI com tooltips individuais (não altera lógica) */
+/* Render skills UI com tooltips */
 function renderSkillsUI(){
   const container = document.getElementById('skillsContainer');
   const quick = document.getElementById('quickSkillSelect');
@@ -579,7 +646,7 @@ function bindAttributeInputs(){
   });
 }
 
-/* Update all derived values */
+/* Update all derived values (mods, skills, iniciativa, passivas, CA, magias) */
 function updateAll(){
   const attrs = ['forca','destreza','constituicao','inteligencia','sabedoria','carisma'];
   const mods = {};
@@ -611,6 +678,59 @@ function updateAll(){
   const invVal = 10 + (mods.inteligencia || 0) + ((invCb && invCb.checked) ? prof : 0);
   const percEl = document.getElementById('perc_passiva'); if(percEl) percEl.value = percVal;
   const invEl = document.getElementById('inv_passiva'); if(invEl) invEl.value = invVal;
+
+  updateArmorClass(mods);
+  updateSpellcasting(mods);
+}
+
+/* CA calculation */
+function updateArmorClass(mods){
+  // mods: object with attribute modifiers
+  const armorType = document.getElementById('armorType')?.value || 'none';
+  const armorBonus = parseInt(document.getElementById('armorBonus')?.value || 0);
+  const shieldBonus = parseInt(document.getElementById('shieldBonus')?.value || 0);
+  const other = parseInt(document.getElementById('otherCa')?.value || 0);
+  let dexMod = mods.destreza || 0;
+
+  // Determine dex contribution based on armor type
+  let dexContribution = 0;
+  if(armorType === 'none' || armorType === 'light'){
+    dexContribution = dexMod;
+  } else if(armorType === 'medium'){
+    // cap +2
+    dexContribution = Math.min(dexMod, 2);
+  } else if(armorType === 'heavy'){
+    dexContribution = 0;
+  }
+
+  // If armorBonus is provided as full AC (e.g., 16 for chain), we treat it as base AC (not additive)
+  // Heuristic: if armorBonus >= 10 treat as base AC; else treat as additive bonus
+  let baseAC = 10;
+  if(armorBonus >= 10){
+    baseAC = armorBonus;
+    // For base AC armors, dexContribution may be limited (already handled above)
+    // Example: chain mail (16) ignores dex, but user can set armorType accordingly
+  } else {
+    baseAC = 10 + armorBonus;
+  }
+
+  const total = baseAC + dexContribution + shieldBonus + other;
+  const caEl = document.getElementById('ca_quick');
+  if(caEl) caEl.value = total;
+}
+
+/* Spellcasting: compute DC and attack bonus */
+function updateSpellcasting(mods){
+  const attr = document.getElementById('spell_attr')?.value || 'inteligencia';
+  const base = parseInt(document.getElementById(attr)?.dataset.base) || 10;
+  const raceBonus = currentRaceBonuses[attr] || 0;
+  const effective = base + raceBonus;
+  const mod = modFrom(effective);
+  const prof = parseInt(document.getElementById('prof_bonus')?.value || 0);
+  const dc = 8 + mod + prof;
+  const atk = mod + prof;
+  const dcEl = document.getElementById('spell_dc'); if(dcEl) dcEl.value = dc;
+  const atkEl = document.getElementById('spell_atk'); if(atkEl) atkEl.value = (atk>=0?'+':'')+atk;
 }
 
 /* Prof by level */
@@ -713,7 +833,41 @@ document.getElementById('addWeaponBtn')?.addEventListener('click', ()=>{
   saveToLocal(true);
 });
 
-/* Avatar: pan/zoom with wheel centered on cursor */
+/* Equipamentos: adicionar, remover, somar peso/valor */
+function addEquipRow(item){
+  const tbody = document.querySelector('#equipTable tbody');
+  if(!tbody) return;
+  const tr = document.createElement('tr');
+  tr.innerHTML = `<td>${item.name||''}</td><td>${item.dmg||''}</td><td>${item.weight||''}</td><td>${item.value||''}</td><td><button class="del-equip" style="color:red;border:0;background:none;cursor:pointer" title="Remover">×</button></td>`;
+  tbody.appendChild(tr);
+  tr.querySelector('.del-equip')?.addEventListener('click', ()=>{ tr.remove(); recalcEquipTotals(); saveToLocal(true); });
+}
+document.getElementById('addEquipBtn')?.addEventListener('click', ()=>{
+  const name = document.getElementById('e_name')?.value || '';
+  const dmg = document.getElementById('e_dmg')?.value || '';
+  const weight = parseFloat(document.getElementById('e_weight')?.value || 0) || 0;
+  const value = parseFloat(document.getElementById('e_value')?.value || 0) || 0;
+  if(!name) return alert('Informe o nome do item.');
+  addEquipRow({ name, dmg, weight, value });
+  document.getElementById('e_name').value=''; document.getElementById('e_dmg').value=''; document.getElementById('e_weight').value=''; document.getElementById('e_value').value='';
+  recalcEquipTotals();
+  saveToLocal(true);
+});
+function recalcEquipTotals(){
+  let totalW = 0;
+  let totalV = 0;
+  document.querySelectorAll('#equipTable tbody tr').forEach(tr=>{
+    const tds = tr.querySelectorAll('td');
+    const w = parseFloat(tds[2].innerText) || 0;
+    const v = parseFloat(tds[3].innerText) || 0;
+    totalW += w;
+    totalV += v;
+  });
+  document.getElementById('totalWeight').textContent = totalW;
+  document.getElementById('totalValue').textContent = totalV;
+}
+
+/* Avatar: pan/zoom with wheel centered on cursor (same as before) */
 const avatarPreview = document.getElementById('avatarPreview');
 const avatarInput = document.getElementById('avatarInput');
 const uploadAvatarBtn = document.getElementById('uploadAvatarBtn');
@@ -874,16 +1028,13 @@ function applyPaletteFromPickers(){
   document.documentElement.style.setProperty('--accent', accent);
   document.documentElement.style.setProperty('--bg-start', bgStart);
   document.documentElement.style.setProperty('--bg-end', bgEnd);
-  /* update body background immediately and keep it fixed, no-repeat */
-  document.documentElement.style.setProperty('--bg-start', bgStart);
-  document.documentElement.style.setProperty('--bg-end', bgEnd);
   document.body.style.backgroundImage = `linear-gradient(180deg, ${bgStart}, ${bgEnd})`;
 }
 accentPicker.addEventListener('input', applyPaletteFromPickers);
 bgStartPicker.addEventListener('input', applyPaletteFromPickers);
 bgEndPicker.addEventListener('input', applyPaletteFromPickers);
 
-/* Persistence */
+/* Persistence: gather and apply data */
 function gatherData(){
   const data = {};
   data.nome = document.getElementById('nome')?.value || '';
@@ -909,12 +1060,22 @@ function gatherData(){
     const tds = tr.querySelectorAll('td');
     data.weapons.push({ name:tds[0].innerText, bonus:tds[1].innerText, dmg:tds[2].innerText, notes:tds[3].innerText });
   });
+  data.equipment = [];
+  document.querySelectorAll('#equipTable tbody tr').forEach(tr=>{
+    const tds = tr.querySelectorAll('td');
+    data.equipment.push({ name:tds[0].innerText, dmg:tds[1].innerText, weight:parseFloat(tds[2].innerText)||0, value:parseFloat(tds[3].innerText)||0 });
+  });
   data.avatar = imgState.src || '';
   data.avatar_scale = imgState.scale || imgState.fitScale || 1;
   data.avatar_offsetX = imgState.offsetX || 0;
   data.avatar_offsetY = imgState.offsetY || 0;
   data.hp_atual = document.getElementById('hp_atual')?.value || 10;
   data.hp_max = document.getElementById('hp_max')?.value || 10;
+  data.armorType = document.getElementById('armorType')?.value || 'none';
+  data.armorBonus = parseInt(document.getElementById('armorBonus')?.value || 0);
+  data.shieldBonus = parseInt(document.getElementById('shieldBonus')?.value || 0);
+  data.otherCa = parseInt(document.getElementById('otherCa')?.value || 0);
+  data.spell_attr = document.getElementById('spell_attr')?.value || 'inteligencia';
   data.palette = { accent: accentPicker.value, bgStart: bgStartPicker.value, bgEnd: bgEndPicker.value };
   return data;
 }
@@ -939,6 +1100,8 @@ function applyData(data){
   document.querySelectorAll('.skill-check').forEach(cb=> cb.checked = !!(data.skills && data.skills[cb.dataset.name]));
   const tbody = document.querySelector('#weaponsTable tbody'); if(tbody) tbody.innerHTML = '';
   (data.weapons || []).forEach(w=> addWeaponRow({ name:w.name, bonus:w.bonus, dmg:w.dmg, notes:w.notes }));
+  const etbody = document.querySelector('#equipTable tbody'); if(etbody) etbody.innerHTML = '';
+  (data.equipment || []).forEach(e=> addEquipRow({ name:e.name, dmg:e.dmg, weight:e.weight, value:e.value }));
   if(data.avatar){
     imgState.src = data.avatar;
     imgState.scale = data.avatar_scale || 1;
@@ -949,6 +1112,11 @@ function applyData(data){
   }
   document.getElementById('hp_atual').value = data.hp_atual || 10;
   document.getElementById('hp_max').value = data.hp_max || 10;
+  document.getElementById('armorType').value = data.armorType || 'none';
+  document.getElementById('armorBonus').value = data.armorBonus || 0;
+  document.getElementById('shieldBonus').value = data.shieldBonus || 0;
+  document.getElementById('otherCa').value = data.otherCa || 0;
+  document.getElementById('spell_attr').value = data.spell_attr || 'inteligencia';
   if(data.palette){
     accentPicker.value = data.palette.accent || accentPicker.value;
     bgStartPicker.value = data.palette.bgStart || bgStartPicker.value;
@@ -957,6 +1125,7 @@ function applyData(data){
   }
   handleRaceSelectUI();
   applyRaceBonusesFromSelection();
+  recalcEquipTotals();
   updateAll();
 }
 
@@ -1001,6 +1170,14 @@ document.addEventListener('change', e=>{
   if(e.target && e.target.matches && e.target.matches('.skill-check')){ updateAll(); saveToLocal(true); }
 });
 
+/* Spell attribute change */
+document.getElementById('spell_attr')?.addEventListener('change', ()=>{ updateAll(); saveToLocal(true); });
+
+/* Armor inputs change */
+['armorType','armorBonus','shieldBonus','otherCa'].forEach(id=>{
+  document.getElementById(id)?.addEventListener('input', ()=>{ updateAll(); saveToLocal(true); });
+});
+
 /* Init */
 window.addEventListener('load', ()=>{
   renderSkillsUI();
@@ -1015,8 +1192,9 @@ window.addEventListener('load', ()=>{
   enforceChoiceLimits([document.getElementById('humanVar1'), document.getElementById('humanVar2')], 2);
   enforceChoiceLimits([document.getElementById('halfElfVar1'), document.getElementById('halfElfVar2')], 2);
   applyRaceBonusesFromSelection();
+  recalcEquipTotals();
   updateAll();
-  addRollLog('Ficha pronta — tooltips de perícias adicionados.');
+  addRollLog('Ficha pronta — CA, Equipamentos e Magias integrados.');
 });
 
 /* Mobile tooltip helper: long-press to show (optional) */
