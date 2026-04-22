@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Ficha RPG — Paleta, Classe PT-BR e Modo Mesa</title>
+<title>Ficha RPG — Paleta, Classe PT-BR</title>
 <style>
 :root{
   --bg-start:#f6f8fb;
@@ -154,12 +154,12 @@ h1{margin:0;color:var(--accent);font-size:18px;font-weight:700}
 .right{margin-left:auto}
 .color-input{width:36px;height:36px;border-radius:8px;border:1px solid #e6e9ef;padding:0}
 
-/* Tabletop mode */
+/* Tabletop mode styles remain available but the toggle button was removed */
 .tabletop-mode body, .tabletop-mode .app { background: var(--bg-start); }
 .tabletop-mode .card { box-shadow:none;border-radius:8px;border:1px solid rgba(7,18,38,0.06); }
 .tabletop-mode .header .card { display:flex;flex-direction:row;align-items:center;gap:12px; }
-.tabletop-mode .aside { display:none !important; } /* esconde painel lateral */
-.tabletop-mode .main { grid-column: 1 / -1; } /* ocupa toda largura */
+.tabletop-mode .aside { display:none !important; }
+.tabletop-mode .main { grid-column: 1 / -1; }
 .tabletop-mode .attr-box { padding:18px; border-radius:12px; }
 .tabletop-mode .attr-box input { width:72px; font-size:20px; padding:8px; }
 .tabletop-mode .skill-item { padding:14px; font-size:16px; }
@@ -171,7 +171,7 @@ h1{margin:0;color:var(--accent);font-size:18px;font-weight:700}
 .tabletop-mode #equipCardMain, .tabletop-mode #weaponsTable { font-size:15px; }
 .tabletop-mode #equipTable td, .tabletop-mode #weaponsTable td { padding:12px; }
 
-/* Fullscreen helper: ensure content fills screen */
+/* Fullscreen helper */
 .tabletop-fullscreen { width:100vw; height:100vh; overflow:auto; }
 
 /* Print optimization */
@@ -190,7 +190,7 @@ h1{margin:0;color:var(--accent);font-size:18px;font-weight:700}
   <!-- Header -->
   <div class="header">
     <div class="card" role="banner" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-      <h1>Ficha RPG — Paleta, Classe PT-BR e Modo Mesa</h1>
+      <h1>Ficha RPG — Paleta e Classe PT-BR</h1>
 
       <div style="display:flex;gap:12px;align-items:center;margin-left:auto;flex-wrap:wrap">
 
@@ -216,8 +216,6 @@ h1{margin:0;color:var(--accent);font-size:18px;font-weight:700}
           <button id="exportBtn" class="btn-ghost" data-tooltip="Exporta a ficha como arquivo JSON">Exportar</button>
           <button id="importBtn" class="btn-ghost" data-tooltip="Importar JSON">Importar</button>
           <button id="clearBtn" class="btn-ghost" data-tooltip="Limpar ficha">Limpar</button>
-          <!-- Toggle modo mesa -->
-          <button id="toggleTabletopBtn" class="btn-ghost small" title="Alternar modo Ficha para Mesa" data-tooltip="Alternar modo Ficha para Mesa">Ficha para mesa</button>
           <!-- Imprimir modo mesa -->
           <button id="printBtn" class="btn-ghost small" data-tooltip="Imprimir versão para mesa">Imprimir</button>
         </div>
@@ -561,11 +559,10 @@ h1{margin:0;color:var(--accent);font-size:18px;font-weight:700}
 </div>
 
 <script>
-/* ====== JS: funcionalidades principais + modo mesa/print + paleta + persistência ====== */
+/* ====== JS: funcionalidades principais + paleta + persistência ====== */
 
 /* --- Dados e utilitários --- */
 const storageKey = 'ficha_rpg_completa_v4_ptbr';
-const TABLETOP_KEY = 'ficha_tabletop_mode_v1';
 const ALL_SKILLS = [
   { name:'Acrobacia', attr:'destreza' },{ name:'Adestrar Animais', attr:'sabedoria' },
   { name:'Arcanismo', attr:'inteligencia' },{ name:'Atletismo', attr:'forca' },
@@ -966,7 +963,7 @@ function recalcEquipTotals(){
   document.getElementById('totalValue').textContent = totalV;
 }
 
-/* Avatar: pan/zoom */
+/* Avatar: pan/zoom (same as before) */
 const avatarPreview = document.getElementById('avatarPreview');
 const avatarInput = document.getElementById('avatarInput');
 const uploadAvatarBtn = document.getElementById('uploadAvatarBtn');
@@ -1307,116 +1304,16 @@ expandAsideBtn.addEventListener('click', ()=>{
   saveToLocal(true);
 });
 
-/* ---------- Modo Ficha para Mesa (Tabletop) ---------- */
-(function(){
-  const btn = document.getElementById('toggleTabletopBtn');
-  const printBtn = document.getElementById('printBtn');
-
-  function isTextInputActive(){
-    const el = document.activeElement;
-    if(!el) return false;
-    const tag = el.tagName.toLowerCase();
-    return tag === 'input' || tag === 'textarea' || el.isContentEditable;
-  }
-
-  function enterFullscreen(el){
-    if(!el) return Promise.reject();
-    if(el.requestFullscreen) return el.requestFullscreen();
-    if(el.webkitRequestFullscreen) return el.webkitRequestFullscreen();
-    if(el.msRequestFullscreen) return el.msRequestFullscreen();
-    return Promise.reject();
-  }
-  function exitFullscreen(){
-    if(document.exitFullscreen) return document.exitFullscreen();
-    if(document.webkitExitFullscreen) return document.webkitExitFullscreen();
-    if(document.msExitFullscreen) return document.msExitFullscreen();
-    return Promise.resolve();
-  }
-
-  function applyTabletopMode(enable, opts = { fullscreen:false }){
-    const root = document.documentElement;
-    if(enable){
-      root.classList.add('tabletop-mode');
-      if(opts.fullscreen) document.body.classList.add('tabletop-fullscreen');
-      btn.classList.add('active');
-      btn.textContent = 'Sair modo mesa';
-    } else {
-      root.classList.remove('tabletop-mode');
-      document.body.classList.remove('tabletop-fullscreen');
-      btn.classList.remove('active');
-      btn.textContent = 'Ficha para mesa';
-    }
-    localStorage.setItem(TABLETOP_KEY, JSON.stringify({ enabled: !!enable }));
-  }
-
-  // Toggle handler: try fullscreen then apply mode
-  btn.addEventListener('click', async ()=>{
-    const currently = JSON.parse(localStorage.getItem(TABLETOP_KEY) || '{}').enabled;
-    if(!currently){
-      const app = document.querySelector('.app');
-      try{
-        await enterFullscreen(app);
-        applyTabletopMode(true, { fullscreen:true });
-      }catch(e){
-        // fallback: apply tabletop without fullscreen
-        applyTabletopMode(true, { fullscreen:false });
-      }
-    } else {
-      try{ await exitFullscreen(); }catch(e){}
-      applyTabletopMode(false, { fullscreen:false });
-    }
-  });
-
-  // Keyboard shortcut: T (toggle) when not typing
-  window.addEventListener('keydown', (e)=>{
-    if(e.key.toLowerCase() === 't' && !isTextInputActive()){
-      e.preventDefault();
-      btn.click();
-    }
-    if(e.key === 'Escape'){
-      const active = JSON.parse(localStorage.getItem(TABLETOP_KEY) || '{}').enabled;
-      if(active){
-        try{ exitFullscreen(); }catch(e){}
-        applyTabletopMode(false, { fullscreen:false });
-      }
-    }
-  });
-
-  // Keep UI in sync with fullscreen changes
-  document.addEventListener('fullscreenchange', ()=>{
-    const fs = !!document.fullscreenElement;
-    if(!fs){
-      document.body.classList.remove('tabletop-fullscreen');
-    }
-  });
-
-  // Initialize from storage on load
-  window.addEventListener('load', ()=>{
-    try{
-      const st = JSON.parse(localStorage.getItem(TABLETOP_KEY) || '{}');
-      if(st && st.enabled){
-        applyTabletopMode(true, { fullscreen:false });
-      }
-    }catch(e){}
-  });
-
-  // Print button: print clean tabletop view
+/* Print button: print clean tabletop view */
+const printBtn = document.getElementById('printBtn');
+if(printBtn){
   printBtn.addEventListener('click', ()=>{
     const main = document.querySelector('.app');
     if(!main) return;
     main.classList.add('tabletop-print');
     setTimeout(()=>{ window.print(); main.classList.remove('tabletop-print'); }, 200);
   });
-
-  // Expose printTabletop globally (optional)
-  window.printTabletop = function(){
-    const main = document.querySelector('.app');
-    if(!main) return;
-    main.classList.add('tabletop-print');
-    setTimeout(()=>{ window.print(); main.classList.remove('tabletop-print'); }, 200);
-  };
-
-})();
+}
 
 /* Mobile tooltip helper */
 let touchTimer = null;
@@ -1447,8 +1344,11 @@ window.addEventListener('load', ()=>{
   updateAll();
   asideRange.value = getAsideWidth();
   asideVal.textContent = getAsideWidth() + 'px';
-  addRollLog('Ficha pronta — modo mesa integrado.');
+  addRollLog('Ficha pronta — botão "Modo Mesa" removido.');
 });
+
+/* small helper for logs */
+function addRollLog(text){ const log = document.getElementById('rollLog'); if(!log) return; const div = document.createElement('div'); div.style.padding='6px 8px'; div.style.borderBottom='1px dashed #f1f5f9'; div.style.fontSize='13px'; div.textContent = `[${now()}] ${text}`; log.prepend(div); while(log.children.length>200) log.removeChild(log.lastChild); }
 </script>
 </body>
 </html>
